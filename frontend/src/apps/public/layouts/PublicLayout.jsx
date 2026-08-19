@@ -120,7 +120,7 @@ const PublicLayout = () => {
       >
         <div className="w-full px-6 lg:px-12 flex items-center justify-between">
           <a href="/" className="flex items-center gap-3 flex-shrink-0">
-            <img src="/kalpanaa-logo-new.png" alt="Kalpanaaa Finance" className="w-40 md:w-56 h-8 md:h-10 object-contain object-left drop-shadow-md" />
+            <img src="/kalpanaa-logo-new.png" alt="Kalpanaa Finance" className="w-40 md:w-56 h-8 md:h-10 object-contain object-left drop-shadow-md" />
           </a>
 
           <div className="hidden md:flex items-center gap-8">
@@ -292,10 +292,10 @@ const PublicLayout = () => {
           {/* Logo & Intro */}
           <div className="mb-10">
             <a href="/" onClick={() => setIsSidebarOpen(false)} className="flex items-center gap-3 mb-6">
-              <img src="/kalpanaa-logo-new.png" alt="Kalpanaaa Finance" className="w-[24rem] md:w-[32rem] h-24 md:h-28 object-contain mb-4 origin-left" />
+              <img src="/kalpanaa-logo-new.png" alt="Kalpanaa Finance" className="w-[24rem] md:w-[32rem] h-24 md:h-28 object-contain mb-4 origin-left" />
             </a>
             <p className="text-sm text-gray-500 leading-relaxed">
-              Kalpanaaa Finance process management of money and includes activities such as investing, borrowing, lending, budgeting, saving, and forecasting.
+              Kalpanaa Finance process management of money and includes activities such as investing, borrowing, lending, budgeting, saving, and forecasting.
             </p>
           </div>
 
@@ -414,7 +414,7 @@ const PublicLayout = () => {
           {/* Left: Logo & Tagline */}
           <div className="flex flex-col gap-4">
             <Link to="/" className="flex items-center gap-3">
-              <img src="/kalpanaa-logo-new.png" alt="Kalpanaaa Finance" className="w-32 md:w-48 h-8 md:h-12 object-contain object-left drop-shadow-md" />
+              <img src="/kalpanaa-logo-new.png" alt="Kalpanaa Finance" className="w-32 md:w-48 h-8 md:h-12 object-contain object-left drop-shadow-md" />
             </Link>
             <p className="text-gray-400 text-sm leading-relaxed max-w-[220px] mt-2">
               Empowering your financial future with smart investments and trusted wealth management.
@@ -467,7 +467,7 @@ const PublicLayout = () => {
         <div className="relative z-10 border-t border-white/10">
           <div className="max-w-6xl mx-auto px-6 lg:px-10 py-5 flex flex-col sm:flex-row items-center justify-between gap-3">
             <p className="text-gray-500 text-xs tracking-wide">
-              © 2026 Kalpanaaa Finance. All rights reserved.
+              © 2026 Kalpanaa Finance. All rights reserved.
             </p>
             <div className="flex gap-6 mt-4 md:mt-0 text-sm">
               <Link to="/privacy-policy" className="hover:text-[#4E8B83] transition-colors">Privacy Policy</Link>

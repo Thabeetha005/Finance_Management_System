@@ -10,7 +10,7 @@ const Navbar = () => {
         <div className="flex justify-between items-center h-16">
           <div className="flex items-center">
             <Link to="/" className="flex items-center gap-3 text-xl font-bold text-emerald-400">
-              <img src="/kalpanaa-logo-new.png" alt="Kalpanaaa Finance Logo" className="w-[24rem] md:w-[32rem] h-24 md:h-28 object-contain origin-left" />
+              <img src="/kalpanaa-logo-new.png" alt="Kalpanaa Finance Logo" className="w-[24rem] md:w-[32rem] h-24 md:h-28 object-contain origin-left" />
             </Link>
           </div>
           <div className="hidden md:flex space-x-8">

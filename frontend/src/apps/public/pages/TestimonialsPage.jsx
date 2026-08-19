@@ -19,7 +19,7 @@ const testimonials = [
     name: "Sarah Jenkins",
     role: "CFO",
     company: "TechNova Solutions",
-    content: "Kalpanaaa Finance transformed our financial operations. Their digital infrastructure is incredibly robust, and the level of support we receive is unmatched in the industry.",
+    content: "Kalpanaa Finance transformed our financial operations. Their digital infrastructure is incredibly robust, and the level of support we receive is unmatched in the industry.",
     rating: 5,
     image: "https://i.pravatar.cc/150?img=1"
   },
@@ -37,7 +37,7 @@ const testimonials = [
     name: "Emma Richards",
     role: "VP of Operations",
     company: "Global Logistics Inc.",
-    content: "We were struggling with compliance and risk management across multiple regions. Kalpanaaa Finance's automated systems cleared up our audit trails entirely.",
+    content: "We were struggling with compliance and risk management across multiple regions. Kalpanaa Finance's automated systems cleared up our audit trails entirely.",
     rating: 5,
     image: "https://i.pravatar.cc/150?img=5"
   },
@@ -72,7 +72,7 @@ const testimonials = [
 
 const TestimonialsPage = () => {
   useEffect(() => {
-    document.title = "Testimonials | Kalpanaaa Finance";
+    document.title = "Testimonials | Kalpanaa Finance";
     window.scrollTo(0, 0);
   }, []);
 
@@ -96,7 +96,7 @@ const TestimonialsPage = () => {
             <span className="text-[#4E8B83]">visionaries.</span>
           </motion.h1>
           <motion.p variants={fadeInUp} className="text-gray-400 max-w-2xl mx-auto text-lg md:text-xl">
-            Don't just take our word for it. Discover how Kalpanaaa Finance is driving growth and transforming businesses globally.
+            Don't just take our word for it. Discover how Kalpanaa Finance is driving growth and transforming businesses globally.
           </motion.p>
         </motion.div>
       </section>
@@ -121,7 +121,7 @@ const TestimonialsPage = () => {
               </div>
               <div className="w-full lg:w-2/3">
                 <h4 className="text-2xl md:text-3xl lg:text-4xl font-bold text-[#12241F] leading-tight mb-8">
-                  "Kalpanaaa Finance didn't just provide us with software; they provided a strategic partnership that completely redefined our approach to global capital management."
+                  "Kalpanaa Finance didn't just provide us with software; they provided a strategic partnership that completely redefined our approach to global capital management."
                 </h4>
                 <div className="flex items-center gap-6">
                   <div className="flex items-center gap-2">

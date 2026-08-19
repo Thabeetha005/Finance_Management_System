@@ -55,7 +55,7 @@ export const categoryConfig = [
 
 const ServicesLandingPage = () => {
   useEffect(() => {
-    document.title = 'Our Services | Kalpanaaa Finance';
+    document.title = 'Our Services | Kalpanaa Finance';
     window.scrollTo(0, 0);
   }, []);
 

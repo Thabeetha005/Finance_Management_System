@@ -39,7 +39,7 @@ const LoginPage = () => {
     <div className="min-h-screen bg-brandWhite-off flex flex-col justify-center py-12 sm:px-6 lg:px-8">
       <div className="sm:mx-auto sm:w-full sm:max-w-md">
         <a href="/" className="flex items-center justify-center gap-3">
-          <img src="/kalpanaa-logo-new.png" alt="Kalpanaaa Finance" className="w-[24rem] md:w-[32rem] h-24 md:h-28 object-contain" />
+          <img src="/kalpanaa-logo-new.png" alt="Kalpanaa Finance" className="w-[24rem] md:w-[32rem] h-24 md:h-28 object-contain" />
         </a>
         <h2 className="mt-6 text-center text-3xl font-extrabold text-brandBlack">
           Log in to your account

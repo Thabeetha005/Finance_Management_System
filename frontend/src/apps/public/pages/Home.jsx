@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom';
 const slides = [
   {
     image: "/hero-bg.jpg?v=2",
-    subtitle: "Kalpanaaa Finance",
+    subtitle: "Kalpanaa Finance",
     title: "Building the Digital Future of Finance",
     desc: "Secure, scalable digital finance platforms designed for modern financial operations. We simplify workflows and automate operations."
   },
@@ -278,7 +278,7 @@ export default function Home() {
         
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10 scroll-animate opacity-0">
           <h2 className="text-3xl md:text-5xl font-bold text-white mb-6 leading-tight">Ready to transform your financial operations?</h2>
-          <p className="text-xl text-text-muted mb-10 max-w-2xl mx-auto">Join forward-thinking companies that rely on Kalpanaaa Finance to power their global growth.</p>
+          <p className="text-xl text-text-muted mb-10 max-w-2xl mx-auto">Join forward-thinking companies that rely on Kalpanaa Finance to power their global growth.</p>
           <Link to="/admin" className="group inline-flex items-center justify-center px-10 py-4 text-sm font-bold tracking-widest uppercase text-white bg-primary hover:bg-primary-hover rounded-full transition-all duration-300 shadow-xl">
             Get started today
             <ArrowRight className="ml-3 h-5 w-5 transition-transform duration-300 group-hover:translate-x-1" />

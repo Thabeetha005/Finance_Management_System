@@ -30,7 +30,7 @@ const CategoryPage = () => {
 
   useEffect(() => {
     if (category) {
-      document.title = `${category.name} | Kalpanaaa Finance`;
+      document.title = `${category.name} | Kalpanaa Finance`;
     }
     window.scrollTo(0, 0);
   }, [category]);
