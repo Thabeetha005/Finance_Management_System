@@ -1,0 +1,119 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --color-emerald: #106354;
+  --color-emerald-hover: #0a4b41;
+  --color-emerald-light: #e6f3f0;
+  
+  --color-gold: #D4AF37;
+  --color-gold-hover: #B89628;
+  --color-gold-light: #FDF8E7;
+  --color-gold-dark: #997A15;
+  
+  --color-copper: #887333;
+  --color-copper-hover: #73602a;
+  --color-copper-light: #f9f6ef;
+  --color-copper-dark: #5C4D20;
+
+  --ease-corporate: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Smooth Scroll & GPU Acceleration Enhancements (Section 1 & 10) */
+html {
+  scroll-behavior: smooth;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Section 11: Reduced Motion Support */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto !important;
+  }
+  *, ::before, ::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+@layer utilities {
+  .animate-fade-in-up {
+    animation: fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  /* GPU Hardware Acceleration for smooth interpolation (Section 3 & 10) */
+  .gpu-accelerate {
+    will-change: transform, opacity;
+    transform: translateZ(0);
+    backface-visibility: hidden;
+  }
+
+  .smooth-transition {
+    transition-property: color, background-color, border-color, opacity, box-shadow, transform, backdrop-filter;
+    transition-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
+    transition-duration: 300ms;
+  }
+
+  .smooth-card-hover {
+    transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.35s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.35s ease;
+  }
+
+  .smooth-card-hover:hover {
+    transform: translateY(-4px);
+  }
+
+  .smooth-button-hover {
+    transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), background-color 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+  }
+
+  .smooth-button-hover:hover {
+    transform: translateY(-1px);
+  }
+
+  .smooth-button-hover:active {
+    transform: translateY(0.5px) scale(0.99);
+  }
+
+  /* Explicit Accent Utility Classes */
+  .text-gold { color: #D4AF37 !important; }
+  .bg-gold { background-color: #D4AF37 !important; }
+  .border-gold { border-color: #D4AF37 !important; }
+
+  .text-copper { color: #887333 !important; }
+  .bg-copper { background-color: #887333 !important; }
+  .border-copper { border-color: #887333 !important; }
+
+  .text-emerald-brand { color: #106354 !important; }
+  .bg-emerald-brand { background-color: #106354 !important; }
+  .border-emerald-brand { border-color: #106354 !important; }
+
+  /* Accent Gradient Utilities */
+  .bg-gradient-accent {
+    background: linear-gradient(135deg, #106354 0%, #D4AF37 50%, #887333 100%) !important;
+  }
+
+  .border-gradient-gold-copper {
+    border-image: linear-gradient(to right, #D4AF37, #887333) 1 !important;
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+body {
+  @apply antialiased;
+}
