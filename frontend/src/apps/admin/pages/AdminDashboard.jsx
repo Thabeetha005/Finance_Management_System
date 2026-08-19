@@ -88,38 +88,46 @@ const AdminDashboard = () => {
       {/* ── KPI CARDS ── */}
       <div>
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-          <StatCard
-            title="Total Customers"
-            value={isLoading ? '—' : Math.min(15, stats?.totalUsers ?? stats?.totalCustomers ?? 15)}
-            sub={!isLoading ? `${Math.min(15, stats?.totalUsers ?? stats?.totalCustomers ?? 15)} registered customers` : ''}
-            icon={Users}
-            iconBg="bg-[#4E8B83]"
-            loading={isLoading}
-          />
-          <StatCard
-            title="Active Loans"
-            value={isLoading ? '—' : formatCr(stats?.totalLoanAmountCr)}
-            sub={stats?.activeLoans != null ? `${stats.activeLoans} active loans` : ''}
-            icon={HandCoins}
-            iconBg="bg-[#C47D57]"
-            loading={isLoading}
-          />
-          <StatCard
-            title="Total Investments"
-            value={isLoading ? '—' : formatCr(stats?.totalInvestmentsCr)}
-            sub={stats?.totalInvestmentsCr != null ? 'Total invested amount' : ''}
-            icon={TrendingUp}
-            iconBg="bg-[#3B6B8A]"
-            loading={isLoading}
-          />
-          <StatCard
-            title="Total Wallet Balance"
-            value={isLoading ? '—' : formatCr(stats?.totalWalletBalanceCr)}
-            sub={stats?.totalWalletBalanceCr != null ? 'Across all customer wallets' : ''}
-            icon={Wallet}
-            iconBg="bg-emerald-600"
-            loading={isLoading}
-          />
+          <div onClick={() => navigate('/admin/users')} className="cursor-pointer transition-transform hover:-translate-y-1">
+            <StatCard
+              title="Total Customers"
+              value={isLoading ? '—' : Math.min(15, stats?.totalUsers ?? stats?.totalCustomers ?? 15)}
+              sub={!isLoading ? `${Math.min(15, stats?.totalUsers ?? stats?.totalCustomers ?? 15)} registered customers` : ''}
+              icon={Users}
+              iconBg="bg-[#106354]"
+              loading={isLoading}
+            />
+          </div>
+          <div onClick={() => navigate('/admin/loans')} className="cursor-pointer transition-transform hover:-translate-y-1">
+            <StatCard
+              title="Active Loans"
+              value={isLoading ? '—' : formatCr(stats?.totalLoanAmountCr)}
+              sub={stats?.activeLoans != null ? `${stats.activeLoans} active loans` : ''}
+              icon={HandCoins}
+              iconBg="bg-[#C47D57]"
+              loading={isLoading}
+            />
+          </div>
+          <div onClick={() => navigate('/admin/loans')} className="cursor-pointer transition-transform hover:-translate-y-1">
+            <StatCard
+              title="Total Investments"
+              value={isLoading ? '—' : formatCr(stats?.totalInvestmentsCr)}
+              sub={stats?.totalInvestmentsCr != null ? 'Total invested amount' : ''}
+              icon={TrendingUp}
+              iconBg="bg-[#3B6B8A]"
+              loading={isLoading}
+            />
+          </div>
+          <div onClick={() => navigate('/admin/accounts')} className="cursor-pointer transition-transform hover:-translate-y-1">
+            <StatCard
+              title="Total Wallet Balance"
+              value={isLoading ? '—' : formatCr(stats?.totalWalletBalanceCr)}
+              sub={stats?.totalWalletBalanceCr != null ? 'Across all customer wallets' : ''}
+              icon={Wallet}
+              iconBg="bg-emerald-700"
+              loading={isLoading}
+            />
+          </div>
         </div>
       </div>
 
@@ -250,8 +258,8 @@ const AdminDashboard = () => {
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-sm font-bold text-gray-900">System Alerts</h2>
             <button
-              onClick={() => navigate('/admin/verification-queue')}
-              className="text-xs text-[#4E8B83] font-semibold hover:underline"
+              onClick={() => navigate('/admin/verifications')}
+              className="text-xs text-[#106354] font-bold hover:underline cursor-pointer"
             >
               Resolve
             </button>

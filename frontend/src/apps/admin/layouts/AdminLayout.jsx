@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Outlet, Link, useLocation } from 'react-router-dom';
+import { useAuth } from '../../../shared/context/AuthContext';
 import { 
   LayoutDashboard, 
   Wallet, 
@@ -13,121 +14,143 @@ import {
   LogOut,
   ChevronDown,
   FileText,
-  Tags
+  Tags,
+  ShieldCheck,
+  UserCheck,
+  MessageSquare,
+  FileCheck,
+  HelpCircle,
+  Mail,
+  Briefcase
 } from 'lucide-react';
 
 export default function AdminLayout() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const { user, logout } = useAuth();
   const location = useLocation();
 
   const navigation = [
-    { name: 'Dashboard', href: '/admin', icon: LayoutDashboard },
+    { name: 'Dashboard', href: '/admin', icon: LayoutDashboard, exact: true },
+    { name: 'Loans & Approvals', href: '/admin/loans', icon: FileCheck },
+    { name: 'Consultants', href: '/admin/consultants', icon: Briefcase },
+    { name: 'Consultations', href: '/admin/consultations', icon: MessageSquare },
+    { name: 'KYC Verifications', href: '/admin/verifications', icon: UserCheck },
+    { name: 'Audit Logs', href: '/admin/audit-logs', icon: ShieldCheck },
+    { name: 'Customers', href: '/admin/users', icon: Users },
     { name: 'Accounts', href: '/admin/accounts', icon: Wallet },
     { name: 'Transactions', href: '/admin/transactions', icon: ArrowLeftRight },
-    { name: 'Customers', href: '/admin/customers', icon: Users },
+    { name: 'Announcements', href: '/admin/announcements', icon: Bell },
+    { name: 'Support Tickets', href: '/admin/support', icon: HelpCircle },
+    { name: 'Contact Requests', href: '/admin/contact-requests', icon: Mail },
     { name: 'Blogs', href: '/admin/blogs', icon: FileText },
     { name: 'Blog Categories', href: '/admin/blog-categories', icon: Tags },
     { name: 'Settings', href: '/admin/settings', icon: Settings },
   ];
 
   return (
-    <div className="min-h-screen bg-slate-50 flex font-sans text-slate-900">
+    <div className="min-h-screen bg-[#F8FAFC] flex font-sans text-gray-900">
       {/* Sidebar */}
       <aside 
-        className={`fixed inset-y-0 left-0 z-50 w-64 bg-slate-900 text-slate-300 transition-transform duration-300 ease-in-out lg:translate-x-0 lg:static lg:inset-0 ${
+        className={`fixed inset-y-0 left-0 z-50 w-64 bg-[#051e17] text-white transition-transform duration-300 ease-in-out lg:translate-x-0 lg:static lg:inset-0 flex flex-col justify-between ${
           isSidebarOpen ? 'translate-x-0' : '-translate-x-full'
         }`}
       >
-        <div className="flex items-center justify-between h-20 px-6 border-b border-slate-800">
-          <Link to="/" className="flex items-center gap-2">
-            <div className="w-8 h-8 bg-blue-500 rounded-lg flex items-center justify-center">
-              <span className="text-white font-bold text-xl">K</span>
-            </div>
-            <span className="font-bold text-xl tracking-tight text-white">Kalpanaa</span>
-          </Link>
-          <button 
-            onClick={() => setIsSidebarOpen(false)}
-            className="lg:hidden text-slate-400 hover:text-white"
-          >
-            <X className="w-6 h-6" />
-          </button>
+        <div>
+          <div className="flex items-center justify-between h-20 px-6 border-b border-white/10">
+            <Link to="/" className="flex items-center">
+              <img src="/kalpanaa-logo-new.png" alt="Kalpanaa" className="h-10 w-auto object-contain" />
+            </Link>
+            <button 
+              onClick={() => setIsSidebarOpen(false)}
+              className="lg:hidden text-gray-400 hover:text-white"
+            >
+              <X className="w-6 h-6" />
+            </button>
+          </div>
+
+          <nav className="p-4 space-y-1 overflow-y-auto max-h-[calc(100vh-140px)] scrollbar-thin scrollbar-thumb-white/10">
+            {navigation.map((item) => {
+              const isActive = item.exact 
+                ? location.pathname === item.href 
+                : location.pathname.startsWith(item.href);
+              return (
+                <Link
+                  key={item.name}
+                  to={item.href}
+                  onClick={() => {
+                    if (window.innerWidth < 1024) setIsSidebarOpen(false);
+                  }}
+                  className={`flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-bold transition-all duration-200 ${
+                    isActive 
+                      ? 'bg-[#106354] text-white shadow-md border-l-4 border-[#D4AF37]' 
+                      : 'text-gray-300 hover:text-white hover:bg-white/5'
+                  }`}
+                >
+                  <item.icon className={`w-4 h-4 ${isActive ? 'text-[#D4AF37]' : 'text-gray-400'}`} />
+                  <span>{item.name}</span>
+                </Link>
+              );
+            })}
+          </nav>
         </div>
 
-        <nav className="p-4 space-y-1">
-          {navigation.map((item) => {
-            const isActive = location.pathname === item.href;
-            return (
-              <Link
-                key={item.name}
-                to={item.href}
-                className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-colors ${
-                  isActive 
-                    ? 'bg-blue-600 text-white font-medium shadow-md shadow-blue-900/20' 
-                    : 'text-slate-400 hover:text-white hover:bg-slate-800'
-                }`}
-              >
-                <item.icon className={`w-5 h-5 ${isActive ? 'text-white' : 'text-slate-400'}`} />
-                {item.name}
-              </Link>
-            );
-          })}
-        </nav>
-
-        <div className="absolute bottom-0 left-0 right-0 p-4 border-t border-slate-800">
-          <Link to="/" className="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800 transition-colors">
-            <LogOut className="w-5 h-5" />
+        <div className="p-4 border-t border-white/10 bg-[#041913]">
+          <button 
+            onClick={logout}
+            className="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold text-red-400 hover:text-white hover:bg-red-950/40 transition-colors cursor-pointer"
+          >
+            <LogOut className="w-4 h-4" />
             Sign Out
-          </Link>
+          </button>
         </div>
       </aside>
 
       {/* Main Content Area */}
       <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
         {/* Topbar */}
-        <header className="h-20 bg-white border-b border-slate-200 flex items-center justify-between px-4 sm:px-6 lg:px-8 z-40">
+        <header className="h-20 bg-white border-b border-gray-200 flex items-center justify-between px-4 sm:px-6 lg:px-8 z-40">
           <div className="flex items-center gap-4">
             <button
               onClick={() => setIsSidebarOpen(true)}
-              className="lg:hidden text-slate-500 hover:text-slate-700"
+              className="lg:hidden text-gray-500 hover:text-gray-700"
             >
               <Menu className="w-6 h-6" />
             </button>
             
             <div className="hidden md:flex relative max-w-md w-full">
               <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <Search className="h-5 w-5 text-slate-400" />
+                <Search className="h-4 w-4 text-gray-400" />
               </div>
               <input
                 type="text"
-                className="block w-full pl-10 pr-3 py-2 border border-slate-200 rounded-lg leading-5 bg-slate-50 placeholder-slate-400 focus:outline-none focus:bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm transition-colors"
-                placeholder="Search transactions, customers..."
+                className="block w-full pl-9 pr-3 py-2 border border-gray-200 rounded-xl leading-5 bg-gray-50 placeholder-gray-400 focus:outline-none focus:bg-white focus:ring-2 focus:ring-[#106354] focus:border-[#106354] text-xs font-medium transition-colors"
+                placeholder="Search transactions, customers, loans..."
               />
             </div>
           </div>
 
           <div className="flex items-center gap-4">
-            <button className="relative p-2 text-slate-400 hover:text-slate-600 transition-colors rounded-full hover:bg-slate-100">
-              <Bell className="w-6 h-6" />
-              <span className="absolute top-2 right-2 block h-2 w-2 rounded-full bg-red-500 ring-2 ring-white" />
+            <button className="relative p-2 text-gray-400 hover:text-gray-600 transition-colors rounded-full hover:bg-gray-100">
+              <Bell className="w-5 h-5" />
+              <span className="absolute top-1.5 right-1.5 block h-2 w-2 rounded-full bg-emerald-500 ring-2 ring-white" />
             </button>
 
-            <div className="h-8 w-px bg-slate-200 mx-2"></div>
+            <div className="h-8 w-px bg-gray-200 mx-1"></div>
 
-            <div className="flex items-center gap-3 cursor-pointer">
-              <div className="w-10 h-10 rounded-full bg-blue-100 border border-blue-200 flex items-center justify-center text-blue-700 font-bold">
-                AD
+            <div className="flex items-center gap-3">
+              <div className="w-9 h-9 rounded-full bg-[#12241F] text-emerald-400 border border-emerald-900 flex items-center justify-center font-bold text-sm shadow-sm">
+                {user?.name ? user.name.charAt(0).toUpperCase() : 'A'}
               </div>
-              <div className="hidden md:block">
-                <p className="text-sm font-medium text-slate-700">Admin User</p>
-                <p className="text-xs text-slate-500">Administrator</p>
+              <div className="hidden md:block text-left">
+                <p className="text-xs font-bold text-gray-900 leading-tight">{user?.name || 'Admin User'}</p>
+                <p className="text-[10px] text-emerald-700 font-semibold leading-tight uppercase tracking-wider">{user?.role || 'Administrator'}</p>
               </div>
-              <ChevronDown className="w-4 h-4 text-slate-400 hidden md:block" />
             </div>
           </div>
         </header>
 
         {/* Page Content */}
-        <main className="flex-1 overflow-y-auto bg-slate-50 p-4 sm:p-6 lg:p-8">
+        <main className="flex-1 overflow-y-auto bg-[#F8FAFC] p-4 sm:p-6 lg:p-8">
           <Outlet />
         </main>
       </div>
@@ -135,7 +158,7 @@ export default function AdminLayout() {
       {/* Mobile Sidebar Overlay */}
       {isSidebarOpen && (
         <div 
-          className="fixed inset-0 bg-slate-900/50 z-40 lg:hidden backdrop-blur-sm"
+          className="fixed inset-0 bg-black/50 z-40 lg:hidden backdrop-blur-sm"
           onClick={() => setIsSidebarOpen(false)}
         />
       )}

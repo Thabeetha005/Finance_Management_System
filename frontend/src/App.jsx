@@ -144,13 +144,16 @@ function AppContent() {
       }>
         <Route index element={<AdminDashboard />} />
         <Route path="users" element={<AllCustomers />} />
+        <Route path="customers" element={<AllCustomers />} />
         <Route path="users/:userId" element={<AdminUserDetails />} />
         <Route path="loans" element={<AdminFinancialApprovals />} />
+        <Route path="approvals" element={<AdminFinancialApprovals />} />
         <Route path="deposits" element={<AdminFinancialApprovals />} />
         <Route path="withdrawals" element={<AdminFinancialApprovals />} />
         <Route path="investments" element={<AdminFinancialApprovals />} />
         <Route path="consultations" element={<ConsultationManagement />} />
         <Route path="verifications" element={<AdminVerificationQueue />} />
+        <Route path="verification-queue" element={<AdminVerificationQueue />} />
         <Route path="contact-requests" element={<ContactRequestManagement />} />
         <Route path="blogs" element={<BlogManagement />} />
         <Route path="blog-categories" element={<AdminBlogCategories />} />
