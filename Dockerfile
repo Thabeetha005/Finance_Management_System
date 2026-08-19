@@ -21,5 +21,5 @@ COPY --from=build /app/target/*.jar app.jar
 # Expose port 8080
 EXPOSE 8080
 
-# Launch application
-ENTRYPOINT ["java", "-Dserver.port=${PORT:-8080}", "-jar", "app.jar"]
+# Launch application (Spring Boot reads PORT environment variable directly via application.properties)
+ENTRYPOINT ["java", "-jar", "app.jar"]
