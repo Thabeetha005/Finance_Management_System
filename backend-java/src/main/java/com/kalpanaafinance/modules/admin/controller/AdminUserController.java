@@ -150,19 +150,7 @@ public class AdminUserController {
         return ResponseEntity.ok(Map.of("message", "Customer scheduled for termination. Termination notice sent to customer."));
     }
 
-    @GetMapping("/transactions")
-    public ResponseEntity<List<Transaction>> getAllTransactions(@RequestParam(required = false) Integer limit) {
-        List<Transaction> txs = transactionRepository.findAll();
-        // Sort descending by date
-        txs.sort((t1, t2) -> {
-            if (t1.getDate() == null || t2.getDate() == null) return 0;
-            return t2.getDate().compareTo(t1.getDate());
-        });
-        if (limit != null && limit > 0) {
-            txs = txs.stream().limit(limit).collect(Collectors.toList());
-        }
-        return ResponseEntity.ok(txs);
-    }
+
 
     @GetMapping("/accounts")
     public ResponseEntity<List<Map<String, Object>>> getAllAccounts() {
