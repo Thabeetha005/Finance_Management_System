@@ -16,6 +16,7 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long> 
     List<Transaction> findByUserId(Long userId);
     List<Transaction> findByAccountUserEmail(String email);
     List<Transaction> findByUserIdOrderByDateDesc(Long userId);
+    List<Transaction> findAllByOrderByDateDesc();
 
     @Query("SELECT t FROM Transaction t WHERE t.userId = :userId " +
            "AND (:type IS NULL OR t.type = :type) " +
