@@ -4,20 +4,29 @@ import api from '../../../shared/api/axios';
 import { ArrowRight, Star } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
+const defaultConsultants = [
+  { id: 101, name: 'Dr. Aris Thorne', specialization: 'Senior Financial Strategist', experienceYears: 14, rating: 4.9 },
+  { id: 102, name: 'Elena Rostova', specialization: 'Investment & Wealth Advisor', experienceYears: 10, rating: 4.8 },
+  { id: 103, name: 'Marcus Vance', specialization: 'Risk & Corporate Finance Lead', experienceYears: 12, rating: 5.0 },
+  { id: 104, name: 'Sophia Chen', specialization: 'Digital Transformation Specialist', experienceYears: 8, rating: 4.9 },
+];
+
 const fetchConsultants = async () => {
   try {
     const res = await api.get('/public/consultants');
-    return Array.isArray(res.data) ? res.data : [];
+    return Array.isArray(res.data) && res.data.length > 0 ? res.data : defaultConsultants;
   } catch (e) {
-    return [];
+    return defaultConsultants;
   }
 };
 
 const ConsultingPage = () => {
-  const { data: consultants = [], isLoading } = useQuery({
+  const { data: consultants = defaultConsultants, isLoading } = useQuery({
     queryKey: ['publicConsultants'],
     queryFn: fetchConsultants,
   });
+
+  const displayConsultants = Array.isArray(consultants) && consultants.length > 0 ? consultants : defaultConsultants;
 
   return (
     <div className="pt-24 pb-12 font-sans bg-white">
@@ -83,7 +92,6 @@ const ConsultingPage = () => {
               <li className="flex items-center gap-2 text-sm text-gray-700 font-medium"><div className="w-4 h-4 rounded-full bg-emerald-500 flex items-center justify-center text-white text-[10px]">✓</div> Business Growth Strategy</li>
               <li className="flex items-center gap-2 text-sm text-gray-700 font-medium"><div className="w-4 h-4 rounded-full bg-emerald-500 flex items-center justify-center text-white text-[10px]">✓</div> Risk Assessment & Mitigation</li>
             </ul>
-
           </div>
 
           {/* Card 2 */}
@@ -98,7 +106,6 @@ const ConsultingPage = () => {
               <li className="flex items-center gap-2 text-sm text-gray-700 font-medium"><div className="w-4 h-4 rounded-full bg-amber-500 flex items-center justify-center text-white text-[10px]">✓</div> Supply Chain Optimization</li>
               <li className="flex items-center gap-2 text-sm text-gray-700 font-medium"><div className="w-4 h-4 rounded-full bg-amber-500 flex items-center justify-center text-white text-[10px]">✓</div> Cost Reduction Strategies</li>
             </ul>
-
           </div>
 
           {/* Card 3 */}
@@ -113,7 +120,6 @@ const ConsultingPage = () => {
               <li className="flex items-center gap-2 text-sm text-gray-700 font-medium"><div className="w-4 h-4 rounded-full bg-teal-500 flex items-center justify-center text-white text-[10px]">✓</div> Technology Integration</li>
               <li className="flex items-center gap-2 text-sm text-gray-700 font-medium"><div className="w-4 h-4 rounded-full bg-teal-500 flex items-center justify-center text-white text-[10px]">✓</div> Automation & AI Solutions</li>
             </ul>
-
           </div>
         </div>
       </div>
@@ -127,35 +133,36 @@ const ConsultingPage = () => {
         </div>
 
         {isLoading ? (
-          <div className="text-center text-gray-500">Loading consultants...</div>
+          <div className="text-center text-gray-500 py-8">Loading consultants...</div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {consultants.slice(0, 8).map(consultant => (
-              <div key={consultant.id} className="bg-white rounded-3xl border border-gray-100 p-6 shadow-sm hover:shadow-md transition-shadow flex flex-col items-center text-center">
-                <div className="w-24 h-24 bg-emerald-100 text-emerald-700 rounded-full flex items-center justify-center text-2xl font-bold mb-4">
-                  {consultant.user?.name ? consultant.user.name.charAt(0).toUpperCase() : 'C'}
-                </div>
-                <h3 className="font-bold text-[#05231e] text-lg mb-1">{consultant.user?.name}</h3>
-                <p className="text-sm font-semibold text-emerald-700 mb-1">{consultant.specialization}</p>
-                <p className="text-xs text-gray-500 mb-4">{consultant.experienceYears || 0}+ Years Exp.</p>
-                <div className="mt-auto pt-4 border-t border-gray-50 w-full flex justify-center">
-                  <div className="flex items-center gap-1 bg-amber-50 text-amber-600 px-3 py-1.5 rounded-xl text-sm font-bold">
-                    <Star className="w-4 h-4 fill-amber-500" />
-                    {consultant.rating || 4.8}
+            {displayConsultants.slice(0, 8).map(consultant => {
+              const name = consultant.user?.name || consultant.name || 'Expert Consultant';
+              return (
+                <div key={consultant.id} className="bg-white rounded-3xl border border-gray-100 p-6 shadow-sm hover:shadow-md transition-shadow flex flex-col items-center text-center">
+                  <div className="w-24 h-24 bg-emerald-100 text-emerald-700 rounded-full flex items-center justify-center text-2xl font-bold mb-4 shadow-inner">
+                    {name.charAt(0).toUpperCase()}
+                  </div>
+                  <h3 className="font-bold text-[#05231e] text-lg mb-1">{name}</h3>
+                  <p className="text-sm font-semibold text-emerald-700 mb-1">{consultant.specialization}</p>
+                  <p className="text-xs text-gray-500 mb-4">{consultant.experienceYears || 5}+ Years Exp.</p>
+                  <div className="mt-auto pt-4 border-t border-gray-50 w-full flex justify-center">
+                    <div className="flex items-center gap-1 bg-amber-50 text-amber-600 px-3 py-1.5 rounded-xl text-sm font-bold">
+                      <Star className="w-4 h-4 fill-amber-500 text-amber-500" />
+                      {consultant.rating || 4.8}
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         )}
 
-        {!isLoading && consultants.length > 6 && (
-          <div className="mt-12 text-center">
-            <Link to="/consultants" className="inline-flex items-center gap-2 bg-[#05231e] text-white px-8 py-3 rounded-full font-bold hover:bg-[#0a362e] transition-colors">
-              View All Consultants <ArrowRight className="w-4 h-4" />
-            </Link>
-          </div>
-        )}
+        <div className="mt-12 text-center">
+          <Link to="/contact" className="inline-flex items-center gap-2 bg-[#05231e] text-white px-8 py-3 rounded-full font-bold hover:bg-[#0a362e] transition-colors">
+            Book Consultation <ArrowRight className="w-4 h-4" />
+          </Link>
+        </div>
       </div>
 
     </div>

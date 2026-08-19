@@ -94,16 +94,8 @@ const ProtectedRoute = ({ children, allowedRoles }) => {
   }
 
   const role = (user.role || 'CUSTOMER').toUpperCase();
-  const isAdmin = role === 'ADMIN';
-  const isConsultant = role === 'CONSULTANT';
 
-  // Admin access guard
-  if (allowedRoles.includes('ADMIN') && !isAdmin) {
-    return <Navigate to="/login" replace />;
-  }
-
-  // Consultant access guard
-  if (allowedRoles.includes('CONSULTANT') && !isConsultant && !isAdmin) {
+  if (allowedRoles && !allowedRoles.includes(role)) {
     return <Navigate to="/login" replace />;
   }
 
@@ -124,6 +116,8 @@ function AppContent() {
         <Route path="/services/:slug" element={<ServicePage />} />
         <Route path="/services/digital-finance-platform" element={<DigitalFinancePage />} />
         <Route path="/services/consulting" element={<ConsultingPage />} />
+        <Route path="/consulting" element={<ConsultingPage />} />
+        <Route path="/consultants" element={<ConsultingPage />} />
         <Route path="/services/risk-management" element={<RiskCompliancePage />} />
         <Route path="/services/loan-management" element={<LendingCreditPage />} />
         <Route path="/services/investment-management" element={<InvestmentWealthPage />} />
