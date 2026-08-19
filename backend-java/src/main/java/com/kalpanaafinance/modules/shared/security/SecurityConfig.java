@@ -65,7 +65,11 @@ public class SecurityConfig {
                 .map(String::trim)
                 .filter(s -> !s.isEmpty())
                 .collect(java.util.stream.Collectors.toList());
-        configuration.setAllowedOrigins(origins);
+        origins.add("https://*.vercel.app");
+        origins.add("https://finance-management-system-neon.vercel.app");
+        origins.add("http://localhost:*");
+        
+        configuration.setAllowedOriginPatterns(origins);
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(List.of("Authorization", "Content-Type", "X-Requested-With"));
         configuration.setAllowCredentials(true);
