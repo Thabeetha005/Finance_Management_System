@@ -5,6 +5,8 @@ import com.kalpanaafinance.modules.shared.dto.UserProfileRequest;
 import com.kalpanaafinance.modules.shared.entity.User;
 import com.kalpanaafinance.modules.shared.repository.UserRepository;
 import com.kalpanaafinance.modules.shared.service.AuditService;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -15,7 +17,6 @@ import com.kalpanaafinance.modules.shared.security.JwtUtils;
 import org.springframework.web.bind.annotation.*;
 import java.util.Map;
 import java.util.HashMap;
-import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/user")
@@ -26,6 +27,9 @@ public class UserProfileController {
     private final PasswordEncoder passwordEncoder;
     private final AuditService auditService;
     private final JwtUtils jwtUtils;
+
+    @PersistenceContext
+    private EntityManager entityManager;
 
     @GetMapping("/profile")
     public ResponseEntity<User> getProfile(@AuthenticationPrincipal UserDetails userDetails) {
@@ -129,13 +133,31 @@ public class UserProfileController {
                 httpServletRequest != null ? httpServletRequest.getRemoteAddr() : "127.0.0.1"
         );
 
-        // 2. Cascade purge all child records
-        jakarta.persistence.EntityManager entityManager = (jakarta.persistence.EntityManager) httpServletRequest.getAttribute("jakarta.persistence.EntityManager");
+        // 2. Full foreign key safe cascade purge
         try {
-            userRepository.delete(user);
-        } catch (Exception e) {
-            // Hard fallback purge
-            userRepository.deleteById(userId);
+            entityManager.createNativeQuery("SET FOREIGN_KEY_CHECKS=0").executeUpdate();
+            
+            entityManager.createNativeQuery("DELETE FROM transactions WHERE account_id IN (SELECT id FROM accounts WHERE user_id = :id)").setParameter("id", userId).executeUpdate();
+            entityManager.createNativeQuery("DELETE FROM accounts WHERE user_id = :id").setParameter("id", userId).executeUpdate();
+            entityManager.createNativeQuery("DELETE FROM payments WHERE user_id = :id").setParameter("id", userId).executeUpdate();
+            entityManager.createNativeQuery("DELETE FROM consultations WHERE user_id = :id").setParameter("id", userId).executeUpdate();
+            entityManager.createNativeQuery("DELETE FROM activity_logs WHERE user_id = :id").setParameter("id", userId).executeUpdate();
+            entityManager.createNativeQuery("DELETE FROM messages WHERE sender_user_id = :id OR recipient_user_id = :id").setParameter("id", userId).executeUpdate();
+            entityManager.createNativeQuery("DELETE FROM notifications WHERE user_id = :id").setParameter("id", userId).executeUpdate();
+            entityManager.createNativeQuery("DELETE FROM support_tickets WHERE customer_id = :id").setParameter("id", userId).executeUpdate();
+            entityManager.createNativeQuery("DELETE FROM bank_accounts WHERE user_id = :id").setParameter("id", userId).executeUpdate();
+            entityManager.createNativeQuery("DELETE FROM investments WHERE user_id = :id").setParameter("id", userId).executeUpdate();
+            entityManager.createNativeQuery("DELETE FROM loans WHERE user_id = :id").setParameter("id", userId).executeUpdate();
+            entityManager.createNativeQuery("DELETE FROM documents WHERE user_id = :id").setParameter("id", userId).executeUpdate();
+            
+            Number hasWalletHistory = (Number) entityManager.createNativeQuery("SELECT COUNT(*) FROM information_schema.TABLES WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'wallet_history'").getSingleResult();
+            if (hasWalletHistory != null && hasWalletHistory.longValue() > 0) {
+                entityManager.createNativeQuery("DELETE FROM wallet_history WHERE user_id = :id").setParameter("id", userId).executeUpdate();
+            }
+
+            entityManager.createNativeQuery("DELETE FROM users WHERE id = :id").setParameter("id", userId).executeUpdate();
+        } finally {
+            entityManager.createNativeQuery("SET FOREIGN_KEY_CHECKS=1").executeUpdate();
         }
 
         return ResponseEntity.ok(Map.of("message", "Account purged successfully."));
