@@ -121,7 +121,7 @@ export const AuthProvider = ({ children }) => {
           localStorage.setItem(`bonusClaimed_${userEmail}`, 'true');
           setShowBonusPopup(true);
         }
-        return { success: true, message: 'Registration successful' };
+        return { success: true, role: userData.role, message: 'Registration successful' };
       } else {
         return { success: false, message: 'Registration failed' };
       }
