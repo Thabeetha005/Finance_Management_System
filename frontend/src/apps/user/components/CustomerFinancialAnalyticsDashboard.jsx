@@ -299,7 +299,7 @@ const CustomerFinancialAnalyticsDashboard = () => {
                 <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
                   <span className="text-[10px] text-gray-400 font-bold uppercase tracking-wider">Portfolio</span>
                   <span className="text-sm font-bold text-[#12241F]">
-                    {formatCurrency(overview.totalInvested?.add(overview.walletBalance || 0))}
+                    {formatCurrency((Number(overview.totalInvested) || 0) + (Number(overview.walletBalance) || 0))}
                   </span>
                 </div>
               </div>
