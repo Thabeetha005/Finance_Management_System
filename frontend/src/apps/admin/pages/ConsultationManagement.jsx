@@ -190,18 +190,16 @@ const ConsultationManagement = () => {
                             e.target.value = ''; // Reset selection
                           }
                         }}
-                        className="bg-gray-50 border border-gray-200 text-gray-700 text-xs rounded-lg focus:ring-[#4E8B83] focus:border-[#4E8B83] block w-full p-2 outline-none cursor-pointer"
-                        defaultValue=""
+                        className="bg-gray-50 border border-gray-200 text-gray-700 text-xs rounded-lg focus:ring-[#106354] focus:border-[#106354] block w-full p-2 outline-none cursor-pointer font-semibold"
+                        value=""
                       >
-                        <option value="" disabled>{cons.adminActionTaken ? cons.adminActionTaken : 'Action...'}</option>
-                        {(cons.status === 'PENDING' || cons.status === 'REQUESTED' || !cons.status) && (
-                          <>
-                            <option value="APPROVE">Approve</option>
-                            <option value="DENY">Deny</option>
-                          </>
-                        )}
+                        <option value="" disabled>Actions...</option>
+                        <option value="APPROVE">Approve</option>
+                        <option value="DENY">Deny / Cancel</option>
                         <option value="RESCHEDULE">Reschedule</option>
-                        <option value="ASSIGN">{cons.assignedConsultantName || (cons.notes && cons.notes.includes('Expert: ') && cons.notes.split('Expert: ')[1] !== 'Any') ? 'Change Consultant' : 'Assign'}</option>
+                        <option value="ASSIGN">
+                          {cons.assignedConsultantName ? 'Reassign / Change Consultant' : 'Assign Consultant'}
+                        </option>
                       </select>
                     </td>
                   </tr>

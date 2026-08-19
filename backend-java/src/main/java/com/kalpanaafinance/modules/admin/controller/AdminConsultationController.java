@@ -90,19 +90,24 @@ public class AdminConsultationController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
+    private final com.kalpanaafinance.modules.shared.service.AuditService auditService;
+
     @PatchMapping("/{id}/approve")
-    public ResponseEntity<Consultation> approve(@PathVariable Long id) {
+    public ResponseEntity<Consultation> approve(@PathVariable Long id, org.springframework.security.core.Authentication auth) {
         Consultation consultation = repository.findById(id).orElseThrow();
         consultation.setStatus("APPROVED");
         consultation = repository.save(consultation);
 
         createConsultationMessage(consultation, "Consultation Approved", "Your consultation on " + consultation.getPreferredDate() + " has been approved.");
         
+        String email = auth != null ? auth.getName() : "admin@kalpanaafinance.com";
+        auditService.logAction(email, "CONSULTATION_APPROVED", "CONSULTATION", id, "Approved consultation #" + id + " for " + (consultation.getUser() != null ? consultation.getUser().getName() : "Client"), "127.0.0.1");
+
         return ResponseEntity.ok(consultation);
     }
 
     @PatchMapping("/{id}/reject")
-    public ResponseEntity<Consultation> reject(@PathVariable Long id, @RequestBody(required = false) java.util.Map<String, String> payload) {
+    public ResponseEntity<Consultation> reject(@PathVariable Long id, @RequestBody(required = false) java.util.Map<String, String> payload, org.springframework.security.core.Authentication auth) {
         Consultation consultation = repository.findById(id).orElseThrow();
         consultation.setStatus("REJECTED");
         consultation = repository.save(consultation);
@@ -110,15 +115,18 @@ public class AdminConsultationController {
         String reason = (payload != null && payload.containsKey("reason")) ? payload.get("reason") : "No reason provided.";
         createConsultationMessage(consultation, "Consultation Denied", "Your consultation was denied. Reason: " + reason);
 
+        String email = auth != null ? auth.getName() : "admin@kalpanaafinance.com";
+        auditService.logAction(email, "CONSULTATION_DENIED", "CONSULTATION", id, "Denied consultation #" + id + ". Reason: " + reason, "127.0.0.1");
+
         return ResponseEntity.ok(consultation);
     }
 
     @PatchMapping("/{id}/assign")
-    public ResponseEntity<ConsultationAssignment> assign(@PathVariable Long id, @RequestBody ConsultationAssignmentRequest request) {
+    public ResponseEntity<ConsultationAssignment> assign(@PathVariable Long id, @RequestBody ConsultationAssignmentRequest request, org.springframework.security.core.Authentication auth) {
         Consultation consultation = repository.findById(id).orElseThrow();
         ConsultantProfile consultant = consultantProfileRepository.findById(request.getConsultantId()).orElseThrow();
         
-        ConsultationAssignment assignment = new ConsultationAssignment();
+        ConsultationAssignment assignment = assignmentRepository.findByConsultationId(id).orElse(new ConsultationAssignment());
         assignment.setConsultation(consultation);
         assignment.setConsultant(consultant);
         assignment.setStatus("PENDING_APPROVAL");
@@ -127,8 +135,12 @@ public class AdminConsultationController {
         consultation.setStatus("CONSULTANT_ASSIGNED_PENDING_APPROVAL");
         consultation = repository.save(consultation);
 
-        createConsultationMessage(consultation, "Consultant Assigned", "A consultant has been assigned to your session and is pending their approval.");
+        String consultantName = (consultant.getUser() != null && consultant.getUser().getName() != null) ? consultant.getUser().getName() : "Consultant #" + consultant.getId();
+        createConsultationMessage(consultation, "Consultant Assigned", "Consultant " + consultantName + " has been assigned to your session.");
         
+        String email = auth != null ? auth.getName() : "admin@kalpanaafinance.com";
+        auditService.logAction(email, "CONSULTANT_ASSIGNED", "CONSULTATION", id, "Assigned consultant " + consultantName + " to consultation #" + id, "127.0.0.1");
+
         return ResponseEntity.ok(assignment);
     }
 

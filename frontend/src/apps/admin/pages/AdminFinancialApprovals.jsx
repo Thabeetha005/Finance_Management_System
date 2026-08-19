@@ -47,7 +47,7 @@ const AdminFinancialApprovals = () => {
         return lower.startsWith('customer a') || lower.startsWith('test customer') || lower.startsWith('wallet customer') || lower.startsWith('withdrawal customer');
       };
 
-      const rawLoans = Array.isArray(loansRes.data) ? loansRes.data : [];
+      const rawLoans = Array.isArray(loansRes.data) ? loansRes.data : (loansRes.data?.content || loansRes.data?.data || []);
       const loansData = rawLoans
         .filter(loan => {
           if (!loan.user) return false;
@@ -75,13 +75,14 @@ const AdminFinancialApprovals = () => {
       let invData = [];
       try {
         const invRes = await api.get('/admin/investments');
-        invData = invRes.data.map(inv => ({
+        const rawInv = Array.isArray(invRes.data) ? invRes.data : (invRes.data?.content || invRes.data?.data || []);
+        invData = rawInv.map(inv => ({
           id: `INV-${inv.id}`,
           originalId: inv.id,
           customer: inv.userName || inv.userEmail || 'Unknown User',
           isVerified: true,
           type: 'Investment',
-          amount: `₹${Number(inv.investedAmount).toLocaleString('en-IN')}`,
+          amount: `₹${Number(inv.investedAmount || 0).toLocaleString('en-IN')}`,
           date: inv.createdAt ? new Date(inv.createdAt).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }) : new Date().toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }),
           status: inv.status || 'ACTIVE',
           raw: inv
@@ -93,14 +94,15 @@ const AdminFinancialApprovals = () => {
       let withdrawalData = [];
       try {
         const wdRes = await api.get('/admin/withdrawals');
-        withdrawalData = wdRes.data.map(wd => ({
+        const rawWd = Array.isArray(wdRes.data) ? wdRes.data : (wdRes.data?.content || wdRes.data?.data || []);
+        withdrawalData = rawWd.map(wd => ({
           id: `WD-${wd.id}`,
           originalId: wd.id,
           customer: wd.customerName || wd.customerEmail || 'Unknown User',
           userEmail: wd.customerEmail,
           isVerified: true,
           type: 'Withdrawal',
-          amount: `₹${Number(wd.amount).toLocaleString('en-IN')}`,
+          amount: `₹${Number(wd.amount || 0).toLocaleString('en-IN')}`,
           rawAmount: wd.amount,
           date: wd.requestedAt ? new Date(wd.requestedAt).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }) : new Date().toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }),
           status: wd.status || 'PENDING',
