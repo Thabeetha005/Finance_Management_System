@@ -1,6 +1,6 @@
 package com.kalpanaafinance.modules.user.service;
 
-import com.kalpanaafinance.dto.*;
+import com.kalpanaafinance.modules.shared.dto.*;
 import com.kalpanaafinance.modules.shared.entity.BankAccount;
 import com.kalpanaafinance.modules.shared.entity.Transaction;
 import com.kalpanaafinance.modules.shared.entity.User;

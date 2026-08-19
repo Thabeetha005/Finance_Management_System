@@ -3,7 +3,7 @@ package com.kalpanaafinance.modules.user.service;
 import com.kalpanaafinance.modules.shared.service.AuditService;
 import com.kalpanaafinance.modules.shared.service.MessageService;
 
-import com.kalpanaafinance.dto.*;
+import com.kalpanaafinance.modules.shared.dto.*;
 import com.kalpanaafinance.modules.shared.entity.*;
 import com.kalpanaafinance.modules.shared.repository.*;
 import lombok.RequiredArgsConstructor;
@@ -119,8 +119,8 @@ public class LoanService {
                 .finalEmiDate(calc.getFinalEmiDate())
                 .overallOutstandingAmount(BigDecimal.ZERO)
                 .overallPaidAmount(BigDecimal.ZERO)
-                .status(com.kalpanaafinance.enums.LoanStatus.APPLICATION_SUBMITTED.name())
-                .applicationStatus(com.kalpanaafinance.enums.LoanStatus.APPLICATION_SUBMITTED.name())
+                .status(com.kalpanaafinance.modules.shared.enums.LoanStatus.APPLICATION_SUBMITTED.name())
+                .applicationStatus(com.kalpanaafinance.modules.shared.enums.LoanStatus.APPLICATION_SUBMITTED.name())
                 .legacyUnverified(false)
                 .build();
 
@@ -157,8 +157,8 @@ public class LoanService {
         Loan loan = loanRepository.findById(loanId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Loan application not found"));
 
-        loan.setStatus(com.kalpanaafinance.enums.LoanStatus.UNDER_REVIEW.name());
-        loan.setApplicationStatus(com.kalpanaafinance.enums.LoanStatus.UNDER_REVIEW.name());
+        loan.setStatus(com.kalpanaafinance.modules.shared.enums.LoanStatus.UNDER_REVIEW.name());
+        loan.setApplicationStatus(com.kalpanaafinance.modules.shared.enums.LoanStatus.UNDER_REVIEW.name());
         Loan saved = loanRepository.save(loan);
 
         auditService.logAction("admin-" + adminId, "LOAN_UNDER_REVIEW", "LOAN", loanId,
@@ -211,8 +211,8 @@ public class LoanService {
         loan.setOutstandingBalance(totalRepayment);
         loan.setOverallOutstandingAmount(totalRepayment);
         loan.setOverallPaidAmount(BigDecimal.ZERO);
-        loan.setStatus(com.kalpanaafinance.enums.LoanStatus.APPROVED.name());
-        loan.setApplicationStatus(com.kalpanaafinance.enums.LoanStatus.APPROVED.name());
+        loan.setStatus(com.kalpanaafinance.modules.shared.enums.LoanStatus.APPROVED.name());
+        loan.setApplicationStatus(com.kalpanaafinance.modules.shared.enums.LoanStatus.APPROVED.name());
         loan.setApprovedAt(LocalDateTime.now());
 
         User customer = loan.getUser();
@@ -236,8 +236,8 @@ public class LoanService {
         Loan loan = loanRepository.findById(loanId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Loan application not found"));
 
-        if (!com.kalpanaafinance.enums.LoanStatus.APPROVED.name().equals(loan.getStatus()) &&
-            !com.kalpanaafinance.enums.LoanStatus.DISBURSED.name().equals(loan.getStatus())) {
+        if (!com.kalpanaafinance.modules.shared.enums.LoanStatus.APPROVED.name().equals(loan.getStatus()) &&
+            !com.kalpanaafinance.modules.shared.enums.LoanStatus.DISBURSED.name().equals(loan.getStatus())) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Loan must be in APPROVED state before disbursement.");
         }
 
@@ -302,7 +302,7 @@ public class LoanService {
             int dayToSet = Math.min(fixedDueDay, targetMonthLen);
             currentDueDate = LocalDate.of(currentDueDate.getYear(), currentDueDate.getMonth(), dayToSet);
 
-            String initialStatus = (i == 1) ? com.kalpanaafinance.enums.EmiStatus.PENDING.name() : com.kalpanaafinance.enums.EmiStatus.UPCOMING.name();
+            String initialStatus = (i == 1) ? com.kalpanaafinance.modules.shared.enums.EmiStatus.PENDING.name() : com.kalpanaafinance.modules.shared.enums.EmiStatus.UPCOMING.name();
 
             LoanInstallment installment = LoanInstallment.builder()
                     .loan(loan)
@@ -320,8 +320,8 @@ public class LoanService {
         loan.setFirstEmiDate(startDate.plusMonths(1));
         loan.setFinalEmiDate(startDate.plusMonths(n));
         loan.setDisbursedAt(LocalDateTime.now());
-        loan.setStatus(com.kalpanaafinance.enums.LoanStatus.ACTIVE.name());
-        loan.setApplicationStatus(com.kalpanaafinance.enums.LoanStatus.ACTIVE.name());
+        loan.setStatus(com.kalpanaafinance.modules.shared.enums.LoanStatus.ACTIVE.name());
+        loan.setApplicationStatus(com.kalpanaafinance.modules.shared.enums.LoanStatus.ACTIVE.name());
         Loan disbursedLoan = loanRepository.save(loan);
 
         auditService.logAction("admin-" + adminId, "LOAN_DISBURSED", "LOAN", loan.getId(),
@@ -339,8 +339,8 @@ public class LoanService {
         Loan loan = loanRepository.findById(loanId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Loan application not found"));
 
-        loan.setStatus(com.kalpanaafinance.enums.LoanStatus.DOCUMENTS_REQUIRED.name());
-        loan.setApplicationStatus(com.kalpanaafinance.enums.LoanStatus.DOCUMENTS_REQUIRED.name());
+        loan.setStatus(com.kalpanaafinance.modules.shared.enums.LoanStatus.DOCUMENTS_REQUIRED.name());
+        loan.setApplicationStatus(com.kalpanaafinance.modules.shared.enums.LoanStatus.DOCUMENTS_REQUIRED.name());
         loan.setResubmissionReason(reason);
         Loan saved = loanRepository.save(loan);
 
@@ -359,8 +359,8 @@ public class LoanService {
         Loan loan = loanRepository.findById(loanId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Loan application not found"));
 
-        loan.setStatus(com.kalpanaafinance.enums.LoanStatus.REJECTED.name());
-        loan.setApplicationStatus(com.kalpanaafinance.enums.LoanStatus.REJECTED.name());
+        loan.setStatus(com.kalpanaafinance.modules.shared.enums.LoanStatus.REJECTED.name());
+        loan.setApplicationStatus(com.kalpanaafinance.modules.shared.enums.LoanStatus.REJECTED.name());
         loan.setResubmissionReason(reason);
         Loan saved = loanRepository.save(loan);
 

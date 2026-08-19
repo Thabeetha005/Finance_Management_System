@@ -1,6 +1,6 @@
 package com.kalpanaafinance.modules.admin.controller;
 
-import com.kalpanaafinance.dto.SupportTicketResolutionRequest;
+import com.kalpanaafinance.modules.shared.dto.SupportTicketResolutionRequest;
 import com.kalpanaafinance.modules.shared.entity.SupportTicket;
 import com.kalpanaafinance.modules.shared.service.SupportTicketService;
 import jakarta.servlet.http.HttpServletRequest;

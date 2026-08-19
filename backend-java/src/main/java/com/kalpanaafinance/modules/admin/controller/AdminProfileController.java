@@ -1,8 +1,8 @@
 package com.kalpanaafinance.modules.admin.controller;
 
-import com.kalpanaafinance.dto.ProfileDTO;
-import com.kalpanaafinance.dto.UpdatePasswordRequest;
-import com.kalpanaafinance.dto.UpdateProfileRequest;
+import com.kalpanaafinance.modules.shared.dto.ProfileDTO;
+import com.kalpanaafinance.modules.shared.dto.UpdatePasswordRequest;
+import com.kalpanaafinance.modules.shared.dto.UpdateProfileRequest;
 import com.kalpanaafinance.modules.shared.entity.User;
 import com.kalpanaafinance.modules.shared.repository.UserRepository;
 import com.kalpanaafinance.modules.shared.service.AuditService;

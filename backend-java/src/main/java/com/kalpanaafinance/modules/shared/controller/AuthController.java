@@ -1,8 +1,8 @@
 package com.kalpanaafinance.modules.shared.controller;
 
-import com.kalpanaafinance.dto.AuthRequest;
-import com.kalpanaafinance.dto.AuthResponse;
-import com.kalpanaafinance.dto.SignUpRequest;
+import com.kalpanaafinance.modules.shared.dto.AuthRequest;
+import com.kalpanaafinance.modules.shared.dto.AuthResponse;
+import com.kalpanaafinance.modules.shared.dto.SignUpRequest;
 import com.kalpanaafinance.modules.shared.service.AuthService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

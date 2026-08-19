@@ -1,6 +1,6 @@
 package com.kalpanaafinance.modules.user.controller;
 
-import com.kalpanaafinance.dto.SupportTicketRequest;
+import com.kalpanaafinance.modules.shared.dto.SupportTicketRequest;
 import com.kalpanaafinance.modules.shared.entity.SupportTicket;
 import com.kalpanaafinance.modules.shared.entity.User;
 import com.kalpanaafinance.modules.shared.service.SupportTicketService;

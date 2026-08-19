@@ -37,7 +37,7 @@ public class AdminUserController {
     private com.kalpanaafinance.modules.user.service.WalletService walletService;
 
     @GetMapping("/users/{userId}/wallet-summary")
-    public ResponseEntity<com.kalpanaafinance.dto.WalletSummaryResponse> getUserWalletSummary(@PathVariable Long userId) {
+    public ResponseEntity<com.kalpanaafinance.modules.shared.dto.WalletSummaryResponse> getUserWalletSummary(@PathVariable Long userId) {
         return ResponseEntity.ok(walletService.getWalletSummary(userId));
     }
 

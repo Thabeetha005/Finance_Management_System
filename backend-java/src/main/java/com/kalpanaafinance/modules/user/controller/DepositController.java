@@ -1,6 +1,6 @@
 package com.kalpanaafinance.modules.user.controller;
 
-import com.kalpanaafinance.dto.DepositCreateRequest;
+import com.kalpanaafinance.modules.shared.dto.DepositCreateRequest;
 import com.kalpanaafinance.modules.shared.entity.Deposit;
 import com.kalpanaafinance.modules.shared.entity.User;
 import com.kalpanaafinance.modules.shared.repository.UserRepository;

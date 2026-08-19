@@ -1,6 +1,6 @@
 package com.kalpanaafinance.modules.user.controller;
 
-import com.kalpanaafinance.dto.*;
+import com.kalpanaafinance.modules.shared.dto.*;
 import com.kalpanaafinance.modules.shared.entity.User;
 import com.kalpanaafinance.modules.shared.repository.UserRepository;
 import com.kalpanaafinance.modules.user.service.WithdrawalService;

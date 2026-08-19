@@ -1,6 +1,6 @@
 package com.kalpanaafinance.modules.admin.controller;
 
-import com.kalpanaafinance.dto.AdminLoanResubmitRequest;
+import com.kalpanaafinance.modules.shared.dto.AdminLoanResubmitRequest;
 import com.kalpanaafinance.modules.shared.entity.Loan;
 import com.kalpanaafinance.modules.shared.entity.LoanEmi;
 import com.kalpanaafinance.modules.shared.entity.User;

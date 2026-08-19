@@ -1,6 +1,6 @@
 package com.kalpanaafinance.modules.admin.controller;
 
-import com.kalpanaafinance.dto.ConsultationAssignmentRequest;
+import com.kalpanaafinance.modules.shared.dto.ConsultationAssignmentRequest;
 import com.kalpanaafinance.modules.shared.entity.ConsultantProfile;
 import com.kalpanaafinance.modules.shared.entity.Consultation;
 import com.kalpanaafinance.modules.shared.entity.ConsultationAssignment;

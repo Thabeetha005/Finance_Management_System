@@ -1,6 +1,6 @@
 package com.kalpanaafinance.modules.admin.controller;
 
-import com.kalpanaafinance.dto.*;
+import com.kalpanaafinance.modules.shared.dto.*;
 import com.kalpanaafinance.modules.shared.entity.InvestmentPlan;
 import com.kalpanaafinance.modules.shared.entity.InvestmentPlanRate;
 import com.kalpanaafinance.modules.shared.repository.InvestmentPlanRateRepository;

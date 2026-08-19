@@ -1,6 +1,6 @@
 package com.kalpanaafinance.modules.admin.controller;
 
-import com.kalpanaafinance.dto.WithdrawalResponse;
+import com.kalpanaafinance.modules.shared.dto.WithdrawalResponse;
 import com.kalpanaafinance.modules.shared.entity.User;
 import com.kalpanaafinance.modules.shared.repository.UserRepository;
 import com.kalpanaafinance.modules.user.service.WithdrawalService;

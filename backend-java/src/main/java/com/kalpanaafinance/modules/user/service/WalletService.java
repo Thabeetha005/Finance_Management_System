@@ -1,7 +1,7 @@
 package com.kalpanaafinance.modules.user.service;
 
-import com.kalpanaafinance.dto.WalletSummaryResponse;
-import com.kalpanaafinance.dto.WalletTransactionResponse;
+import com.kalpanaafinance.modules.shared.dto.WalletSummaryResponse;
+import com.kalpanaafinance.modules.shared.dto.WalletTransactionResponse;
 import com.kalpanaafinance.modules.shared.entity.Account;
 import com.kalpanaafinance.modules.shared.entity.Investment;
 import com.kalpanaafinance.modules.shared.entity.Loan;

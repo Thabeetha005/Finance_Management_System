@@ -1,6 +1,6 @@
 package com.kalpanaafinance.modules.user.controller;
 
-import com.kalpanaafinance.dto.*;
+import com.kalpanaafinance.modules.shared.dto.*;
 import com.kalpanaafinance.modules.shared.entity.Loan;
 import com.kalpanaafinance.modules.shared.entity.LoanEmi;
 import com.kalpanaafinance.modules.shared.entity.User;

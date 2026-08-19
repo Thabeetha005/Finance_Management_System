@@ -1,7 +1,7 @@
 package com.kalpanaafinance.modules.user.controller;
 
-import com.kalpanaafinance.dto.UpdatePasswordRequest;
-import com.kalpanaafinance.dto.UserProfileRequest;
+import com.kalpanaafinance.modules.shared.dto.UpdatePasswordRequest;
+import com.kalpanaafinance.modules.shared.dto.UserProfileRequest;
 import com.kalpanaafinance.modules.shared.entity.User;
 import com.kalpanaafinance.modules.shared.repository.UserRepository;
 import com.kalpanaafinance.modules.shared.service.AuditService;
@@ -11,7 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import com.kalpanaafinance.security.JwtUtils;
+import com.kalpanaafinance.modules.shared.security.JwtUtils;
 import org.springframework.web.bind.annotation.*;
 import java.util.Map;
 import java.util.HashMap;

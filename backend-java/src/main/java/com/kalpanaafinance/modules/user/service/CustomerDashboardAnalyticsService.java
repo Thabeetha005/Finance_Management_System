@@ -1,7 +1,7 @@
 package com.kalpanaafinance.modules.user.service;
 
-import com.kalpanaafinance.dto.analytics.CustomerDashboardAnalyticsDTO;
-import com.kalpanaafinance.dto.analytics.CustomerDashboardAnalyticsDTO.*;
+import com.kalpanaafinance.modules.shared.dto.analytics.CustomerDashboardAnalyticsDTO;
+import com.kalpanaafinance.modules.shared.dto.analytics.CustomerDashboardAnalyticsDTO.*;
 import com.kalpanaafinance.modules.shared.entity.*;
 import com.kalpanaafinance.modules.shared.repository.*;
 import lombok.RequiredArgsConstructor;

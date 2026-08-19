@@ -1,7 +1,7 @@
 package com.kalpanaafinance.modules.user.controller;
 
-import com.kalpanaafinance.dto.WalletSummaryResponse;
-import com.kalpanaafinance.dto.WalletTransactionResponse;
+import com.kalpanaafinance.modules.shared.dto.WalletSummaryResponse;
+import com.kalpanaafinance.modules.shared.dto.WalletTransactionResponse;
 import com.kalpanaafinance.modules.shared.entity.Deposit;
 import com.kalpanaafinance.modules.shared.entity.User;
 import com.kalpanaafinance.modules.shared.repository.UserRepository;
@@ -43,7 +43,7 @@ public class WalletController {
 
     @PostMapping({"/deposit", "/deposits", "/add-funds", "/me/deposit"})
     public ResponseEntity<Deposit> createDeposit(
-            @RequestBody com.kalpanaafinance.dto.DepositCreateRequest request,
+            @RequestBody com.kalpanaafinance.modules.shared.dto.DepositCreateRequest request,
             Authentication auth) {
         User user = getAuthenticatedUser(auth);
         Deposit deposit = depositService.createDeposit(user.getId(), request);

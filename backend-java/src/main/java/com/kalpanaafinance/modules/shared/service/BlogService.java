@@ -1,7 +1,7 @@
 package com.kalpanaafinance.modules.shared.service;
 
-import com.kalpanaafinance.dto.BlogCategoryRequest;
-import com.kalpanaafinance.dto.BlogRequest;
+import com.kalpanaafinance.modules.shared.dto.BlogCategoryRequest;
+import com.kalpanaafinance.modules.shared.dto.BlogRequest;
 import com.kalpanaafinance.modules.shared.entity.Blog;
 import com.kalpanaafinance.modules.shared.entity.BlogCategory;
 import com.kalpanaafinance.modules.shared.entity.BlogType;

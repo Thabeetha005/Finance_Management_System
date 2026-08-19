@@ -1,12 +1,12 @@
 package com.kalpanaafinance.modules.shared.service;
 
-import com.kalpanaafinance.dto.AuthRequest;
-import com.kalpanaafinance.dto.AuthResponse;
-import com.kalpanaafinance.dto.SignUpRequest;
+import com.kalpanaafinance.modules.shared.dto.AuthRequest;
+import com.kalpanaafinance.modules.shared.dto.AuthResponse;
+import com.kalpanaafinance.modules.shared.dto.SignUpRequest;
 import com.kalpanaafinance.modules.shared.entity.Role;
 import com.kalpanaafinance.modules.shared.entity.User;
 import com.kalpanaafinance.modules.shared.repository.UserRepository;
-import com.kalpanaafinance.security.JwtUtils;
+import com.kalpanaafinance.modules.shared.security.JwtUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;

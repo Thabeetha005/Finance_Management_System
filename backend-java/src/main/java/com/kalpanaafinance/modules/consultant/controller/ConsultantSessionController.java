@@ -2,7 +2,7 @@ package com.kalpanaafinance.modules.consultant.controller;
 
 import com.kalpanaafinance.modules.shared.service.AuditService;
 
-import com.kalpanaafinance.dto.ConsultationNoteRequest;
+import com.kalpanaafinance.modules.shared.dto.ConsultationNoteRequest;
 import com.kalpanaafinance.modules.shared.entity.*;
 import com.kalpanaafinance.modules.shared.repository.*;
 import lombok.RequiredArgsConstructor;

@@ -3,8 +3,8 @@ package com.kalpanaafinance.modules.shared.service;
 import com.kalpanaafinance.modules.shared.service.AuditService;
 import com.kalpanaafinance.modules.shared.service.MessageService;
 
-import com.kalpanaafinance.dto.SupportTicketRequest;
-import com.kalpanaafinance.dto.SupportTicketResolutionRequest;
+import com.kalpanaafinance.modules.shared.dto.SupportTicketRequest;
+import com.kalpanaafinance.modules.shared.dto.SupportTicketResolutionRequest;
 import com.kalpanaafinance.modules.shared.entity.Message;
 import com.kalpanaafinance.modules.shared.entity.SupportTicket;
 import com.kalpanaafinance.modules.shared.entity.User;

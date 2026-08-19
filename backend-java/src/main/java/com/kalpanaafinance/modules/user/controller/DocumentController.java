@@ -1,7 +1,7 @@
 package com.kalpanaafinance.modules.user.controller;
 
-import com.kalpanaafinance.dto.ApplicationDocumentDTO;
-import com.kalpanaafinance.dto.LinkDocumentRequest;
+import com.kalpanaafinance.modules.shared.dto.ApplicationDocumentDTO;
+import com.kalpanaafinance.modules.shared.dto.LinkDocumentRequest;
 import com.kalpanaafinance.modules.shared.entity.ApplicationDocument;
 import com.kalpanaafinance.modules.shared.entity.Document;
 import com.kalpanaafinance.modules.shared.entity.User;

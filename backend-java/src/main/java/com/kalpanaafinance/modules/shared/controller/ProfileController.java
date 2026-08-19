@@ -1,6 +1,6 @@
 package com.kalpanaafinance.modules.shared.controller;
 
-import com.kalpanaafinance.dto.*;
+import com.kalpanaafinance.modules.shared.dto.*;
 import com.kalpanaafinance.modules.shared.entity.User;
 import com.kalpanaafinance.modules.shared.service.ProfileService;
 import lombok.RequiredArgsConstructor;
