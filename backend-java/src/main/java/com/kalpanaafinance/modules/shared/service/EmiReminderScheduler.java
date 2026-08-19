@@ -1,5 +1,7 @@
 package com.kalpanaafinance.modules.shared.service;
 
+import com.kalpanaafinance.modules.shared.service.MessageService;
+
 import com.kalpanaafinance.modules.shared.entity.LoanInstallment;
 import com.kalpanaafinance.modules.shared.entity.Message;
 import com.kalpanaafinance.modules.shared.repository.LoanInstallmentRepository;
