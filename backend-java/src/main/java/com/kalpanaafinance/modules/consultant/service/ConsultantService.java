@@ -30,8 +30,45 @@ public class ConsultantService {
     private final AuditService auditService;
     private final MessageService messageService;
 
+    @Transactional
     public List<ConsultantProfile> getAllConsultants() {
-        return profileRepository.findAll();
+        List<ConsultantProfile> list = profileRepository.findAll();
+        if (list.isEmpty()) {
+            seedDefaultConsultants();
+            return profileRepository.findAll();
+        }
+        return list;
+    }
+
+    private void seedDefaultConsultants() {
+        seedSingleConsultant("Ananya Rao", "ananya.rao@kalpanaafinance.com", "Investment & Wealth", 7, "Senior Financial Advisor specializing in portfolio diversification, SIPs, and mutual funds.");
+        seedSingleConsultant("Rahul Mehta", "rahul.mehta@kalpanaafinance.com", "Lending & Credit", 6, "Credit Specialist focusing on personal loans, mortgage restructuring, and CIBIL optimization.");
+        seedSingleConsultant("Priya Nair", "priya.nair@kalpanaafinance.com", "Digital Finance", 5, "Digital Assets and FinTech specialist providing guidance on digital wallets and electronic payments.");
+        seedSingleConsultant("Arjun Menon", "arjun.menon@kalpanaafinance.com", "Business Finance", 8, "Corporate finance & SME advisory consultant for working capital and business expansion.");
+    }
+
+    private void seedSingleConsultant(String name, String email, String specialization, int exp, String bio) {
+        if (userRepository.existsByEmail(email)) return;
+        User user = new User();
+        user.setName(name);
+        user.setEmail(email);
+        user.setPhone("+91 9876543210");
+        user.setRole(Role.CONSULTANT);
+        user.setPasswordHash(passwordEncoder.encode("Password123!"));
+        user = userRepository.save(user);
+
+        ConsultantProfile profile = new ConsultantProfile();
+        profile.setUser(user);
+        profile.setSpecialization(specialization);
+        profile.setExperienceYears(exp);
+        profile.setQualification("MBA Finance / CFA");
+        profile.setBio(bio);
+        profile.setWorkingDays("Mon-Fri");
+        profile.setWorkingHoursStart("09:00");
+        profile.setWorkingHoursEnd("17:00");
+        profile.setMaxSessionsPerDay(6);
+        profile.setStatus("ACTIVE");
+        profileRepository.save(profile);
     }
 
     public ConsultantProfile getConsultantById(Long id) {
