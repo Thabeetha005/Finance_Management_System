@@ -2,11 +2,11 @@ package com.kalpanaafinance.service;
 
 import com.kalpanaafinance.dto.BlogCategoryRequest;
 import com.kalpanaafinance.dto.BlogRequest;
-import com.kalpanaafinance.entity.Blog;
-import com.kalpanaafinance.entity.BlogCategory;
-import com.kalpanaafinance.entity.BlogType;
-import com.kalpanaafinance.repository.BlogCategoryRepository;
-import com.kalpanaafinance.repository.BlogRepository;
+import com.kalpanaafinance.modules.shared.entity.Blog;
+import com.kalpanaafinance.modules.shared.entity.BlogCategory;
+import com.kalpanaafinance.modules.shared.entity.BlogType;
+import com.kalpanaafinance.modules.shared.repository.BlogCategoryRepository;
+import com.kalpanaafinance.modules.shared.repository.BlogRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

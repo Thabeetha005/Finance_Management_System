@@ -52,7 +52,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             if (userEmail != null && SecurityContextHolder.getContext().getAuthentication() == null) {
                 UserDetails userDetails = this.userDetailsService.loadUserByUsername(userEmail);
 
-                if (userDetails instanceof com.kalpanaafinance.entity.User u) {
+                if (userDetails instanceof com.kalpanaafinance.modules.shared.entity.User u) {
                     if ("SUSPENDED".equalsIgnoreCase(u.getAccountStatus())) {
                         response.setStatus(HttpServletResponse.SC_FORBIDDEN);
                         response.setContentType("application/json");

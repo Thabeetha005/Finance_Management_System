@@ -1,10 +1,10 @@
 package com.kalpanaafinance.controller;
 
-import com.kalpanaafinance.entity.ContactRequest;
-import com.kalpanaafinance.entity.User;
-import com.kalpanaafinance.entity.Message;
-import com.kalpanaafinance.repository.ContactRequestRepository;
-import com.kalpanaafinance.repository.UserRepository;
+import com.kalpanaafinance.modules.shared.entity.ContactRequest;
+import com.kalpanaafinance.modules.shared.entity.User;
+import com.kalpanaafinance.modules.shared.entity.Message;
+import com.kalpanaafinance.modules.shared.repository.ContactRequestRepository;
+import com.kalpanaafinance.modules.shared.repository.UserRepository;
 import com.kalpanaafinance.service.MessageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -37,7 +37,7 @@ public class AdminContactRequestController {
     @GetMapping
     public ResponseEntity<List<ContactRequest>> getAll() {
         List<User> activeUsers = userRepository.findAll().stream()
-                .filter(u -> u.getRole() == com.kalpanaafinance.entity.Role.CUSTOMER)
+                .filter(u -> u.getRole() == com.kalpanaafinance.modules.shared.entity.Role.CUSTOMER)
                 .limit(15)
                 .collect(java.util.stream.Collectors.toList());
 

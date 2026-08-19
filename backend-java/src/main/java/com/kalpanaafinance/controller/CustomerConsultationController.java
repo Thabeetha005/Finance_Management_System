@@ -1,14 +1,14 @@
 package com.kalpanaafinance.controller;
 
-import com.kalpanaafinance.entity.Consultation;
-import com.kalpanaafinance.entity.User;
-import com.kalpanaafinance.repository.ConsultationRepository;
-import com.kalpanaafinance.repository.UserRepository;
-import com.kalpanaafinance.repository.ConsultantProfileRepository;
-import com.kalpanaafinance.repository.ConsultationAssignmentRepository;
-import com.kalpanaafinance.repository.ConsultationSessionRepository;
-import com.kalpanaafinance.entity.ConsultationAssignment;
-import com.kalpanaafinance.entity.ConsultationSession;
+import com.kalpanaafinance.modules.shared.entity.Consultation;
+import com.kalpanaafinance.modules.shared.entity.User;
+import com.kalpanaafinance.modules.shared.repository.ConsultationRepository;
+import com.kalpanaafinance.modules.shared.repository.UserRepository;
+import com.kalpanaafinance.modules.shared.repository.ConsultantProfileRepository;
+import com.kalpanaafinance.modules.shared.repository.ConsultationAssignmentRepository;
+import com.kalpanaafinance.modules.shared.repository.ConsultationSessionRepository;
+import com.kalpanaafinance.modules.shared.entity.ConsultationAssignment;
+import com.kalpanaafinance.modules.shared.entity.ConsultationSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -30,7 +30,7 @@ public class CustomerConsultationController {
     private final ConsultantProfileRepository consultantProfileRepository;
     private final ConsultationAssignmentRepository assignmentRepository;
     private final ConsultationSessionRepository sessionRepository;
-    private final com.kalpanaafinance.repository.MessageRepository messageRepository;
+    private final com.kalpanaafinance.modules.shared.repository.MessageRepository messageRepository;
 
     @GetMapping
     public ResponseEntity<List<Consultation>> getMyConsultations(Authentication authentication) {
@@ -87,13 +87,13 @@ public class CustomerConsultationController {
                     consultationRepository.save(saved);
                     
                     // Create notification for consultant
-                    com.kalpanaafinance.entity.Message msg = new com.kalpanaafinance.entity.Message();
+                    com.kalpanaafinance.modules.shared.entity.Message msg = new com.kalpanaafinance.modules.shared.entity.Message();
                     msg.setSenderUserId(user.getId());
                     msg.setRecipientUserId(consultant.getUser().getId());
                     msg.setSubject("New Consultation Request");
                     msg.setMessageContent("A client has requested a consultation with you for " + saved.getType() + " on " + saved.getPreferredDate());
                     msg.setIsRead(false);
-                    msg.setRelatedEntityType(com.kalpanaafinance.entity.Message.EntityType.CONSULTATION);
+                    msg.setRelatedEntityType(com.kalpanaafinance.modules.shared.entity.Message.EntityType.CONSULTATION);
                     msg.setRelatedEntityId(saved.getId());
                     messageRepository.save(msg);
                 });

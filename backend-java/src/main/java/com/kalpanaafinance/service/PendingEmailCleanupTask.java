@@ -1,7 +1,7 @@
 package com.kalpanaafinance.service;
 
-import com.kalpanaafinance.entity.PendingEmailChange;
-import com.kalpanaafinance.repository.PendingEmailChangeRepository;
+import com.kalpanaafinance.modules.shared.entity.PendingEmailChange;
+import com.kalpanaafinance.modules.shared.repository.PendingEmailChangeRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;

@@ -1,6 +1,6 @@
 package com.kalpanaafinance.security;
 
-import com.kalpanaafinance.repository.UserRepository;
+import com.kalpanaafinance.modules.shared.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

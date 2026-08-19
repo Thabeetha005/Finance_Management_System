@@ -47,7 +47,7 @@ public class JwtUtils {
 
     public String generateToken(UserDetails userDetails) {
         Map<String, Object> claims = new HashMap<>();
-        if (userDetails instanceof com.kalpanaafinance.entity.User u) {
+        if (userDetails instanceof com.kalpanaafinance.modules.shared.entity.User u) {
             if (u.getTokenVersion() != null) {
                 claims.put("tokenVersion", u.getTokenVersion());
             }
@@ -56,7 +56,7 @@ public class JwtUtils {
     }
 
     public String generateToken(Map<String, Object> extraClaims, UserDetails userDetails) {
-        if (userDetails instanceof com.kalpanaafinance.entity.User u && u.getTokenVersion() != null) {
+        if (userDetails instanceof com.kalpanaafinance.modules.shared.entity.User u && u.getTokenVersion() != null) {
             extraClaims.putIfAbsent("tokenVersion", u.getTokenVersion());
         }
         return buildToken(extraClaims, userDetails, jwtExpiration);
@@ -78,7 +78,7 @@ public class JwtUtils {
         if (!usernameMatches || isTokenExpired(token)) {
             return false;
         }
-        if (userDetails instanceof com.kalpanaafinance.entity.User u) {
+        if (userDetails instanceof com.kalpanaafinance.modules.shared.entity.User u) {
             Integer tokenVersionInJwt = extractTokenVersion(token);
             if (tokenVersionInJwt != null && u.getTokenVersion() != null) {
                 if (!tokenVersionInJwt.equals(u.getTokenVersion())) {

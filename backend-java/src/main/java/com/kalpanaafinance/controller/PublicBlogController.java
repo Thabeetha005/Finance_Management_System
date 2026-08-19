@@ -1,8 +1,8 @@
 package com.kalpanaafinance.controller;
 
-import com.kalpanaafinance.entity.Blog;
-import com.kalpanaafinance.entity.BlogCategory;
-import com.kalpanaafinance.entity.BlogType;
+import com.kalpanaafinance.modules.shared.entity.Blog;
+import com.kalpanaafinance.modules.shared.entity.BlogCategory;
+import com.kalpanaafinance.modules.shared.entity.BlogType;
 import com.kalpanaafinance.service.BlogService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;

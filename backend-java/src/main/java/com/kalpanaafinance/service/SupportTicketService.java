@@ -2,11 +2,11 @@ package com.kalpanaafinance.service;
 
 import com.kalpanaafinance.dto.SupportTicketRequest;
 import com.kalpanaafinance.dto.SupportTicketResolutionRequest;
-import com.kalpanaafinance.entity.Message;
-import com.kalpanaafinance.entity.SupportTicket;
-import com.kalpanaafinance.entity.User;
-import com.kalpanaafinance.repository.SupportTicketRepository;
-import com.kalpanaafinance.repository.UserRepository;
+import com.kalpanaafinance.modules.shared.entity.Message;
+import com.kalpanaafinance.modules.shared.entity.SupportTicket;
+import com.kalpanaafinance.modules.shared.entity.User;
+import com.kalpanaafinance.modules.shared.repository.SupportTicketRepository;
+import com.kalpanaafinance.modules.shared.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -51,7 +51,7 @@ public class SupportTicketService {
 
     public List<SupportTicket> getAllTicketsForAdmin() {
         List<User> activeUsers = userRepository.findAll().stream()
-                .filter(u -> u.getRole() == com.kalpanaafinance.entity.Role.CUSTOMER)
+                .filter(u -> u.getRole() == com.kalpanaafinance.modules.shared.entity.Role.CUSTOMER)
                 .limit(15)
                 .collect(java.util.stream.Collectors.toList());
 

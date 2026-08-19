@@ -1,13 +1,13 @@
 package com.kalpanaafinance.service;
 
 import com.kalpanaafinance.dto.*;
-import com.kalpanaafinance.entity.BankAccount;
-import com.kalpanaafinance.entity.Transaction;
-import com.kalpanaafinance.entity.User;
-import com.kalpanaafinance.entity.Withdrawal;
-import com.kalpanaafinance.entity.Notification;
-import com.kalpanaafinance.entity.AuditLog;
-import com.kalpanaafinance.repository.*;
+import com.kalpanaafinance.modules.shared.entity.BankAccount;
+import com.kalpanaafinance.modules.shared.entity.Transaction;
+import com.kalpanaafinance.modules.shared.entity.User;
+import com.kalpanaafinance.modules.shared.entity.Withdrawal;
+import com.kalpanaafinance.modules.shared.entity.Notification;
+import com.kalpanaafinance.modules.shared.entity.AuditLog;
+import com.kalpanaafinance.modules.shared.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

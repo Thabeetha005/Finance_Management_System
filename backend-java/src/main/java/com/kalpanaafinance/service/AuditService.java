@@ -1,9 +1,9 @@
 package com.kalpanaafinance.service;
 
-import com.kalpanaafinance.entity.AuditLog;
-import com.kalpanaafinance.entity.User;
-import com.kalpanaafinance.repository.AuditLogRepository;
-import com.kalpanaafinance.repository.UserRepository;
+import com.kalpanaafinance.modules.shared.entity.AuditLog;
+import com.kalpanaafinance.modules.shared.entity.User;
+import com.kalpanaafinance.modules.shared.repository.AuditLogRepository;
+import com.kalpanaafinance.modules.shared.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

@@ -1,6 +1,6 @@
 package com.kalpanaafinance.controller;
 
-import com.kalpanaafinance.entity.ConsultantProfile;
+import com.kalpanaafinance.modules.shared.entity.ConsultantProfile;
 import com.kalpanaafinance.service.ConsultantService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;

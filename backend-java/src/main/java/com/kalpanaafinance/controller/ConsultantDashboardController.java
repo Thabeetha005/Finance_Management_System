@@ -1,11 +1,11 @@
 package com.kalpanaafinance.controller;
 
-import com.kalpanaafinance.entity.ConsultantProfile;
-import com.kalpanaafinance.entity.ConsultationSession;
-import com.kalpanaafinance.entity.User;
-import com.kalpanaafinance.repository.ConsultantProfileRepository;
-import com.kalpanaafinance.repository.ConsultationSessionRepository;
-import com.kalpanaafinance.repository.UserRepository;
+import com.kalpanaafinance.modules.shared.entity.ConsultantProfile;
+import com.kalpanaafinance.modules.shared.entity.ConsultationSession;
+import com.kalpanaafinance.modules.shared.entity.User;
+import com.kalpanaafinance.modules.shared.repository.ConsultantProfileRepository;
+import com.kalpanaafinance.modules.shared.repository.ConsultationSessionRepository;
+import com.kalpanaafinance.modules.shared.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;

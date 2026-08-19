@@ -2,9 +2,9 @@ package com.kalpanaafinance.controller;
 
 import com.kalpanaafinance.dto.WalletSummaryResponse;
 import com.kalpanaafinance.dto.WalletTransactionResponse;
-import com.kalpanaafinance.entity.Deposit;
-import com.kalpanaafinance.entity.User;
-import com.kalpanaafinance.repository.UserRepository;
+import com.kalpanaafinance.modules.shared.entity.Deposit;
+import com.kalpanaafinance.modules.shared.entity.User;
+import com.kalpanaafinance.modules.shared.repository.UserRepository;
 import com.kalpanaafinance.service.DepositService;
 import com.kalpanaafinance.service.WalletService;
 import lombok.RequiredArgsConstructor;

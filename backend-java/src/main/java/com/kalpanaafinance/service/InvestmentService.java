@@ -1,8 +1,8 @@
 package com.kalpanaafinance.service;
 
 import com.kalpanaafinance.dto.*;
-import com.kalpanaafinance.entity.*;
-import com.kalpanaafinance.repository.*;
+import com.kalpanaafinance.modules.shared.entity.*;
+import com.kalpanaafinance.modules.shared.repository.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -140,7 +140,7 @@ public class InvestmentService {
         investment = investmentRepository.save(investment);
 
         // Step 6: Create Wallet Transaction Audit Log
-        com.kalpanaafinance.entity.Transaction tx = com.kalpanaafinance.entity.Transaction.builder()
+        com.kalpanaafinance.modules.shared.entity.Transaction tx = com.kalpanaafinance.modules.shared.entity.Transaction.builder()
                 .account(account)
                 .amount(request.getInvestedAmount())
                 .balanceBefore(balanceBefore)
@@ -195,7 +195,7 @@ public class InvestmentService {
         investment.setRedeemedAt(LocalDateTime.now());
 
         // Step 4: Create Wallet Transaction Audit Log
-        com.kalpanaafinance.entity.Transaction tx = com.kalpanaafinance.entity.Transaction.builder()
+        com.kalpanaafinance.modules.shared.entity.Transaction tx = com.kalpanaafinance.modules.shared.entity.Transaction.builder()
                 .account(account)
                 .amount(maturityValue)
                 .balanceBefore(balanceBefore)

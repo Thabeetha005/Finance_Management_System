@@ -1,8 +1,8 @@
 package com.kalpanaafinance.controller;
 
 import com.kalpanaafinance.dto.WithdrawalResponse;
-import com.kalpanaafinance.entity.User;
-import com.kalpanaafinance.repository.UserRepository;
+import com.kalpanaafinance.modules.shared.entity.User;
+import com.kalpanaafinance.modules.shared.repository.UserRepository;
 import com.kalpanaafinance.service.WithdrawalService;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

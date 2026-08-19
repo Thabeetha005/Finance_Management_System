@@ -1,19 +1,19 @@
 package com.kalpanaafinance.controller;
 
 import com.kalpanaafinance.dto.ConsultationAssignmentRequest;
-import com.kalpanaafinance.entity.ConsultantProfile;
-import com.kalpanaafinance.entity.Consultation;
-import com.kalpanaafinance.entity.ConsultationAssignment;
-import com.kalpanaafinance.entity.ConsultationSession;
-import com.kalpanaafinance.repository.ConsultantProfileRepository;
-import com.kalpanaafinance.repository.ConsultationAssignmentRepository;
-import com.kalpanaafinance.repository.ConsultationRepository;
-import com.kalpanaafinance.repository.ConsultationSessionRepository;
-import com.kalpanaafinance.repository.MessageRepository;
-import com.kalpanaafinance.entity.User;
-import com.kalpanaafinance.repository.UserRepository;
-import com.kalpanaafinance.entity.ConsultationAssignment;
-import com.kalpanaafinance.entity.Message;
+import com.kalpanaafinance.modules.shared.entity.ConsultantProfile;
+import com.kalpanaafinance.modules.shared.entity.Consultation;
+import com.kalpanaafinance.modules.shared.entity.ConsultationAssignment;
+import com.kalpanaafinance.modules.shared.entity.ConsultationSession;
+import com.kalpanaafinance.modules.shared.repository.ConsultantProfileRepository;
+import com.kalpanaafinance.modules.shared.repository.ConsultationAssignmentRepository;
+import com.kalpanaafinance.modules.shared.repository.ConsultationRepository;
+import com.kalpanaafinance.modules.shared.repository.ConsultationSessionRepository;
+import com.kalpanaafinance.modules.shared.repository.MessageRepository;
+import com.kalpanaafinance.modules.shared.entity.User;
+import com.kalpanaafinance.modules.shared.repository.UserRepository;
+import com.kalpanaafinance.modules.shared.entity.ConsultationAssignment;
+import com.kalpanaafinance.modules.shared.entity.Message;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -38,7 +38,7 @@ public class AdminConsultationController {
     @GetMapping
     public ResponseEntity<List<Consultation>> getAll() {
         List<User> activeUsers = userRepository.findAll().stream()
-                .filter(u -> u.getRole() == com.kalpanaafinance.entity.Role.CUSTOMER)
+                .filter(u -> u.getRole() == com.kalpanaafinance.modules.shared.entity.Role.CUSTOMER)
                 .limit(15)
                 .collect(java.util.stream.Collectors.toList());
 

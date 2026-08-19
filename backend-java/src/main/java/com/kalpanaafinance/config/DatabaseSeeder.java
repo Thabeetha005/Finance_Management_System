@@ -1,7 +1,7 @@
 package com.kalpanaafinance.config;
 
-import com.kalpanaafinance.entity.InvestmentPlan;
-import com.kalpanaafinance.repository.InvestmentPlanRepository;
+import com.kalpanaafinance.modules.shared.entity.InvestmentPlan;
+import com.kalpanaafinance.modules.shared.repository.InvestmentPlanRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
@@ -17,7 +17,7 @@ import java.util.List;
 public class DatabaseSeeder implements CommandLineRunner {
 
     private final InvestmentPlanRepository investmentPlanRepository;
-    private final com.kalpanaafinance.repository.UserRepository userRepository;
+    private final com.kalpanaafinance.modules.shared.repository.UserRepository userRepository;
     private final org.springframework.security.crypto.password.PasswordEncoder passwordEncoder;
 
     @Override

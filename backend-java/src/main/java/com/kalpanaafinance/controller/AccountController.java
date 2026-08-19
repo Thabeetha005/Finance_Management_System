@@ -1,6 +1,6 @@
 package com.kalpanaafinance.controller;
 
-import com.kalpanaafinance.entity.Account;
+import com.kalpanaafinance.modules.shared.entity.Account;
 import com.kalpanaafinance.service.AccountService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;

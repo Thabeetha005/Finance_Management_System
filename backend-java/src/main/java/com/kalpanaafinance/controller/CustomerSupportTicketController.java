@@ -1,8 +1,8 @@
 package com.kalpanaafinance.controller;
 
 import com.kalpanaafinance.dto.SupportTicketRequest;
-import com.kalpanaafinance.entity.SupportTicket;
-import com.kalpanaafinance.entity.User;
+import com.kalpanaafinance.modules.shared.entity.SupportTicket;
+import com.kalpanaafinance.modules.shared.entity.User;
 import com.kalpanaafinance.service.SupportTicketService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;

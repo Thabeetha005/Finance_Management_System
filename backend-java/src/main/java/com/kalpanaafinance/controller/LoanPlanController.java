@@ -1,7 +1,7 @@
 package com.kalpanaafinance.controller;
 
-import com.kalpanaafinance.entity.LoanPlan;
-import com.kalpanaafinance.repository.LoanPlanRepository;
+import com.kalpanaafinance.modules.shared.entity.LoanPlan;
+import com.kalpanaafinance.modules.shared.repository.LoanPlanRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

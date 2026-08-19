@@ -1,8 +1,8 @@
 package com.kalpanaafinance.controller;
 
 import com.kalpanaafinance.dto.ConsultationNoteRequest;
-import com.kalpanaafinance.entity.*;
-import com.kalpanaafinance.repository.*;
+import com.kalpanaafinance.modules.shared.entity.*;
+import com.kalpanaafinance.modules.shared.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;

@@ -1,6 +1,6 @@
 package com.kalpanaafinance.controller;
 
-import com.kalpanaafinance.entity.AuditLog;
+import com.kalpanaafinance.modules.shared.entity.AuditLog;
 import com.kalpanaafinance.service.AuditService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;

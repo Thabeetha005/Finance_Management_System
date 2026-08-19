@@ -2,16 +2,16 @@ package com.kalpanaafinance.service;
 
 import com.kalpanaafinance.dto.WalletSummaryResponse;
 import com.kalpanaafinance.dto.WalletTransactionResponse;
-import com.kalpanaafinance.entity.Account;
-import com.kalpanaafinance.entity.Investment;
-import com.kalpanaafinance.entity.Loan;
-import com.kalpanaafinance.entity.Transaction;
-import com.kalpanaafinance.entity.User;
-import com.kalpanaafinance.repository.AccountRepository;
-import com.kalpanaafinance.repository.InvestmentRepository;
-import com.kalpanaafinance.repository.LoanRepository;
-import com.kalpanaafinance.repository.TransactionRepository;
-import com.kalpanaafinance.repository.UserRepository;
+import com.kalpanaafinance.modules.shared.entity.Account;
+import com.kalpanaafinance.modules.shared.entity.Investment;
+import com.kalpanaafinance.modules.shared.entity.Loan;
+import com.kalpanaafinance.modules.shared.entity.Transaction;
+import com.kalpanaafinance.modules.shared.entity.User;
+import com.kalpanaafinance.modules.shared.repository.AccountRepository;
+import com.kalpanaafinance.modules.shared.repository.InvestmentRepository;
+import com.kalpanaafinance.modules.shared.repository.LoanRepository;
+import com.kalpanaafinance.modules.shared.repository.TransactionRepository;
+import com.kalpanaafinance.modules.shared.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -35,7 +35,7 @@ public class WalletService {
     private final InvestmentRepository investmentRepository;
     private final LoanRepository loanRepository;
     private final TransactionRepository transactionRepository;
-    private final com.kalpanaafinance.repository.WithdrawalRepository withdrawalRepository;
+    private final com.kalpanaafinance.modules.shared.repository.WithdrawalRepository withdrawalRepository;
 
     @Transactional(readOnly = true)
     public WalletSummaryResponse getWalletSummary(Long userId) {

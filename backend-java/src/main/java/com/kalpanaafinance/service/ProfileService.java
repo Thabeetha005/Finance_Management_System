@@ -1,8 +1,8 @@
 package com.kalpanaafinance.service;
 
 import com.kalpanaafinance.dto.*;
-import com.kalpanaafinance.entity.*;
-import com.kalpanaafinance.repository.*;
+import com.kalpanaafinance.modules.shared.entity.*;
+import com.kalpanaafinance.modules.shared.repository.*;
 import com.kalpanaafinance.security.JwtUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;

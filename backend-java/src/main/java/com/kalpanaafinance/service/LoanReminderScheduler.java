@@ -1,10 +1,10 @@
 package com.kalpanaafinance.service;
 
-import com.kalpanaafinance.entity.Loan;
-import com.kalpanaafinance.entity.LoanEmi;
-import com.kalpanaafinance.entity.Message;
-import com.kalpanaafinance.repository.LoanEmiRepository;
-import com.kalpanaafinance.repository.LoanRepository;
+import com.kalpanaafinance.modules.shared.entity.Loan;
+import com.kalpanaafinance.modules.shared.entity.LoanEmi;
+import com.kalpanaafinance.modules.shared.entity.Message;
+import com.kalpanaafinance.modules.shared.repository.LoanEmiRepository;
+import com.kalpanaafinance.modules.shared.repository.LoanRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;

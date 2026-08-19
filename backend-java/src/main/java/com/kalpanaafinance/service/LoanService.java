@@ -1,8 +1,8 @@
 package com.kalpanaafinance.service;
 
 import com.kalpanaafinance.dto.*;
-import com.kalpanaafinance.entity.*;
-import com.kalpanaafinance.repository.*;
+import com.kalpanaafinance.modules.shared.entity.*;
+import com.kalpanaafinance.modules.shared.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;

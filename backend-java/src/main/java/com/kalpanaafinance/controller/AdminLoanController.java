@@ -1,12 +1,12 @@
 package com.kalpanaafinance.controller;
 
 import com.kalpanaafinance.dto.AdminLoanResubmitRequest;
-import com.kalpanaafinance.entity.Loan;
-import com.kalpanaafinance.entity.LoanEmi;
-import com.kalpanaafinance.entity.User;
-import com.kalpanaafinance.repository.LoanEmiRepository;
-import com.kalpanaafinance.repository.LoanRepository;
-import com.kalpanaafinance.repository.UserRepository;
+import com.kalpanaafinance.modules.shared.entity.Loan;
+import com.kalpanaafinance.modules.shared.entity.LoanEmi;
+import com.kalpanaafinance.modules.shared.entity.User;
+import com.kalpanaafinance.modules.shared.repository.LoanEmiRepository;
+import com.kalpanaafinance.modules.shared.repository.LoanRepository;
+import com.kalpanaafinance.modules.shared.repository.UserRepository;
 import com.kalpanaafinance.service.LoanService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -31,7 +31,7 @@ public class AdminLoanController {
     @GetMapping
     public ResponseEntity<List<Loan>> getAll() {
         List<User> activeUsers = userRepository.findAll().stream()
-                .filter(u -> u.getRole() == com.kalpanaafinance.entity.Role.CUSTOMER)
+                .filter(u -> u.getRole() == com.kalpanaafinance.modules.shared.entity.Role.CUSTOMER)
                 .limit(15)
                 .collect(java.util.stream.Collectors.toList());
 

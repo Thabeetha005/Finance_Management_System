@@ -1,11 +1,11 @@
 package com.kalpanaafinance.controller;
 
-import com.kalpanaafinance.entity.Account;
-import com.kalpanaafinance.entity.Invoice;
-import com.kalpanaafinance.entity.Transaction;
-import com.kalpanaafinance.repository.AccountRepository;
-import com.kalpanaafinance.repository.InvoiceRepository;
-import com.kalpanaafinance.repository.TransactionRepository;
+import com.kalpanaafinance.modules.shared.entity.Account;
+import com.kalpanaafinance.modules.shared.entity.Invoice;
+import com.kalpanaafinance.modules.shared.entity.Transaction;
+import com.kalpanaafinance.modules.shared.repository.AccountRepository;
+import com.kalpanaafinance.modules.shared.repository.InvoiceRepository;
+import com.kalpanaafinance.modules.shared.repository.TransactionRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;

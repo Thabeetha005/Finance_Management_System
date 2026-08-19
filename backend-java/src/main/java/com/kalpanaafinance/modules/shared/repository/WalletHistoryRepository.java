@@ -1,0 +1,12 @@
+package com.kalpanaafinance.modules.shared.repository;
+
+import com.kalpanaafinance.modules.shared.entity.WalletHistory;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+
+import java.util.List;
+
+@Repository
+public interface WalletHistoryRepository extends JpaRepository<WalletHistory, Long> {
+    List<WalletHistory> findByUserEmailOrderByRecordDateAsc(String email);
+}

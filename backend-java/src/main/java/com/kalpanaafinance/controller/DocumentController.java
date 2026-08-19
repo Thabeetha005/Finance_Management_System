@@ -2,12 +2,12 @@ package com.kalpanaafinance.controller;
 
 import com.kalpanaafinance.dto.ApplicationDocumentDTO;
 import com.kalpanaafinance.dto.LinkDocumentRequest;
-import com.kalpanaafinance.entity.ApplicationDocument;
-import com.kalpanaafinance.entity.Document;
-import com.kalpanaafinance.entity.User;
-import com.kalpanaafinance.repository.ApplicationDocumentRepository;
-import com.kalpanaafinance.repository.DocumentRepository;
-import com.kalpanaafinance.repository.UserRepository;
+import com.kalpanaafinance.modules.shared.entity.ApplicationDocument;
+import com.kalpanaafinance.modules.shared.entity.Document;
+import com.kalpanaafinance.modules.shared.entity.User;
+import com.kalpanaafinance.modules.shared.repository.ApplicationDocumentRepository;
+import com.kalpanaafinance.modules.shared.repository.DocumentRepository;
+import com.kalpanaafinance.modules.shared.repository.UserRepository;
 import com.kalpanaafinance.service.MessageService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
@@ -188,7 +188,7 @@ public class DocumentController {
                     user.getId(),
                     "Document Uploaded — Under Review",
                     "Your document " + file.getOriginalFilename() + " (" + documentType + " v" + nextVersion + ") has been uploaded successfully and is under review by admin.",
-                    com.kalpanaafinance.entity.Message.EntityType.DOCUMENT,
+                    com.kalpanaafinance.modules.shared.entity.Message.EntityType.DOCUMENT,
                     savedDoc.getId()
                 );
             }

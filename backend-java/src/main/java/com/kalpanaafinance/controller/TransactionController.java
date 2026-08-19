@@ -1,6 +1,6 @@
 package com.kalpanaafinance.controller;
 
-import com.kalpanaafinance.entity.Transaction;
+import com.kalpanaafinance.modules.shared.entity.Transaction;
 import com.kalpanaafinance.service.TransactionService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;

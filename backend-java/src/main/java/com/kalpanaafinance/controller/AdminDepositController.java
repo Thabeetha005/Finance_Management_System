@@ -1,6 +1,6 @@
 package com.kalpanaafinance.controller;
 
-import com.kalpanaafinance.entity.Deposit;
+import com.kalpanaafinance.modules.shared.entity.Deposit;
 import com.kalpanaafinance.service.DepositService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;

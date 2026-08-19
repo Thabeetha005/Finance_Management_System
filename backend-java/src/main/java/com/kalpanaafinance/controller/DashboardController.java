@@ -1,8 +1,8 @@
 package com.kalpanaafinance.controller;
 
-import com.kalpanaafinance.repository.AccountRepository;
-import com.kalpanaafinance.repository.TransactionRepository;
-import com.kalpanaafinance.repository.UserRepository;
+import com.kalpanaafinance.modules.shared.repository.AccountRepository;
+import com.kalpanaafinance.modules.shared.repository.TransactionRepository;
+import com.kalpanaafinance.modules.shared.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import java.math.BigDecimal;

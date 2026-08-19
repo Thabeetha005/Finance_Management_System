@@ -1,10 +1,10 @@
 package com.kalpanaafinance.controller;
 
 import com.kalpanaafinance.dto.ConsultantProfileRequest;
-import com.kalpanaafinance.entity.ConsultantProfile;
+import com.kalpanaafinance.modules.shared.entity.ConsultantProfile;
 import com.kalpanaafinance.service.ConsultantService;
-import com.kalpanaafinance.repository.ConsultationSessionRepository;
-import com.kalpanaafinance.entity.ConsultationSession;
+import com.kalpanaafinance.modules.shared.repository.ConsultationSessionRepository;
+import com.kalpanaafinance.modules.shared.entity.ConsultationSession;
 import com.kalpanaafinance.service.AuditService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
@@ -22,7 +22,7 @@ public class AdminConsultantController {
     private final ConsultationSessionRepository sessionRepository;
     private final AuditService auditService;
 
-    private final com.kalpanaafinance.repository.UserRepository userRepository;
+    private final com.kalpanaafinance.modules.shared.repository.UserRepository userRepository;
 
     @GetMapping
     public ResponseEntity<List<ConsultantProfile>> getAllConsultants() {
@@ -84,7 +84,7 @@ public class AdminConsultantController {
         }
 
         String email = auth != null ? auth.getName() : "System";
-        com.kalpanaafinance.entity.User admin = userRepository.findByEmail(email).orElse(null);
+        com.kalpanaafinance.modules.shared.entity.User admin = userRepository.findByEmail(email).orElse(null);
         Long adminId = admin != null ? admin.getId() : 1L;
         String clientIp = httpRequest != null ? httpRequest.getRemoteAddr() : "127.0.0.1";
 

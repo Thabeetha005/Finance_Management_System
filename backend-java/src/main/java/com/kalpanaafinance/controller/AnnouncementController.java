@@ -1,9 +1,9 @@
 package com.kalpanaafinance.controller;
 
-import com.kalpanaafinance.entity.Announcement;
-import com.kalpanaafinance.entity.User;
-import com.kalpanaafinance.repository.AnnouncementRepository;
-import com.kalpanaafinance.repository.UserRepository;
+import com.kalpanaafinance.modules.shared.entity.Announcement;
+import com.kalpanaafinance.modules.shared.entity.User;
+import com.kalpanaafinance.modules.shared.repository.AnnouncementRepository;
+import com.kalpanaafinance.modules.shared.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;

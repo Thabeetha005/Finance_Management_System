@@ -1,7 +1,7 @@
 package com.kalpanaafinance.controller;
 
-import com.kalpanaafinance.entity.Service;
-import com.kalpanaafinance.repository.ServiceRepository;
+import com.kalpanaafinance.modules.shared.entity.Service;
+import com.kalpanaafinance.modules.shared.repository.ServiceRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;

@@ -1,12 +1,12 @@
 package com.kalpanaafinance.controller;
 
 import com.kalpanaafinance.dto.*;
-import com.kalpanaafinance.entity.Loan;
-import com.kalpanaafinance.entity.LoanEmi;
-import com.kalpanaafinance.entity.User;
-import com.kalpanaafinance.repository.LoanEmiRepository;
-import com.kalpanaafinance.repository.LoanRepository;
-import com.kalpanaafinance.repository.UserRepository;
+import com.kalpanaafinance.modules.shared.entity.Loan;
+import com.kalpanaafinance.modules.shared.entity.LoanEmi;
+import com.kalpanaafinance.modules.shared.entity.User;
+import com.kalpanaafinance.modules.shared.repository.LoanEmiRepository;
+import com.kalpanaafinance.modules.shared.repository.LoanRepository;
+import com.kalpanaafinance.modules.shared.repository.UserRepository;
 import com.kalpanaafinance.service.LoanService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;

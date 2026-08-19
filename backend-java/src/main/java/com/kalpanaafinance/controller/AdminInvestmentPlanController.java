@@ -1,10 +1,10 @@
 package com.kalpanaafinance.controller;
 
 import com.kalpanaafinance.dto.*;
-import com.kalpanaafinance.entity.InvestmentPlan;
-import com.kalpanaafinance.entity.InvestmentPlanRate;
-import com.kalpanaafinance.repository.InvestmentPlanRateRepository;
-import com.kalpanaafinance.repository.InvestmentPlanRepository;
+import com.kalpanaafinance.modules.shared.entity.InvestmentPlan;
+import com.kalpanaafinance.modules.shared.entity.InvestmentPlanRate;
+import com.kalpanaafinance.modules.shared.repository.InvestmentPlanRateRepository;
+import com.kalpanaafinance.modules.shared.repository.InvestmentPlanRepository;
 import com.kalpanaafinance.service.InvestmentService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

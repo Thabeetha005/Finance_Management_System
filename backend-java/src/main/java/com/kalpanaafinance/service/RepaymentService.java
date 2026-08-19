@@ -1,13 +1,13 @@
 package com.kalpanaafinance.service;
 
-import com.kalpanaafinance.entity.Loan;
-import com.kalpanaafinance.entity.LoanInstallment;
-import com.kalpanaafinance.entity.PaymentAttempt;
-import com.kalpanaafinance.entity.User;
-import com.kalpanaafinance.repository.LoanInstallmentRepository;
-import com.kalpanaafinance.repository.LoanRepository;
-import com.kalpanaafinance.repository.PaymentAttemptRepository;
-import com.kalpanaafinance.repository.UserRepository;
+import com.kalpanaafinance.modules.shared.entity.Loan;
+import com.kalpanaafinance.modules.shared.entity.LoanInstallment;
+import com.kalpanaafinance.modules.shared.entity.PaymentAttempt;
+import com.kalpanaafinance.modules.shared.entity.User;
+import com.kalpanaafinance.modules.shared.repository.LoanInstallmentRepository;
+import com.kalpanaafinance.modules.shared.repository.LoanRepository;
+import com.kalpanaafinance.modules.shared.repository.PaymentAttemptRepository;
+import com.kalpanaafinance.modules.shared.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

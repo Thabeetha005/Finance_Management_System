@@ -1,7 +1,7 @@
 package com.kalpanaafinance.controller;
 
-import com.kalpanaafinance.entity.ContactRequest;
-import com.kalpanaafinance.repository.ContactRequestRepository;
+import com.kalpanaafinance.modules.shared.entity.ContactRequest;
+import com.kalpanaafinance.modules.shared.repository.ContactRequestRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

@@ -1,8 +1,8 @@
 package com.kalpanaafinance.controller;
 
-import com.kalpanaafinance.entity.Role;
-import com.kalpanaafinance.entity.User;
-import com.kalpanaafinance.repository.*;
+import com.kalpanaafinance.modules.shared.entity.Role;
+import com.kalpanaafinance.modules.shared.entity.User;
+import com.kalpanaafinance.modules.shared.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -119,7 +119,7 @@ public class AdminDashboardController {
 
         // ── RECENT ACTIVITY (last 5) ────────────────────────────────
         List<Map<String, Object>> recentActivity = activityLogRepository.findAll().stream()
-                .sorted(Comparator.comparing(a -> ((com.kalpanaafinance.entity.ActivityLog) a).getCreatedAt()).reversed())
+                .sorted(Comparator.comparing(a -> ((com.kalpanaafinance.modules.shared.entity.ActivityLog) a).getCreatedAt()).reversed())
                 .limit(5)
                 .map(a -> {
                     Map<String, Object> item = new HashMap<>();

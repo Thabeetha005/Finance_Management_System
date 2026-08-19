@@ -1,7 +1,7 @@
 package com.kalpanaafinance.service;
 
-import com.kalpanaafinance.entity.Account;
-import com.kalpanaafinance.repository.AccountRepository;
+import com.kalpanaafinance.modules.shared.entity.Account;
+import com.kalpanaafinance.modules.shared.repository.AccountRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

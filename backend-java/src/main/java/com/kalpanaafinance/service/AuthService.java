@@ -3,9 +3,9 @@ package com.kalpanaafinance.service;
 import com.kalpanaafinance.dto.AuthRequest;
 import com.kalpanaafinance.dto.AuthResponse;
 import com.kalpanaafinance.dto.SignUpRequest;
-import com.kalpanaafinance.entity.Role;
-import com.kalpanaafinance.entity.User;
-import com.kalpanaafinance.repository.UserRepository;
+import com.kalpanaafinance.modules.shared.entity.Role;
+import com.kalpanaafinance.modules.shared.entity.User;
+import com.kalpanaafinance.modules.shared.repository.UserRepository;
 import com.kalpanaafinance.security.JwtUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -20,8 +20,8 @@ import java.math.BigDecimal;
 public class AuthService {
 
     private final UserRepository userRepository;
-    private final com.kalpanaafinance.repository.AccountRepository accountRepository;
-    private final com.kalpanaafinance.repository.TransactionRepository transactionRepository;
+    private final com.kalpanaafinance.modules.shared.repository.AccountRepository accountRepository;
+    private final com.kalpanaafinance.modules.shared.repository.TransactionRepository transactionRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtUtils jwtUtils;
     private final AuthenticationManager authenticationManager;
@@ -44,7 +44,7 @@ public class AuthService {
 
         userRepository.save(user);
 
-        com.kalpanaafinance.entity.Account account = com.kalpanaafinance.entity.Account.builder()
+        com.kalpanaafinance.modules.shared.entity.Account account = com.kalpanaafinance.modules.shared.entity.Account.builder()
                 .user(user)
                 .name("Main Wallet")
                 .type("WALLET")
@@ -53,7 +53,7 @@ public class AuthService {
         accountRepository.save(account);
 
         if (transactionRepository != null) {
-            com.kalpanaafinance.entity.Transaction tx = com.kalpanaafinance.entity.Transaction.builder()
+            com.kalpanaafinance.modules.shared.entity.Transaction tx = com.kalpanaafinance.modules.shared.entity.Transaction.builder()
                     .account(account)
                     .amount(bonus)
                     .balanceBefore(BigDecimal.ZERO)

@@ -2,8 +2,8 @@ package com.kalpanaafinance.controller;
 
 import com.kalpanaafinance.dto.UpdatePasswordRequest;
 import com.kalpanaafinance.dto.UserProfileRequest;
-import com.kalpanaafinance.entity.User;
-import com.kalpanaafinance.repository.UserRepository;
+import com.kalpanaafinance.modules.shared.entity.User;
+import com.kalpanaafinance.modules.shared.repository.UserRepository;
 import com.kalpanaafinance.service.AuditService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;

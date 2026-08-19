@@ -1,11 +1,11 @@
 package com.kalpanaafinance.controller;
 
-import com.kalpanaafinance.entity.Document;
-import com.kalpanaafinance.entity.User;
-import com.kalpanaafinance.entity.Message;
+import com.kalpanaafinance.modules.shared.entity.Document;
+import com.kalpanaafinance.modules.shared.entity.User;
+import com.kalpanaafinance.modules.shared.entity.Message;
 import com.kalpanaafinance.service.MessageService;
-import com.kalpanaafinance.repository.DocumentRepository;
-import com.kalpanaafinance.repository.UserRepository;
+import com.kalpanaafinance.modules.shared.repository.DocumentRepository;
+import com.kalpanaafinance.modules.shared.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -30,7 +30,7 @@ public class AdminDocumentController {
     @GetMapping
     public ResponseEntity<List<Document>> getDocumentsForVerification() {
         List<User> activeUsers = userRepository.findAll().stream()
-                .filter(u -> u.getRole() == com.kalpanaafinance.entity.Role.CUSTOMER)
+                .filter(u -> u.getRole() == com.kalpanaafinance.modules.shared.entity.Role.CUSTOMER)
                 .limit(15)
                 .collect(java.util.stream.Collectors.toList());
 

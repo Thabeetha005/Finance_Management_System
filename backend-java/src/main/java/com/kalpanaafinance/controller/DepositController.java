@@ -1,9 +1,9 @@
 package com.kalpanaafinance.controller;
 
 import com.kalpanaafinance.dto.DepositCreateRequest;
-import com.kalpanaafinance.entity.Deposit;
-import com.kalpanaafinance.entity.User;
-import com.kalpanaafinance.repository.UserRepository;
+import com.kalpanaafinance.modules.shared.entity.Deposit;
+import com.kalpanaafinance.modules.shared.entity.User;
+import com.kalpanaafinance.modules.shared.repository.UserRepository;
 import com.kalpanaafinance.service.DepositService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;

@@ -1,6 +1,6 @@
 package com.kalpanaafinance.dto;
 
-import com.kalpanaafinance.entity.BlogType;
+import com.kalpanaafinance.modules.shared.entity.BlogType;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
