@@ -1,24 +1,9 @@
--- V22: Add missing loan columns
--- Uses SET/PREPARE pattern to add columns only if they don't already exist (idempotent)
+-- V22: Add missing loan columns (safe - uses IF NOT EXISTS syntax)
+ALTER TABLE loans ADD COLUMN IF NOT EXISTS outstanding_balance DECIMAL(19,2) NULL;
+ALTER TABLE loans ADD COLUMN IF NOT EXISTS overall_outstanding_amount DECIMAL(19,2) NULL;
+ALTER TABLE loans ADD COLUMN IF NOT EXISTS overall_paid_amount DECIMAL(19,2) NULL;
 
-SET @dbname = DATABASE();
-
--- Add outstanding_balance if not exists
-SET @col1 = (SELECT COUNT(*) FROM information_schema.COLUMNS WHERE TABLE_SCHEMA = @dbname AND TABLE_NAME = 'loans' AND COLUMN_NAME = 'outstanding_balance');
-SET @sql1 = IF(@col1 = 0, 'ALTER TABLE loans ADD COLUMN outstanding_balance DECIMAL(19,2) NULL', 'SELECT 1');
-PREPARE stmt1 FROM @sql1; EXECUTE stmt1; DEALLOCATE PREPARE stmt1;
-
--- Add overall_outstanding_amount if not exists
-SET @col2 = (SELECT COUNT(*) FROM information_schema.COLUMNS WHERE TABLE_SCHEMA = @dbname AND TABLE_NAME = 'loans' AND COLUMN_NAME = 'overall_outstanding_amount');
-SET @sql2 = IF(@col2 = 0, 'ALTER TABLE loans ADD COLUMN overall_outstanding_amount DECIMAL(19,2) NULL', 'SELECT 1');
-PREPARE stmt2 FROM @sql2; EXECUTE stmt2; DEALLOCATE PREPARE stmt2;
-
--- Add overall_paid_amount if not exists
-SET @col3 = (SELECT COUNT(*) FROM information_schema.COLUMNS WHERE TABLE_SCHEMA = @dbname AND TABLE_NAME = 'loans' AND COLUMN_NAME = 'overall_paid_amount');
-SET @sql3 = IF(@col3 = 0, 'ALTER TABLE loans ADD COLUMN overall_paid_amount DECIMAL(19,2) NULL', 'SELECT 1');
-PREPARE stmt3 FROM @sql3; EXECUTE stmt3; DEALLOCATE PREPARE stmt3;
-
--- Now update the seeded loans with outstanding and paid amounts (safe since columns now exist)
+-- Backfill outstanding amounts for seeded loans from V15
 UPDATE loans SET overall_outstanding_amount = 40000.00, overall_paid_amount = 10000.00
 WHERE user_id = (SELECT id FROM users WHERE email = 'rahul@gmail.com' LIMIT 1) AND purpose = 'Personal Loan' AND amount = 50000.00;
 
