@@ -1,5 +1,5 @@
 import { createContext, useContext, useState, useEffect } from 'react';
-import axios from 'axios';
+import api from '../api/axios';
 
 const AuthContext = createContext();
 
@@ -21,12 +21,9 @@ export const AuthProvider = ({ children }) => {
         // Always start with balance=0 from localStorage — live API will update it immediately
         const userWithoutStaleBalance = { ...parsedUser, balance: 0 };
         setUser(userWithoutStaleBalance);
-        axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
         
         // Immediately fetch live user profile to keep data fresh
-        axios.get('http://localhost:8080/api/user/profile', {
-          headers: { Authorization: `Bearer ${token}` }
-        }).then(profileRes => {
+        api.get('/user/profile').then(profileRes => {
           const liveUser = { 
             ...parsedUser, 
             name: profileRes.data.name, 
@@ -40,9 +37,7 @@ export const AuthProvider = ({ children }) => {
           
           // Then fetch live wallet balance if customer
           if (parsedUser.role === 'CUSTOMER') {
-            axios.get('http://localhost:8080/api/wallet/me', {
-              headers: { Authorization: `Bearer ${token}` }
-            }).then(res => {
+            api.get('/wallet/me').then(res => {
               const liveBalance = parseFloat(res.data?.availableBalance) || 0;
               const updated = { ...liveUser, balance: liveBalance };
               setUser(updated);
@@ -66,15 +61,13 @@ export const AuthProvider = ({ children }) => {
 
   const login = async (email, password) => {
     try {
-      const response = await axios.post('http://localhost:8080/api/auth/signin', { email, password });
+      const response = await api.post('/auth/signin', { email, password });
       if (response.data.token) {
         const { token, email: userEmail, role, name, balance, isVerified } = response.data;
         const userData = { name: name || userEmail.split('@')[0], email: userEmail, role, isVerified: Boolean(isVerified), balance: balance || 0 };
         setUser(userData);
         localStorage.setItem('token', token);
         localStorage.setItem('user', JSON.stringify(userData));
-        axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-        // No bonus popup on login - only on first signup
         return { success: true, role: userData.role };
       } else {
         return { success: false, message: 'Login failed' };
@@ -100,17 +93,12 @@ export const AuthProvider = ({ children }) => {
     localStorage.setItem('user', JSON.stringify(userData));
     if (token) {
       localStorage.setItem('token', token);
-      axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
     }
   };
 
   const refreshBalance = async () => {
     try {
-      const token = localStorage.getItem('token');
-      const res = await axios.get('http://localhost:8080/api/wallet/me', {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      // API returns a Map object with 'availableBalance' key
+      const res = await api.get('/wallet/me');
       const liveBalance = parseFloat(res.data?.availableBalance) || 0;
       updateBalance(liveBalance);
       return liveBalance;
@@ -119,7 +107,7 @@ export const AuthProvider = ({ children }) => {
 
   const register = async (name, email, password) => {
     try {
-      const response = await axios.post('http://localhost:8080/api/auth/signup', { name, email, password });
+      const response = await api.post('/auth/signup', { name, email, password });
       if (response.data.token) {
         // Auto-login upon successful registration
         const { token, email: userEmail, role, balance } = response.data;
@@ -127,7 +115,7 @@ export const AuthProvider = ({ children }) => {
         setUser(userData);
         localStorage.setItem('token', token);
         localStorage.setItem('user', JSON.stringify(userData));
-        axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+        
         // Show bonus only on first signup
         if (!localStorage.getItem(`bonusClaimed_${userEmail}`)) {
           localStorage.setItem(`bonusClaimed_${userEmail}`, 'true');
@@ -149,7 +137,6 @@ export const AuthProvider = ({ children }) => {
     setUser(null);
     localStorage.removeItem('token');
     localStorage.removeItem('user');
-    delete axios.defaults.headers.common['Authorization'];
   };
 
   const value = {
