@@ -1,0 +1,5 @@
+[providers]
+providers = ["dockerfile"]
+
+[build]
+dockerfile = "Dockerfile"

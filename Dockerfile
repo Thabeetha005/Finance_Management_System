@@ -1,22 +1,17 @@
-# Stage 1: Build Java application with Maven
+# Stage 1: Build Spring Boot backend from backend-java folder
 FROM eclipse-temurin:21-jdk-alpine AS build
 WORKDIR /app
 
-# Copy maven wrapper and pom.xml from backend-java
-COPY backend-java/.mvn/ .mvn/
-COPY backend-java/mvnw backend-java/pom.xml ./
+# Copy entire backend-java directory into container
+COPY backend-java .
 
 # Grant execution rights on mvnw
 RUN chmod +x mvnw
 
-# Download dependencies
-RUN ./mvnw dependency:go-offline -B
-
-# Copy source code and build production jar without tests
-COPY backend-java/src ./src
+# Build production jar skipping tests
 RUN ./mvnw clean package -DskipTests
 
-# Stage 2: Minimal JRE runtime
+# Stage 2: Lightweight JRE runtime container
 FROM eclipse-temurin:21-jre-alpine
 WORKDIR /app
 
@@ -26,5 +21,5 @@ COPY --from=build /app/target/*.jar app.jar
 # Expose port 8080
 EXPOSE 8080
 
-# Run Spring Boot application
+# Launch application
 ENTRYPOINT ["java", "-Dserver.port=${PORT:-8080}", "-jar", "app.jar"]
