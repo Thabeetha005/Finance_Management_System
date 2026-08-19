@@ -3,6 +3,7 @@ import { useQuery } from '@tanstack/react-query';
 import api from '../../../shared/api/axios';
 import AddFundsModal from '../components/wallet/AddFundsModal';
 import WithdrawModal from '../components/wallet/WithdrawModal';
+import StatementDownloadModal from '../components/StatementDownloadModal';
 import { 
   ArrowUpRight, ArrowDownLeft, Download, Plus, Minus, Search, 
   Filter, Calendar, FileText, CheckCircle2, AlertCircle, X, ChevronLeft, ChevronRight, Eye, RefreshCw
@@ -11,6 +12,7 @@ import {
 const CustomerPaymentsPage = () => {
   const [showAddModal, setShowAddModal] = useState(false);
   const [showWithdrawModal, setShowWithdrawModal] = useState(false);
+  const [showStatementModal, setShowStatementModal] = useState(false);
   const [selectedTx, setSelectedTx] = useState(null);
 
   // Filter & Pagination States
@@ -139,7 +141,7 @@ const CustomerPaymentsPage = () => {
 
         <div className="flex flex-wrap items-center gap-3 w-full md:w-auto">
           <button
-            onClick={handleDownloadStatement}
+            onClick={() => setShowStatementModal(true)}
             className="px-5 py-3 bg-[#106354] hover:bg-[#0c4d41] text-white font-bold text-xs rounded-xl shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer"
           >
             <Download className="w-4 h-4" /> Download Statement
@@ -480,9 +482,10 @@ const CustomerPaymentsPage = () => {
         </div>
       )}
 
-      {/* Modals for Add Funds & Withdraw */}
+      {/* Modals for Add Funds, Withdraw, and Download Statement */}
       <AddFundsModal isOpen={showAddModal} onClose={() => setShowAddModal(false)} />
       <WithdrawModal isOpen={showWithdrawModal} onClose={() => setShowWithdrawModal(false)} totalValue={availableBalance} targetValue={500000} />
+      <StatementDownloadModal isOpen={showStatementModal} onClose={() => setShowStatementModal(false)} />
     </div>
   );
 };

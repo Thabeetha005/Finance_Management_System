@@ -84,6 +84,13 @@
             <version>2.5.0</version>
         </dependency>
 
+        <!-- OpenPDF for PDF Financial Statements Generation -->
+        <dependency>
+            <groupId>com.github.librepdf</groupId>
+            <artifactId>openpdf</artifactId>
+            <version>2.0.2</version>
+        </dependency>
+
         <!-- Lombok -->
         <dependency>
             <groupId>org.projectlombok</groupId>
