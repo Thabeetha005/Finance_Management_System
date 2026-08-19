@@ -37,18 +37,7 @@ public class AdminConsultationController {
 
     @GetMapping
     public ResponseEntity<List<Consultation>> getAll() {
-        List<User> activeUsers = userRepository.findAll().stream()
-                .filter(u -> u.getRole() == com.kalpanaafinance.modules.shared.entity.Role.CUSTOMER)
-                .limit(15)
-                .collect(java.util.stream.Collectors.toList());
-
-        java.util.Set<Long> activeUserIds = activeUsers.stream()
-                .map(User::getId)
-                .collect(java.util.stream.Collectors.toSet());
-
-        List<Consultation> consultations = repository.findAllWithUser().stream()
-                .filter(c -> c.getUser() != null && activeUserIds.contains(c.getUser().getId()))
-                .collect(java.util.stream.Collectors.toList());
+        List<Consultation> consultations = repository.findAllWithUser();
         for (Consultation c : consultations) {
             // Find Assignment
             assignmentRepository.findByConsultationId(c.getId()).ifPresent(assignment -> {

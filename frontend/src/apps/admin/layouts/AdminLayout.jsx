@@ -128,13 +128,6 @@ export default function AdminLayout() {
           </div>
 
           <div className="flex items-center gap-4">
-            <button className="relative p-2 text-gray-400 hover:text-gray-600 transition-colors rounded-full hover:bg-gray-100">
-              <Bell className="w-5 h-5" />
-              <span className="absolute top-1.5 right-1.5 block h-2 w-2 rounded-full bg-emerald-500 ring-2 ring-white" />
-            </button>
-
-            <div className="h-8 w-px bg-gray-200 mx-1"></div>
-
             <div className="flex items-center gap-3">
               <div className="w-9 h-9 rounded-full bg-[#12241F] text-emerald-400 border border-emerald-900 flex items-center justify-center font-bold text-sm shadow-sm">
                 {user?.name ? user.name.charAt(0).toUpperCase() : 'A'}

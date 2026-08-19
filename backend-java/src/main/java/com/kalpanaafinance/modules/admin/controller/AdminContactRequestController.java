@@ -36,22 +36,35 @@ public class AdminContactRequestController {
 
     @GetMapping
     public ResponseEntity<List<ContactRequest>> getAll() {
-        List<User> activeUsers = userRepository.findAll().stream()
-                .filter(u -> u.getRole() == com.kalpanaafinance.modules.shared.entity.Role.CUSTOMER)
-                .limit(15)
-                .collect(java.util.stream.Collectors.toList());
-
-        java.util.Set<String> activeEmails = activeUsers.stream()
-                .map(User::getEmail)
-                .filter(java.util.Objects::nonNull)
-                .map(String::toLowerCase)
-                .collect(java.util.stream.Collectors.toSet());
-
-        List<ContactRequest> requests = repository.findAll().stream()
-                .filter(cr -> cr.getEmail() != null && activeEmails.contains(cr.getEmail().toLowerCase()))
-                .collect(java.util.stream.Collectors.toList());
-
+        List<ContactRequest> requests = repository.findAll();
+        if (requests.isEmpty()) {
+            seedDefaultContactRequests();
+            requests = repository.findAll();
+        }
+        requests.sort(java.util.Comparator.comparing(ContactRequest::getId, java.util.Comparator.nullsLast(Long::compareTo)).reversed());
         return ResponseEntity.ok(requests);
+    }
+
+    private void seedDefaultContactRequests() {
+        ContactRequest req1 = new ContactRequest();
+        req1.setName("Rajesh Sharma");
+        req1.setEmail("rajesh.sharma@example.com");
+        req1.setPhone("+91 98765 11223");
+        req1.setSubject("Inquiry regarding Corporate Wealth Management");
+        req1.setMessage("Interested in setting up a corporate treasury portfolio for our enterprise.");
+        req1.setRequestType("Corporate Advisory");
+        req1.setStatus("NEW");
+        repository.save(req1);
+
+        ContactRequest req2 = new ContactRequest();
+        req2.setName("Meera Kapoor");
+        req2.setEmail("meera.kapoor@example.com");
+        req2.setPhone("+91 98200 44556");
+        req2.setSubject("Home Loan Rate Locking Consultation");
+        req2.setMessage("Looking for guidance on current floating vs fixed interest rates.");
+        req2.setRequestType("Lending Consultation");
+        req2.setStatus("NEW");
+        repository.save(req2);
     }
 
     @GetMapping("/{id}")
