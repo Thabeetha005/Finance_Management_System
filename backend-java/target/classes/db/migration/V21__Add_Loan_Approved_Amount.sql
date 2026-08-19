@@ -1,1 +1,0 @@
-ALTER TABLE loans ADD COLUMN approved_amount DECIMAL(19,2) NULL;
