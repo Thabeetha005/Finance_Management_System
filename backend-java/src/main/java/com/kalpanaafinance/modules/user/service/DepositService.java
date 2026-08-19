@@ -1,4 +1,7 @@
-package com.kalpanaafinance.service;
+package com.kalpanaafinance.modules.user.service;
+
+import com.kalpanaafinance.modules.shared.service.AuditService;
+import com.kalpanaafinance.modules.shared.service.MessageService;
 
 import com.kalpanaafinance.dto.DepositCreateRequest;
 import com.kalpanaafinance.modules.shared.entity.*;

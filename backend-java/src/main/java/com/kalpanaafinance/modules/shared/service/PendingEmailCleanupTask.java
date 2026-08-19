@@ -1,4 +1,4 @@
-package com.kalpanaafinance.service;
+package com.kalpanaafinance.modules.shared.service;
 
 import com.kalpanaafinance.modules.shared.entity.PendingEmailChange;
 import com.kalpanaafinance.modules.shared.repository.PendingEmailChangeRepository;

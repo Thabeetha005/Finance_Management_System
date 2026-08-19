@@ -1,4 +1,4 @@
-package com.kalpanaafinance.service;
+package com.kalpanaafinance.modules.user.service;
 
 import com.kalpanaafinance.dto.WalletSummaryResponse;
 import com.kalpanaafinance.dto.WalletTransactionResponse;

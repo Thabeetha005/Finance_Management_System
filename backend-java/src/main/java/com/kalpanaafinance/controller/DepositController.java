@@ -4,7 +4,7 @@ import com.kalpanaafinance.dto.DepositCreateRequest;
 import com.kalpanaafinance.modules.shared.entity.Deposit;
 import com.kalpanaafinance.modules.shared.entity.User;
 import com.kalpanaafinance.modules.shared.repository.UserRepository;
-import com.kalpanaafinance.service.DepositService;
+import com.kalpanaafinance.modules.user.service.DepositService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

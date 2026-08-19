@@ -2,10 +2,10 @@ package com.kalpanaafinance.controller;
 
 import com.kalpanaafinance.dto.ConsultantProfileRequest;
 import com.kalpanaafinance.modules.shared.entity.ConsultantProfile;
-import com.kalpanaafinance.service.ConsultantService;
+import com.kalpanaafinance.modules.consultant.service.ConsultantService;
 import com.kalpanaafinance.modules.shared.repository.ConsultationSessionRepository;
 import com.kalpanaafinance.modules.shared.entity.ConsultationSession;
-import com.kalpanaafinance.service.AuditService;
+import com.kalpanaafinance.modules.shared.service.AuditService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.http.ResponseEntity;

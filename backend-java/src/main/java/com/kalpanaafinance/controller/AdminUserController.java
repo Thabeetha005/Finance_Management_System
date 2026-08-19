@@ -28,10 +28,10 @@ public class AdminUserController {
     private AuditLogRepository auditLogRepository;
 
     @Autowired
-    private com.kalpanaafinance.service.AuditService auditService;
+    private com.kalpanaafinance.modules.shared.service.AuditService auditService;
 
     @Autowired
-    private com.kalpanaafinance.service.WalletService walletService;
+    private com.kalpanaafinance.modules.user.service.WalletService walletService;
 
     @GetMapping("/users/{userId}/wallet-summary")
     public ResponseEntity<com.kalpanaafinance.dto.WalletSummaryResponse> getUserWalletSummary(@PathVariable Long userId) {

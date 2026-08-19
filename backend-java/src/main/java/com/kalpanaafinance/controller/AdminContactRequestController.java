@@ -5,14 +5,14 @@ import com.kalpanaafinance.modules.shared.entity.User;
 import com.kalpanaafinance.modules.shared.entity.Message;
 import com.kalpanaafinance.modules.shared.repository.ContactRequestRepository;
 import com.kalpanaafinance.modules.shared.repository.UserRepository;
-import com.kalpanaafinance.service.MessageService;
+import com.kalpanaafinance.modules.shared.service.MessageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.security.core.Authentication;
 import jakarta.servlet.http.HttpServletRequest;
-import com.kalpanaafinance.service.AuditService;
+import com.kalpanaafinance.modules.shared.service.AuditService;
 
 import java.util.List;
 import java.util.Optional;

@@ -1,4 +1,7 @@
-package com.kalpanaafinance.service;
+package com.kalpanaafinance.modules.consultant.service;
+
+import com.kalpanaafinance.modules.shared.service.AuditService;
+import com.kalpanaafinance.modules.shared.service.MessageService;
 
 import com.kalpanaafinance.dto.ConsultantProfileRequest;
 import com.kalpanaafinance.modules.shared.entity.*;

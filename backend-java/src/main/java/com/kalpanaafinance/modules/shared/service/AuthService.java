@@ -1,4 +1,4 @@
-package com.kalpanaafinance.service;
+package com.kalpanaafinance.modules.shared.service;
 
 import com.kalpanaafinance.dto.AuthRequest;
 import com.kalpanaafinance.dto.AuthResponse;

@@ -3,7 +3,7 @@ package com.kalpanaafinance.controller;
 import com.kalpanaafinance.dto.WithdrawalResponse;
 import com.kalpanaafinance.modules.shared.entity.User;
 import com.kalpanaafinance.modules.shared.repository.UserRepository;
-import com.kalpanaafinance.service.WithdrawalService;
+import com.kalpanaafinance.modules.user.service.WithdrawalService;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;

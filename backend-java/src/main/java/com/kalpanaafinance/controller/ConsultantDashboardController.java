@@ -31,7 +31,7 @@ public class ConsultantDashboardController {
     private final UserRepository userRepository;
     private final ConsultantProfileRepository profileRepository;
     private final ConsultationSessionRepository sessionRepository;
-    private final com.kalpanaafinance.service.ConsultantService consultantService;
+    private final com.kalpanaafinance.modules.consultant.service.ConsultantService consultantService;
 
     @GetMapping
     public ResponseEntity<Map<String, Object>> getDashboard(Authentication authentication) {

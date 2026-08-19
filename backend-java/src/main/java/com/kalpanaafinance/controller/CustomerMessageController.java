@@ -4,7 +4,7 @@ import com.kalpanaafinance.modules.shared.entity.Message;
 import com.kalpanaafinance.modules.shared.entity.User;
 import com.kalpanaafinance.modules.shared.repository.MessageRepository;
 import com.kalpanaafinance.modules.shared.repository.UserRepository;
-import com.kalpanaafinance.service.MessageService;
+import com.kalpanaafinance.modules.shared.service.MessageService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;

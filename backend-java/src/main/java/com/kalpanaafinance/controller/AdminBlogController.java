@@ -5,7 +5,7 @@ import com.kalpanaafinance.dto.BlogRequest;
 import com.kalpanaafinance.modules.shared.entity.Blog;
 import com.kalpanaafinance.modules.shared.entity.BlogCategory;
 import com.kalpanaafinance.modules.shared.entity.BlogType;
-import com.kalpanaafinance.service.BlogService;
+import com.kalpanaafinance.modules.shared.service.BlogService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;

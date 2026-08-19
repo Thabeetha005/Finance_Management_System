@@ -1,7 +1,7 @@
 package com.kalpanaafinance.controller;
 
 import com.kalpanaafinance.modules.shared.entity.ConsultantProfile;
-import com.kalpanaafinance.service.ConsultantService;
+import com.kalpanaafinance.modules.consultant.service.ConsultantService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

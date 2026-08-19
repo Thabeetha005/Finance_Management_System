@@ -5,7 +5,7 @@ import com.kalpanaafinance.dto.UpdatePasswordRequest;
 import com.kalpanaafinance.dto.UpdateProfileRequest;
 import com.kalpanaafinance.modules.shared.entity.User;
 import com.kalpanaafinance.modules.shared.repository.UserRepository;
-import com.kalpanaafinance.service.AuditService;
+import com.kalpanaafinance.modules.shared.service.AuditService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;

@@ -1,7 +1,7 @@
 package com.kalpanaafinance.controller;
 
 import com.kalpanaafinance.modules.shared.entity.Transaction;
-import com.kalpanaafinance.service.TransactionService;
+import com.kalpanaafinance.modules.user.service.TransactionService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.security.access.prepost.PreAuthorize;

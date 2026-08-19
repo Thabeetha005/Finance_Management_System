@@ -2,7 +2,7 @@ package com.kalpanaafinance.controller;
 
 import com.kalpanaafinance.dto.SupportTicketResolutionRequest;
 import com.kalpanaafinance.modules.shared.entity.SupportTicket;
-import com.kalpanaafinance.service.SupportTicketService;
+import com.kalpanaafinance.modules.shared.service.SupportTicketService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;

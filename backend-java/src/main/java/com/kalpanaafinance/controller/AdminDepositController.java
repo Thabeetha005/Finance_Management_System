@@ -1,7 +1,7 @@
 package com.kalpanaafinance.controller;
 
 import com.kalpanaafinance.modules.shared.entity.Deposit;
-import com.kalpanaafinance.service.DepositService;
+import com.kalpanaafinance.modules.user.service.DepositService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;

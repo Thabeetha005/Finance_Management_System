@@ -3,7 +3,7 @@ package com.kalpanaafinance.controller;
 import com.kalpanaafinance.modules.shared.entity.Document;
 import com.kalpanaafinance.modules.shared.entity.User;
 import com.kalpanaafinance.modules.shared.entity.Message;
-import com.kalpanaafinance.service.MessageService;
+import com.kalpanaafinance.modules.shared.service.MessageService;
 import com.kalpanaafinance.modules.shared.repository.DocumentRepository;
 import com.kalpanaafinance.modules.shared.repository.UserRepository;
 import lombok.RequiredArgsConstructor;

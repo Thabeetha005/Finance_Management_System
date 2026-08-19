@@ -8,7 +8,7 @@ import com.kalpanaafinance.modules.shared.entity.User;
 import com.kalpanaafinance.modules.shared.repository.ApplicationDocumentRepository;
 import com.kalpanaafinance.modules.shared.repository.DocumentRepository;
 import com.kalpanaafinance.modules.shared.repository.UserRepository;
-import com.kalpanaafinance.service.MessageService;
+import com.kalpanaafinance.modules.shared.service.MessageService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;

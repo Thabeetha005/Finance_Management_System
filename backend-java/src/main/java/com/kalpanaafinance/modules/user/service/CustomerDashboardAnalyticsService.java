@@ -1,4 +1,4 @@
-package com.kalpanaafinance.service;
+package com.kalpanaafinance.modules.user.service;
 
 import com.kalpanaafinance.dto.analytics.CustomerDashboardAnalyticsDTO;
 import com.kalpanaafinance.dto.analytics.CustomerDashboardAnalyticsDTO.*;

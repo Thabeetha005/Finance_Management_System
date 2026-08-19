@@ -3,7 +3,7 @@ package com.kalpanaafinance.controller;
 import com.kalpanaafinance.dto.SupportTicketRequest;
 import com.kalpanaafinance.modules.shared.entity.SupportTicket;
 import com.kalpanaafinance.modules.shared.entity.User;
-import com.kalpanaafinance.service.SupportTicketService;
+import com.kalpanaafinance.modules.shared.service.SupportTicketService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;

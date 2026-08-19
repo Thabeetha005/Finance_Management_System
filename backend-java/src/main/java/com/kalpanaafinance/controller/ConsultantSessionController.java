@@ -24,7 +24,7 @@ public class ConsultantSessionController {
     private final ConsultationNoteRepository noteRepository;
     private final ConsultationRepository consultationRepository;
     private final MessageRepository messageRepository;
-    private final com.kalpanaafinance.service.AuditService auditService;
+    private final com.kalpanaafinance.modules.shared.service.AuditService auditService;
 
     private ConsultantProfile getProfile(Authentication auth) {
         User user = userRepository.findByEmail(auth.getName()).orElseThrow();

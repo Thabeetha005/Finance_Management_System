@@ -5,7 +5,7 @@ import com.kalpanaafinance.modules.shared.entity.InvestmentPlan;
 import com.kalpanaafinance.modules.shared.entity.InvestmentPlanRate;
 import com.kalpanaafinance.modules.shared.repository.InvestmentPlanRateRepository;
 import com.kalpanaafinance.modules.shared.repository.InvestmentPlanRepository;
-import com.kalpanaafinance.service.InvestmentService;
+import com.kalpanaafinance.modules.user.service.InvestmentService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;

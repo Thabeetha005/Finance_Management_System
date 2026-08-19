@@ -3,7 +3,7 @@ package com.kalpanaafinance.controller;
 import com.kalpanaafinance.modules.shared.entity.Blog;
 import com.kalpanaafinance.modules.shared.entity.BlogCategory;
 import com.kalpanaafinance.modules.shared.entity.BlogType;
-import com.kalpanaafinance.service.BlogService;
+import com.kalpanaafinance.modules.shared.service.BlogService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

@@ -3,7 +3,7 @@ package com.kalpanaafinance.controller;
 import com.kalpanaafinance.dto.analytics.CustomerDashboardAnalyticsDTO;
 import com.kalpanaafinance.modules.shared.entity.User;
 import com.kalpanaafinance.modules.shared.repository.UserRepository;
-import com.kalpanaafinance.service.CustomerDashboardAnalyticsService;
+import com.kalpanaafinance.modules.user.service.CustomerDashboardAnalyticsService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;

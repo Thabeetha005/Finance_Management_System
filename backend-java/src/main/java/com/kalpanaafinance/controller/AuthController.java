@@ -3,7 +3,7 @@ package com.kalpanaafinance.controller;
 import com.kalpanaafinance.dto.AuthRequest;
 import com.kalpanaafinance.dto.AuthResponse;
 import com.kalpanaafinance.dto.SignUpRequest;
-import com.kalpanaafinance.service.AuthService;
+import com.kalpanaafinance.modules.shared.service.AuthService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;

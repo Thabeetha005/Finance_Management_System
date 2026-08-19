@@ -1,4 +1,6 @@
-package com.kalpanaafinance.service;
+package com.kalpanaafinance.modules.user.service;
+
+import com.kalpanaafinance.modules.shared.service.ProfileService;
 
 import com.kalpanaafinance.dto.*;
 import com.kalpanaafinance.modules.shared.entity.*;

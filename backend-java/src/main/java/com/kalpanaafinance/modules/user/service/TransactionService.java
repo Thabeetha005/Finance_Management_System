@@ -1,4 +1,6 @@
-package com.kalpanaafinance.service;
+package com.kalpanaafinance.modules.user.service;
+
+import com.kalpanaafinance.modules.shared.service.AuditService;
 
 import com.kalpanaafinance.modules.shared.entity.Transaction;
 import com.kalpanaafinance.modules.shared.repository.TransactionRepository;

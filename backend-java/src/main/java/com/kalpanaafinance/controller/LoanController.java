@@ -7,7 +7,7 @@ import com.kalpanaafinance.modules.shared.entity.User;
 import com.kalpanaafinance.modules.shared.repository.LoanEmiRepository;
 import com.kalpanaafinance.modules.shared.repository.LoanRepository;
 import com.kalpanaafinance.modules.shared.repository.UserRepository;
-import com.kalpanaafinance.service.LoanService;
+import com.kalpanaafinance.modules.user.service.LoanService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
