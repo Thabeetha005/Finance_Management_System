@@ -1,10 +1,10 @@
 package com.kalpanaafinance.config;
 
-import com.kalpanaafinance.entity.ConsultantProfile;
-import com.kalpanaafinance.entity.Role;
-import com.kalpanaafinance.entity.User;
-import com.kalpanaafinance.repository.ConsultantProfileRepository;
-import com.kalpanaafinance.repository.UserRepository;
+import com.kalpanaafinance.modules.shared.entity.ConsultantProfile;
+import com.kalpanaafinance.modules.shared.entity.Role;
+import com.kalpanaafinance.modules.shared.entity.User;
+import com.kalpanaafinance.modules.shared.repository.ConsultantProfileRepository;
+import com.kalpanaafinance.modules.shared.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
