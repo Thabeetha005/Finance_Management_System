@@ -1,8 +1,12 @@
 -- V31: Bank Accounts & Wallet Withdrawals System
 
-ALTER TABLE notifications 
-ADD COLUMN IF NOT EXISTS title VARCHAR(255) NULL,
-ADD COLUMN IF NOT EXISTS type VARCHAR(50) NULL;
+SET @col_exists = (SELECT COUNT(*) FROM information_schema.columns WHERE table_schema = DATABASE() AND table_name = 'notifications' AND column_name = 'title');
+SET @sql = IF(@col_exists = 0, 'ALTER TABLE notifications ADD COLUMN title VARCHAR(255) NULL', 'SELECT 1');
+PREPARE stmt FROM @sql; EXECUTE stmt; DEALLOCATE PREPARE stmt;
+
+SET @col_exists = (SELECT COUNT(*) FROM information_schema.columns WHERE table_schema = DATABASE() AND table_name = 'notifications' AND column_name = 'type');
+SET @sql = IF(@col_exists = 0, 'ALTER TABLE notifications ADD COLUMN type VARCHAR(50) NULL', 'SELECT 1');
+PREPARE stmt FROM @sql; EXECUTE stmt; DEALLOCATE PREPARE stmt;
 
 CREATE TABLE IF NOT EXISTS bank_accounts (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
