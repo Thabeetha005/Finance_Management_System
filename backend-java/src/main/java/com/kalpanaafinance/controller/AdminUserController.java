@@ -100,23 +100,38 @@ public class AdminUserController {
         if (user == null) return ResponseEntity.notFound().build();
         
         try {
+            // Guard: Reject user deletion if financial (deposits, withdrawals, loans, investments) or compliance (documents) history exists
+            Number depositCount = (Number) entityManager.createNativeQuery("SELECT COUNT(*) FROM deposits WHERE user_id = :id").setParameter("id", id).getSingleResult();
+            Number withdrawalCount = (Number) entityManager.createNativeQuery("SELECT COUNT(*) FROM withdrawals WHERE user_id = :id").setParameter("id", id).getSingleResult();
+            Number loanCount = (Number) entityManager.createNativeQuery("SELECT COUNT(*) FROM loans WHERE user_id = :id").setParameter("id", id).getSingleResult();
+            Number investmentCount = (Number) entityManager.createNativeQuery("SELECT COUNT(*) FROM investments WHERE user_id = :id").setParameter("id", id).getSingleResult();
+            Number documentCount = (Number) entityManager.createNativeQuery("SELECT COUNT(*) FROM documents WHERE user_id = :id").setParameter("id", id).getSingleResult();
+
+            if ((depositCount != null && depositCount.longValue() > 0) ||
+                (withdrawalCount != null && withdrawalCount.longValue() > 0) ||
+                (loanCount != null && loanCount.longValue() > 0) ||
+                (investmentCount != null && investmentCount.longValue() > 0) ||
+                (documentCount != null && documentCount.longValue() > 0)) {
+                return ResponseEntity.badRequest().body(Map.of("message", "Cannot delete user account with active financial or compliance history. Financial, loan, investment, and document audit records must be preserved."));
+            }
+
             entityManager.createNativeQuery("SET FOREIGN_KEY_CHECKS=0").executeUpdate();
             
-            entityManager.createNativeQuery("DELETE FROM loan_emis WHERE loan_id IN (SELECT id FROM loans WHERE user_id = :id)").setParameter("id", id).executeUpdate();
-            entityManager.createNativeQuery("DELETE FROM loan_installments WHERE loan_id IN (SELECT id FROM loans WHERE user_id = :id)").setParameter("id", id).executeUpdate();
-            entityManager.createNativeQuery("DELETE FROM loan_repayments WHERE loan_id IN (SELECT id FROM loans WHERE user_id = :id)").setParameter("id", id).executeUpdate();
-            entityManager.createNativeQuery("DELETE FROM loans WHERE user_id = :id").setParameter("id", id).executeUpdate();
             entityManager.createNativeQuery("DELETE FROM transactions WHERE account_id IN (SELECT id FROM accounts WHERE user_id = :id)").setParameter("id", id).executeUpdate();
             entityManager.createNativeQuery("DELETE FROM accounts WHERE user_id = :id").setParameter("id", id).executeUpdate();
-            entityManager.createNativeQuery("DELETE FROM investments WHERE user_id = :id").setParameter("id", id).executeUpdate();
             entityManager.createNativeQuery("DELETE FROM payments WHERE user_id = :id").setParameter("id", id).executeUpdate();
             entityManager.createNativeQuery("DELETE FROM consultations WHERE user_id = :id").setParameter("id", id).executeUpdate();
             entityManager.createNativeQuery("DELETE FROM activity_logs WHERE user_id = :id").setParameter("id", id).executeUpdate();
-            entityManager.createNativeQuery("DELETE FROM documents WHERE user_id = :id").setParameter("id", id).executeUpdate();
             entityManager.createNativeQuery("DELETE FROM messages WHERE sender_user_id = :id OR recipient_user_id = :id").setParameter("id", id).executeUpdate();
             entityManager.createNativeQuery("DELETE FROM notifications WHERE user_id = :id").setParameter("id", id).executeUpdate();
             entityManager.createNativeQuery("DELETE FROM support_tickets WHERE customer_id = :id").setParameter("id", id).executeUpdate();
-            entityManager.createNativeQuery("DELETE FROM wallet_history WHERE user_id = :id").setParameter("id", id).executeUpdate();
+            entityManager.createNativeQuery("DELETE FROM bank_accounts WHERE user_id = :id").setParameter("id", id).executeUpdate();
+            
+            // Safely delete from wallet_history ONLY if the table exists in MySQL
+            Number hasWalletHistory = (Number) entityManager.createNativeQuery("SELECT COUNT(*) FROM information_schema.TABLES WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'wallet_history'").getSingleResult();
+            if (hasWalletHistory != null && hasWalletHistory.longValue() > 0) {
+                entityManager.createNativeQuery("DELETE FROM wallet_history WHERE user_id = :id").setParameter("id", id).executeUpdate();
+            }
             
             entityManager.createNativeQuery("DELETE FROM users WHERE id = :id").setParameter("id", id).executeUpdate();
         } finally {

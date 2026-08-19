@@ -12,6 +12,7 @@ import java.util.Arrays;
 import java.util.List;
 
 @Component
+@org.springframework.context.annotation.Profile({"dev", "local"})
 @RequiredArgsConstructor
 public class DatabaseSeeder implements CommandLineRunner {
 

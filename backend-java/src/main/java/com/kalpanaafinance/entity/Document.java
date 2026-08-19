@@ -25,13 +25,13 @@ public class Document {
     @com.fasterxml.jackson.annotation.JsonIgnore
     private User user;
 
-    @Column(nullable = false)
+    @Column(name = "application_id", nullable = true)
     private Long applicationId;
 
-    @Column(nullable = false)
+    @Column(name = "application_type", nullable = true)
     private String applicationType; // LOAN or INVESTMENT
 
-    @Column(nullable = false)
+    @Column(name = "document_type", nullable = true)
     private String documentType; // ID_PROOF, INCOME_PROOF, etc.
 
     @Column(nullable = false)

@@ -12,6 +12,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 @Component
+@org.springframework.context.annotation.Profile({"dev", "local"})
 @RequiredArgsConstructor
 public class ConsultantDataSeeder implements CommandLineRunner {
 
