@@ -73,12 +73,12 @@ const DashboardLayout = () => {
   });
 
   const navItems = [
-    { name: 'Dashboard', path: '/dashboard', icon: LayoutDashboard, exact: true },
-    { name: 'Wallet', path: '/wallet', icon: Landmark },
-    { name: 'Invest', path: '/profile/investpage', icon: PieChart },
+    { name: 'Dashboard', path: '/profile', icon: LayoutDashboard, exact: true },
+    { name: 'Wallet', path: '/profile/wallet', icon: Landmark },
+    { name: 'Invest', path: '/profile/investments', icon: PieChart },
     { name: 'Loans', path: '/profile/loans', icon: FileText },
     { name: 'Payments', path: '/profile/payments', icon: ArrowRightLeft },
-    { name: 'Consult', path: '/profile/consult', icon: MessageSquare },
+    { name: 'Consult', path: '/profile/consultation', icon: MessageSquare },
     { name: 'Documents', path: '/profile/documents', icon: FileText },
     { name: 'Support', path: '/profile/support', icon: HelpCircle }
   ];
@@ -279,7 +279,7 @@ const DashboardLayout = () => {
                       {/* Section 16 Final Menu Structure */}
                       <div className="py-2 text-xs font-medium text-gray-700">
                         <Link
-                          to="/profile"
+                          to="/profile/account"
                           onClick={() => setProfileMenuOpen(false)}
                           className="flex items-center gap-3 px-4 py-2.5 hover:bg-emerald-50/60 hover:text-emerald-900 transition-colors"
                         >
@@ -287,7 +287,7 @@ const DashboardLayout = () => {
                           <span>My Profile</span>
                         </Link>
                         <Link
-                          to="/profile?tab=edit"
+                          to="/profile/account?tab=edit"
                           onClick={() => setProfileMenuOpen(false)}
                           className="flex items-center gap-3 px-4 py-2.5 hover:bg-emerald-50/60 hover:text-emerald-900 transition-colors"
                         >
@@ -303,7 +303,7 @@ const DashboardLayout = () => {
                           <span>Documents</span>
                         </Link>
                         <Link
-                          to="/profile?tab=verification"
+                          to="/profile/account?tab=verification"
                           onClick={() => setProfileMenuOpen(false)}
                           className="flex items-center gap-3 px-4 py-2.5 hover:bg-emerald-50/60 hover:text-emerald-900 transition-colors"
                         >
@@ -311,9 +311,9 @@ const DashboardLayout = () => {
                           <span>Verification Status</span>
                         </Link>
                         <Link
-                          to="/profile?tab=password"
+                          to="/profile/account?tab=password"
                           onClick={() => setProfileMenuOpen(false)}
-                          className="flex items-center gap-3 px-4 py-2.5 hover:bg-emerald-50/60 hover:text-emerald-900 transition-colors"
+                          className="flex items-center gap-[#0f172a] px-4 py-2.5 hover:bg-emerald-50/60 hover:text-emerald-900 transition-colors"
                         >
                           <FileText className="w-4 h-4 text-rose-600" />
                           <span>Change Password</span>

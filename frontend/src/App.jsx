@@ -179,15 +179,22 @@ function AppContent() {
         <Route path="account" element={<CustomerProfilePage />} />
         <Route path="wallet" element={<CustomerWalletPage />} />
         <Route path="investments" element={<CustomerInvestPage />} />
+        <Route path="investpage" element={<CustomerInvestPage />} />
         <Route path="loans" element={<CustomerLoansPage />} />
         <Route path="payments" element={<CustomerPaymentsPage />} />
         <Route path="consultation" element={<CustomerConsultPage />} />
+        <Route path="consult" element={<CustomerConsultPage />} />
         <Route path="emi-repayments" element={<CustomerEmiRepaymentsPage />} />
         <Route path="inbox" element={<CustomerInboxPage />} />
         <Route path="documents" element={<CustomerDocumentsPage />} />
         <Route path="support" element={<CustomerSupportPage />} />
         <Route path="settings" element={<CustomerSettings />} />
+        <Route path="dashboard" element={<Navigate to="/profile" replace />} />
       </Route>
+
+      {/* Top-Level Shortcuts */}
+      <Route path="/dashboard" element={<Navigate to="/profile" replace />} />
+      <Route path="/wallet" element={<Navigate to="/profile/wallet" replace />} />
 
       {/* Protected Consultant Routes */}
       <Route path="/consultant" element={
