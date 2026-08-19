@@ -3,12 +3,10 @@
 
 SET FOREIGN_KEY_CHECKS = 0;
 
--- 1. Ensure CUS1021 exists in database
-INSERT INTO users (id, customer_id, name, email, password_hash, role, phone, account_status, is_verified, balance, created_at, updated_at)
-SELECT 21, 'CUS1021', 'Customer CUS1021', 'cus1021@kalpanaafinance.com', '$2a$10$93dk.v7w4VmpwShh8JtldeEpzKBWJ6UDZNcSOi7ScNBaY8BzaYwlS', 'CUSTOMER', '9876541021', 'Active', TRUE, 75000.00, NOW(), NOW()
-WHERE NOT EXISTS (SELECT 1 FROM users WHERE customer_id = 'CUS1021' OR id = 21);
-
-UPDATE users SET customer_id = 'CUS1021' WHERE id = 21;
+-- 1. Ensure CUS1021 exists in database (no forced ID - let auto-increment assign it)
+INSERT IGNORE INTO users (customer_id, name, email, password_hash, role, phone, account_status, is_verified, balance, created_at, updated_at)
+SELECT 'CUS1021', 'Customer CUS1021', 'cus1021@kalpanaafinance.com', '$2a$10$93dk.v7w4VmpwShh8JtldeEpzKBWJ6UDZNcSOi7ScNBaY8BzaYwlS', 'CUSTOMER', '9876541021', 'Active', TRUE, 75000.00, NOW(), NOW()
+FROM DUAL WHERE NOT EXISTS (SELECT 1 FROM users WHERE customer_id = 'CUS1021' OR email = 'cus1021@kalpanaafinance.com');
 
 -- 2. Populate customer_id for any nulls
 UPDATE users SET customer_id = CONCAT('CUS', 1000 + id) WHERE customer_id IS NULL OR customer_id = '';

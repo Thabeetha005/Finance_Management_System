@@ -7,7 +7,7 @@ DROP TABLE IF EXISTS keep_customer_ids;
 CREATE TABLE keep_customer_ids (id BIGINT PRIMARY KEY);
 
 INSERT IGNORE INTO keep_customer_ids (id)
-SELECT id FROM users WHERE customer_id = 'CUS1021' OR email = 'cus1021@kalpanaafinance.com' OR id = 21;
+SELECT id FROM users WHERE customer_id = 'CUS1021' OR email = 'cus1021@kalpanaafinance.com';
 
 INSERT IGNORE INTO keep_customer_ids (id)
 SELECT id FROM users 
