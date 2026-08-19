@@ -1,11 +1,11 @@
 import React, { useState, useMemo, useEffect } from 'react';
-import { Search } from 'lucide-react';
+import { Search, FileText, CheckCircle, XCircle, Eye } from 'lucide-react';
 import api from '../../../shared/api/axios';
+import { toast } from 'react-hot-toast';
 
 const AdminVerificationQueue = () => {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [errorMsg, setErrorMsg] = useState(null);
   const [activeTab, setActiveTab] = useState('All');
   const [searchQuery, setSearchQuery] = useState('');
   const [page, setPage] = useState(1);
@@ -20,12 +20,23 @@ const AdminVerificationQueue = () => {
     const fetchData = async () => {
       try {
         setLoading(true);
-        const [docsRes, clientsRes] = await Promise.all([
-          api.get('/admin/documents'),
-          api.get('/admin/clients')
-        ]);
+        let docsList = [];
+        let clientsList = [];
 
-        const clientsList = Array.isArray(clientsRes.data) ? clientsRes.data : clientsRes.data?.content || [];
+        try {
+          const docsRes = await api.get('/admin/documents');
+          docsList = Array.isArray(docsRes.data) ? docsRes.data : docsRes.data?.content || [];
+        } catch (e) {
+          console.warn("Could not fetch admin documents", e);
+        }
+
+        try {
+          const clientsRes = await api.get('/admin/clients');
+          clientsList = Array.isArray(clientsRes.data) ? clientsRes.data : clientsRes.data?.content || [];
+        } catch (e) {
+          console.warn("Could not fetch admin clients", e);
+        }
+
         const clientsMap = {};
         clientsList.forEach(c => {
           if (c && c.id) {
@@ -39,16 +50,15 @@ const AdminVerificationQueue = () => {
           return lower.startsWith('customer a') || lower.startsWith('test customer') || lower.startsWith('wallet customer') || lower.startsWith('withdrawal customer');
         };
 
-        const rawDocs = Array.isArray(docsRes.data) ? docsRes.data : [];
-        const docsData = rawDocs
-          .filter(doc => doc.userId && clientsMap[doc.userId] && !isMockName(clientsMap[doc.userId]))
+        const docsData = docsList
+          .filter(doc => !doc.userId || !clientsMap[doc.userId] || !isMockName(clientsMap[doc.userId]))
           .map(doc => ({
             id: `DOC-${doc.id}`,
             originalId: doc.id,
-            customer: clientsMap[doc.userId] ? `${clientsMap[doc.userId]} (ID: ${doc.userId})` : `User ID: ${doc.userId}`,
-            isVerified: false,
-            type: doc.documentType || 'Document',
-            documents: doc.fileName,
+            userId: doc.userId || 'N/A',
+            customer: clientsMap[doc.userId] ? `${clientsMap[doc.userId]} (ID: ${doc.userId})` : `User ID: ${doc.userId || 'N/A'}`,
+            type: doc.documentType || 'Identity Document',
+            documents: doc.fileName || 'Document.pdf',
             date: doc.uploadedAt ? new Date(doc.uploadedAt).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }) : new Date().toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }),
             status: doc.verificationStatus || 'PENDING',
             raw: doc
@@ -58,7 +68,6 @@ const AdminVerificationQueue = () => {
         setData(docsData);
       } catch (err) {
         console.error("Failed to fetch queue data", err);
-        setErrorMsg(err.message + " | " + (err.response?.data?.message || err.response?.status));
       } finally {
         setLoading(false);
       }
@@ -75,13 +84,14 @@ const AdminVerificationQueue = () => {
       }
       
       // Search filter
-      if (searchQuery) {
+      if (searchQuery.trim()) {
         const query = searchQuery.toLowerCase();
         return (
           item.id.toLowerCase().includes(query) ||
           item.customer.toLowerCase().includes(query) ||
           item.type.toLowerCase().includes(query) ||
-          item.status.toLowerCase().includes(query)
+          item.status.toLowerCase().includes(query) ||
+          item.documents.toLowerCase().includes(query)
         );
       }
       return true;
@@ -114,13 +124,15 @@ const AdminVerificationQueue = () => {
       if (status === 'Approved') {
         await api.post(`/admin/documents/${selectedApp.originalId}/verify`, {
           verificationStatus: 'APPROVED',
-          adminNote: 'Document looks good'
+          adminNote: 'Document verified & approved by Admin'
         });
+        toast.success('Document Approved successfully');
       } else if (status === 'Denied') {
         await api.post(`/admin/documents/${selectedApp.originalId}/verify`, {
           verificationStatus: 'REJECTED',
-          adminNote: 'Did not meet verification criteria'
+          adminNote: 'Document rejected due to non-compliance'
         });
+        toast.success('Document Rejected');
       }
       
       // Update local state to reflect change
@@ -128,102 +140,103 @@ const AdminVerificationQueue = () => {
       setSelectedApp(null);
     } catch (err) {
       console.error("Action failed", err);
-      alert("Failed to update status: " + (err.response?.data?.message || err.message));
+      toast.error("Failed to update verification status: " + (err.response?.data?.message || err.message));
     }
   };
 
   return (
-    <div className="max-w-7xl mx-auto space-y-6">
+    <div className="max-w-7xl mx-auto space-y-6 pb-10">
       
       {/* Header */}
       <div>
-        <h1 className="text-[22px] font-bold text-[#12241F]">Verification Queue</h1>
-        <p className="text-[13px] text-gray-500 mt-1">Review and verify customer documents</p>
+        <h1 className="text-2xl font-bold text-gray-900">Verification Queue</h1>
+        <p className="text-xs text-gray-500 mt-1">Review and verify customer KYC and identity documents in real-time.</p>
       </div>
 
       {/* Search and Filter Row */}
-      <div className="flex items-center gap-4">
+      <div className="flex items-center gap-4 bg-white p-4 rounded-2xl border border-gray-100 shadow-sm">
         <div className="relative flex-1">
           <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 w-4 h-4" />
           <input 
             type="text" 
-            placeholder="Search by customer or application..."
+            placeholder="Search by customer name, Document ID, file name, or type..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-10 pr-4 py-2.5 bg-white border border-gray-200 rounded-lg text-[13px] focus:outline-none focus:ring-2 focus:ring-[#1E4A40]/20 focus:border-[#1E4A40] text-gray-800 placeholder-gray-400 transition-shadow shadow-sm"
+            className="w-full pl-10 pr-4 py-2 bg-gray-50 border border-gray-200 rounded-xl text-xs font-semibold text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#106354] transition-all"
           />
         </div>
       </div>
 
       {/* Tabs */}
-      <div className="border-b border-gray-200 flex gap-8">
+      <div className="border-b border-gray-200 flex gap-6">
         {tabs.map((tab) => (
           <button
             key={tab.id}
             onClick={() => setActiveTab(tab.id)}
-            className={`pb-3 text-[13px] font-semibold transition-colors relative ${
+            className={`pb-3 text-xs font-bold transition-colors relative cursor-pointer ${
               activeTab === tab.id 
-                ? 'text-[#1E4A40]' 
+                ? 'text-[#106354]' 
                 : 'text-gray-500 hover:text-gray-700'
             }`}
           >
             {tab.label}
             {activeTab === tab.id && (
-              <div className="absolute bottom-0 left-0 right-0 h-[2px] bg-[#1E4A40] rounded-t-full" />
+              <div className="absolute bottom-0 left-0 right-0 h-[2px] bg-[#106354] rounded-t-full" />
             )}
           </button>
         ))}
       </div>
 
       {/* Table */}
-      <div className="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden">
+      <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse">
             <thead>
-              <tr className="bg-gray-50/50 border-b border-gray-100">
-                <th className="py-4 px-6 text-[12px] font-bold text-gray-900">Document ID</th>
-                <th className="py-4 px-6 text-[12px] font-bold text-gray-900">User ID</th>
-                <th className="py-4 px-6 text-[12px] font-bold text-gray-900">Type</th>
-                <th className="py-4 px-6 text-[12px] font-bold text-gray-900">File Name</th>
-                <th className="py-4 px-6 text-[12px] font-bold text-gray-900">Uploaded On</th>
-                <th className="py-4 px-6 text-[12px] font-bold text-gray-900">Status</th>
-                <th className="py-4 px-6 text-[12px] font-bold text-gray-900">Action</th>
+              <tr className="bg-gray-50/50 border-b border-gray-100 text-gray-400 text-[11px] font-bold uppercase tracking-wider">
+                <th className="py-4 px-6">Document ID</th>
+                <th className="py-4 px-6">Customer</th>
+                <th className="py-4 px-6">Type</th>
+                <th className="py-4 px-6">File Name</th>
+                <th className="py-4 px-6">Uploaded On</th>
+                <th className="py-4 px-6">Status</th>
+                <th className="py-4 px-6">Action</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-100">
+            <tbody className="divide-y divide-gray-100 text-xs">
               {loading ? (
-                <tr>
-                  <td colSpan="7" className="py-12 text-center text-sm text-gray-500">
-                    Loading applications...
-                  </td>
-                </tr>
-              ) : errorMsg ? (
-                <tr>
-                  <td colSpan="7" className="py-12 text-center text-sm text-red-500 font-bold">
-                    Error: {errorMsg}
-                  </td>
-                </tr>
+                [...Array(5)].map((_, i) => (
+                  <tr key={i}>
+                    <td className="py-4 px-6"><div className="h-4 bg-gray-200 animate-pulse rounded w-16"></div></td>
+                    <td className="py-4 px-6"><div className="h-4 bg-gray-200 animate-pulse rounded w-32"></div></td>
+                    <td className="py-4 px-6"><div className="h-4 bg-gray-200 animate-pulse rounded w-24"></div></td>
+                    <td className="py-4 px-6"><div className="h-4 bg-gray-200 animate-pulse rounded w-28"></div></td>
+                    <td className="py-4 px-6"><div className="h-4 bg-gray-200 animate-pulse rounded w-20"></div></td>
+                    <td className="py-4 px-6"><div className="h-6 bg-gray-200 animate-pulse rounded-full w-16"></div></td>
+                    <td className="py-4 px-6"><div className="h-7 bg-gray-200 animate-pulse rounded-lg w-16"></div></td>
+                  </tr>
+                ))
               ) : filteredData.length === 0 ? (
                 <tr>
-                  <td colSpan="7" className="py-12 text-center text-sm text-gray-500">
-                    No applications found matching your criteria.
+                  <td colSpan="7" className="py-12 text-center text-xs text-gray-500">
+                    No documents found matching your criteria.
                   </td>
                 </tr>
               ) : (
                 paginatedData.map((row, idx) => (
                   <tr key={idx} className="hover:bg-gray-50/50 transition-colors">
-                    <td className="py-4 px-6 text-[13px] font-medium text-gray-700">{row.id}</td>
-                    <td className="py-4 px-6 text-[13px] text-gray-700">{row.customer}</td>
-                    <td className="py-4 px-6 text-[13px] text-gray-700">{row.type}</td>
-                    <td className="py-4 px-6 text-[13px] text-gray-700">{row.documents}</td>
-                    <td className="py-4 px-6 text-[13px] text-gray-700">{row.date}</td>
-                    <td className="py-4 px-6 text-[13px]">
-                      <span className={`font-semibold ${
-                        row.status === 'UNDER_REVIEW' ? 'text-[#1E4A40]' : 
-                        row.status === 'PENDING' ? 'text-amber-500' : 
-                        row.status === 'APPROVED' ? 'text-emerald-500' :
-                        row.status === 'REJECTED' ? 'text-red-500' :
-                        'text-[#1E4A40]'
+                    <td className="py-4 px-6 font-bold text-gray-900">{row.id}</td>
+                    <td className="py-4 px-6 font-bold text-gray-800">{row.customer}</td>
+                    <td className="py-4 px-6 font-semibold text-gray-700">{row.type}</td>
+                    <td className="py-4 px-6 font-medium text-gray-600 flex items-center gap-1.5 mt-2">
+                      <FileText className="w-3.5 h-3.5 text-gray-400 shrink-0" />
+                      <span className="truncate max-w-xs">{row.documents}</span>
+                    </td>
+                    <td className="py-4 px-6 font-medium text-gray-500">{row.date}</td>
+                    <td className="py-4 px-6">
+                      <span className={`px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider ${
+                        row.status === 'APPROVED' ? 'bg-emerald-100 text-emerald-800' :
+                        row.status === 'PENDING' ? 'bg-amber-100 text-amber-800' :
+                        'bg-red-100 text-red-700'
                       }`}>
                         {row.status}
                       </span>
@@ -231,7 +244,7 @@ const AdminVerificationQueue = () => {
                     <td className="py-4 px-6">
                       <button 
                         onClick={() => setSelectedApp(row)}
-                        className="px-4 py-1.5 text-[12px] font-medium rounded-md transition-colors shadow-sm bg-[#1E4A40] hover:bg-[#153a31] text-white"
+                        className="px-3 py-1.5 text-xs font-bold rounded-lg transition-colors shadow-sm bg-[#106354] hover:bg-[#0c4e42] text-white cursor-pointer"
                       >
                         Review
                       </button>
@@ -243,7 +256,7 @@ const AdminVerificationQueue = () => {
           </table>
         </div>
 
-        {/* Pagination UI - Only rendered if total items > 15 */}
+        {/* Pagination UI */}
         {filteredData.length > PAGE_SIZE && (
           <div className="flex items-center justify-between px-6 py-4 border-t border-gray-100 bg-gray-50/50">
             <span className="text-xs text-gray-500 font-medium">
@@ -274,36 +287,39 @@ const AdminVerificationQueue = () => {
 
       {/* Review Modal */}
       {selectedApp && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 p-4">
-          <div className="bg-white rounded-2xl w-full max-w-md">
-            <div className="p-6 border-b border-gray-100 flex justify-between items-center">
-              <h2 className="text-xl font-bold text-gray-900">Review Application</h2>
-              <button onClick={() => setSelectedApp(null)} className="text-gray-400 hover:text-gray-600">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-xs p-4">
+          <div className="bg-white rounded-3xl w-full max-w-md shadow-2xl overflow-hidden border border-gray-100">
+            <div className="p-6 border-b border-gray-100 flex justify-between items-center bg-gray-50/50">
+              <div>
+                <h2 className="text-lg font-bold text-gray-900">Review Application</h2>
+                <p className="text-xs text-gray-500 mt-0.5">{selectedApp.id}</p>
+              </div>
+              <button onClick={() => setSelectedApp(null)} className="text-gray-400 hover:text-gray-600 text-xl font-bold cursor-pointer">
                 &times;
               </button>
             </div>
             
-            <div className="p-6 space-y-4">
-              <div className="grid grid-cols-2 gap-4">
+            <div className="p-6 space-y-4 text-xs">
+              <div className="grid grid-cols-2 gap-4 bg-gray-50 p-4 rounded-2xl border border-gray-100">
                 <div>
-                  <label className="block text-xs font-medium text-gray-500 mb-1">Customer</label>
-                  <div className="text-sm font-semibold text-gray-900">{selectedApp.customer}</div>
+                  <label className="block text-[10px] font-bold text-gray-400 uppercase">Customer</label>
+                  <div className="font-bold text-gray-900 mt-0.5">{selectedApp.customer}</div>
                 </div>
                 <div>
-                  <label className="block text-xs font-medium text-gray-500 mb-1">Document ID</label>
-                  <div className="text-sm font-semibold text-gray-900">{selectedApp.id}</div>
+                  <label className="block text-[10px] font-bold text-gray-400 uppercase">Document ID</label>
+                  <div className="font-bold text-gray-900 mt-0.5">{selectedApp.id}</div>
                 </div>
                 <div>
-                  <label className="block text-xs font-medium text-gray-500 mb-1">Type</label>
-                  <div className="text-sm font-semibold text-gray-900">{selectedApp.type}</div>
+                  <label className="block text-[10px] font-bold text-gray-400 uppercase">Type</label>
+                  <div className="font-bold text-gray-900 mt-0.5">{selectedApp.type}</div>
                 </div>
                 <div>
-                  <label className="block text-xs font-medium text-gray-500 mb-1">File Name</label>
-                  <div className="text-sm font-semibold text-gray-900">{selectedApp.documents}</div>
+                  <label className="block text-[10px] font-bold text-gray-400 uppercase">File Name</label>
+                  <div className="font-bold text-gray-900 mt-0.5 truncate">{selectedApp.documents}</div>
                 </div>
               </div>
               
-              <div className="p-4 bg-gray-50 rounded-xl mt-4">
+              <div className="p-4 bg-emerald-50/50 border border-emerald-100 rounded-2xl text-center space-y-2">
                 <button 
                   onClick={async () => {
                     try {
@@ -311,28 +327,29 @@ const AdminVerificationQueue = () => {
                       const url = window.URL.createObjectURL(new Blob([res.data]));
                       window.open(url, '_blank');
                     } catch (e) {
-                      alert("Failed to open document");
+                      toast.error("Failed to open document file");
                     }
                   }}
-                  className="w-full py-2 bg-white border border-[#1E4A40] text-[#1E4A40] rounded-lg font-bold hover:bg-gray-50 transition-colors mb-2"
+                  className="w-full py-2.5 bg-white border border-[#106354] text-[#106354] rounded-xl font-bold hover:bg-emerald-50 transition-colors shadow-xs flex items-center justify-center gap-2 cursor-pointer"
                 >
-                  View Document File
+                  <Eye className="w-4 h-4" />
+                  View Uploaded Document File
                 </button>
-                <p className="text-sm text-gray-600 text-center">
-                  Review the document content before verifying.
+                <p className="text-[11px] text-gray-500">
+                  Inspect official document details before verifying.
                 </p>
               </div>
               
-              <div className="pt-4 flex justify-end gap-3">
+              <div className="pt-3 flex justify-end gap-3">
                 <button 
                   onClick={() => handleAction('Denied')}
-                  className="px-4 py-2 text-red-700 bg-red-50 hover:bg-red-100 rounded-lg font-medium transition-colors"
+                  className="px-4 py-2.5 text-red-700 bg-red-50 hover:bg-red-100 rounded-xl font-bold transition-all text-xs cursor-pointer"
                 >
                   Deny Application
                 </button>
                 <button 
                   onClick={() => handleAction('Approved')}
-                  className="px-4 py-2 bg-[#4E8B83] hover:bg-[#3A6B65] text-white rounded-lg font-medium transition-colors"
+                  className="px-4 py-2.5 bg-[#106354] hover:bg-[#0c4e42] text-white rounded-xl font-bold transition-all text-xs shadow-md cursor-pointer"
                 >
                   Approve Application
                 </button>
