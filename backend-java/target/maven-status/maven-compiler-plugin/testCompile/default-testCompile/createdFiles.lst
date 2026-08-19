@@ -1,0 +1,6 @@
+com\kalpanaafinance\ProfileSystemTest.class
+com\kalpanaafinance\LoanSystemTest.class
+com\kalpanaafinance\WalletSystemTest.class
+com\kalpanaafinance\DocumentReuseSystemTest.class
+com\kalpanaafinance\WithdrawalSystemTest.class
+com\kalpanaafinance\InvestmentConcurrencyTest.class
