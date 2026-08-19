@@ -1,0 +1,11 @@
+[providers]
+providers = ["java", "maven"]
+
+[build]
+cmds = ["./mvnw clean package -DskipTests"]
+
+[start]
+cmd = "java -Dserver.port=$PORT -jar target/*.jar"
+
+[phases.setup]
+nixPkgs = ["jdk21", "maven"]
