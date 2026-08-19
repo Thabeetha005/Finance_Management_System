@@ -98,59 +98,56 @@ public class AdminUserController {
 
     @DeleteMapping("/users/{id}")
     @org.springframework.transaction.annotation.Transactional
-    public ResponseEntity<?> deleteUser(@PathVariable Long id, org.springframework.security.core.Authentication auth) {
+    public ResponseEntity<?> deleteUser(
+            @PathVariable Long id,
+            @RequestParam(required = false) String reason,
+            @RequestBody(required = false) Map<String, String> body,
+            jakarta.servlet.http.HttpServletRequest httpRequest,
+            org.springframework.security.core.Authentication auth) {
+
         User user = userRepository.findById(id).orElse(null);
         if (user == null) return ResponseEntity.notFound().build();
-        
-        try {
-            // Guard: Reject user deletion if financial (deposits, withdrawals, loans, investments) or compliance (documents) history exists
-            Number depositCount = (Number) entityManager.createNativeQuery("SELECT COUNT(*) FROM deposits WHERE user_id = :id").setParameter("id", id).getSingleResult();
-            Number withdrawalCount = (Number) entityManager.createNativeQuery("SELECT COUNT(*) FROM withdrawals WHERE user_id = :id").setParameter("id", id).getSingleResult();
-            Number loanCount = (Number) entityManager.createNativeQuery("SELECT COUNT(*) FROM loans WHERE user_id = :id").setParameter("id", id).getSingleResult();
-            Number investmentCount = (Number) entityManager.createNativeQuery("SELECT COUNT(*) FROM investments WHERE user_id = :id").setParameter("id", id).getSingleResult();
-            Number documentCount = (Number) entityManager.createNativeQuery("SELECT COUNT(*) FROM documents WHERE user_id = :id").setParameter("id", id).getSingleResult();
 
-            if ((depositCount != null && depositCount.longValue() > 0) ||
-                (withdrawalCount != null && withdrawalCount.longValue() > 0) ||
-                (loanCount != null && loanCount.longValue() > 0) ||
-                (investmentCount != null && investmentCount.longValue() > 0) ||
-                (documentCount != null && documentCount.longValue() > 0)) {
-                return ResponseEntity.badRequest().body(Map.of("message", "Cannot delete user account with active financial or compliance history. Financial, loan, investment, and document audit records must be preserved."));
-            }
+        String deletionReason = (reason != null && !reason.trim().isEmpty()) 
+                ? reason 
+                : (body != null ? body.get("reason") : null);
 
-            entityManager.createNativeQuery("SET FOREIGN_KEY_CHECKS=0").executeUpdate();
-            
-            entityManager.createNativeQuery("DELETE FROM transactions WHERE account_id IN (SELECT id FROM accounts WHERE user_id = :id)").setParameter("id", id).executeUpdate();
-            entityManager.createNativeQuery("DELETE FROM accounts WHERE user_id = :id").setParameter("id", id).executeUpdate();
-            entityManager.createNativeQuery("DELETE FROM payments WHERE user_id = :id").setParameter("id", id).executeUpdate();
-            entityManager.createNativeQuery("DELETE FROM consultations WHERE user_id = :id").setParameter("id", id).executeUpdate();
-            entityManager.createNativeQuery("DELETE FROM activity_logs WHERE user_id = :id").setParameter("id", id).executeUpdate();
-            entityManager.createNativeQuery("DELETE FROM messages WHERE sender_user_id = :id OR recipient_user_id = :id").setParameter("id", id).executeUpdate();
-            entityManager.createNativeQuery("DELETE FROM notifications WHERE user_id = :id").setParameter("id", id).executeUpdate();
-            entityManager.createNativeQuery("DELETE FROM support_tickets WHERE customer_id = :id").setParameter("id", id).executeUpdate();
-            entityManager.createNativeQuery("DELETE FROM bank_accounts WHERE user_id = :id").setParameter("id", id).executeUpdate();
-            
-            // Safely delete from wallet_history ONLY if the table exists in MySQL
-            Number hasWalletHistory = (Number) entityManager.createNativeQuery("SELECT COUNT(*) FROM information_schema.TABLES WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'wallet_history'").getSingleResult();
-            if (hasWalletHistory != null && hasWalletHistory.longValue() > 0) {
-                entityManager.createNativeQuery("DELETE FROM wallet_history WHERE user_id = :id").setParameter("id", id).executeUpdate();
-            }
-            
-            entityManager.createNativeQuery("DELETE FROM users WHERE id = :id").setParameter("id", id).executeUpdate();
-        } finally {
-            entityManager.createNativeQuery("SET FOREIGN_KEY_CHECKS=1").executeUpdate();
+        if (deletionReason == null || deletionReason.trim().isEmpty()) {
+            return ResponseEntity.badRequest().body(Map.of("message", "Deletion reason is mandatory"));
         }
-        
+
+        // 1. Mark customer status as PENDING_TERMINATION
+        user.setAccountStatus("PENDING_TERMINATION");
+        user.setTerminationReason(deletionReason.trim());
+        userRepository.save(user);
+
+        // 2. Send System Notification Message to the customer
+        Message deactivationMsg = Message.builder()
+                .recipientUserId(id)
+                .senderUserId(1L)
+                .senderRole("ADMIN")
+                .subject("Account Termination Notice")
+                .messageContent("Your customer account has been scheduled for termination by Administration.\n\nReason:\n" + deletionReason.trim() + 
+                        "\n\nPlease review and confirm this notice upon logging in.")
+                .messageType(Message.MessageType.SYSTEM)
+                .relatedEntityType(Message.EntityType.SYSTEM)
+                .relatedEntityId(id)
+                .isRead(false)
+                .build();
+        messageRepository.save(deactivationMsg);
+
+        // 3. Admin Audit Log
+        String adminEmail = auth != null ? auth.getName() : "admin@kalpanaafinance.com";
         auditService.logAction(
-            auth != null ? auth.getName() : "System",
-            "DELETE_USER",
-            "USER",
-            id,
-            "Deleted user " + user.getName(),
-            null
+                adminEmail,
+                "CUSTOMER_TERMINATION_INITIATED",
+                "USER",
+                id,
+                "Customer " + user.getName() + " (ID #" + id + ") marked for termination by Admin. Reason: " + deletionReason.trim(),
+                httpRequest != null ? httpRequest.getRemoteAddr() : "127.0.0.1"
         );
-        
-        return ResponseEntity.ok(Map.of("message", "User deleted successfully"));
+
+        return ResponseEntity.ok(Map.of("message", "Customer scheduled for termination. Termination notice sent to customer."));
     }
 
     @GetMapping("/transactions")
@@ -168,8 +165,25 @@ public class AdminUserController {
     }
 
     @GetMapping("/accounts")
-    public ResponseEntity<List<Account>> getAllAccounts() {
-        return ResponseEntity.ok(accountRepository.findAll());
+    public ResponseEntity<List<Map<String, Object>>> getAllAccounts() {
+        List<User> customers = userRepository.findAll().stream()
+                .filter(u -> u.getRole() == Role.CUSTOMER)
+                .collect(Collectors.toList());
+
+        List<Map<String, Object>> response = customers.stream().map(c -> {
+            Map<String, Object> map = new HashMap<>();
+            map.put("id", "ACC-" + (10000 + c.getId()));
+            map.put("userId", c.getId());
+            map.put("userName", c.getName());
+            map.put("userEmail", c.getEmail());
+            map.put("accountType", "Wallet & Savings");
+            map.put("balance", c.getBalance());
+            map.put("status", c.getAccountStatus() != null ? c.getAccountStatus() : "Active");
+            map.put("createdAt", c.getCreatedAt());
+            return map;
+        }).collect(Collectors.toList());
+
+        return ResponseEntity.ok(response);
     }
 
     @GetMapping("/users/{id}")

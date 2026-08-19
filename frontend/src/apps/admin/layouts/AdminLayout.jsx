@@ -41,6 +41,7 @@ export default function AdminLayout() {
     { name: 'Contact Requests', href: '/admin/contact-requests', icon: Mail },
     { name: 'Support Tickets', href: '/admin/support', icon: HelpCircle },
     { name: 'Audit Logs', href: '/admin/audit-logs', icon: ShieldCheck },
+    { name: 'Accounts', href: '/admin/accounts', icon: Wallet },
     { name: 'Transactions', href: '/admin/transactions', icon: ArrowLeftRight },
     { name: 'Settings', href: '/admin/settings', icon: Settings },
   ];

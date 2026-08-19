@@ -50,6 +50,9 @@ public class User implements UserDetails {
     @Column(name = "account_status")
     private String accountStatus = "Active";
 
+    @Column(name = "termination_reason", columnDefinition = "TEXT")
+    private String terminationReason;
+
     @Column(name = "is_verified")
     private Boolean isVerified = false;
 
@@ -147,6 +150,7 @@ public class User implements UserDetails {
     public Role getRole() { return this.role; }
     public String getPhone() { return this.phone; }
     public String getAccountStatus() { return this.accountStatus; }
+    public String getTerminationReason() { return this.terminationReason; }
     public Boolean getIsVerified() { return this.isVerified; }
     public BigDecimal getBalance() { return this.balance; }
     public BigDecimal getBonusBalance() { return this.bonusBalance; }
@@ -163,6 +167,7 @@ public class User implements UserDetails {
     public void setRole(Role role) { this.role = role; }
     public void setPhone(String phone) { this.phone = phone; }
     public void setAccountStatus(String accountStatus) { this.accountStatus = accountStatus; }
+    public void setTerminationReason(String terminationReason) { this.terminationReason = terminationReason; }
     public void setIsVerified(Boolean isVerified) { this.isVerified = isVerified; }
     public void setBalance(BigDecimal balance) { this.balance = balance; }
     public void setUsername(String username) { this.username = username; }

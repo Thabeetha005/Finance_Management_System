@@ -694,18 +694,21 @@ const AdminUserDetails = () => {
   const queryClient = useQueryClient();
   const navigate = useNavigate();
 
+  const [deletionReason, setDeletionReason] = useState('');
+
   const deleteUserMutation = useMutation({
-    mutationFn: async () => {
-      await api.delete(`/admin/users/${userId}`);
+    mutationFn: async (reason) => {
+      await api.delete(`/admin/users/${userId}?reason=${encodeURIComponent(reason)}`);
     },
     onSuccess: () => {
+      toast.success('Customer scheduled for termination. Notice sent to customer.');
       queryClient.invalidateQueries(['adminUsers']);
       queryClient.invalidateQueries(['adminClients']);
       setShowDeleteModal(false);
       navigate('/admin/users');
     },
     onError: (err) => {
-      alert("Failed to delete user: " + (err.response?.data?.message || err.message));
+      toast.error(err.response?.data?.message || err.message || 'Failed to terminate user');
     }
   });
 
@@ -819,46 +822,62 @@ const AdminUserDetails = () => {
               </button>
             </div>
             
-            <div className="p-4 bg-red-50 rounded-xl mb-4 border border-red-100">
-              <div className="flex gap-3">
-                <AlertCircle className="w-5 h-5 text-red-600 shrink-0" />
-                <p className="text-sm text-red-800">
-                  <strong className="block mb-1">Warning: Irreversible Action</strong>
-                  This will permanently delete the user's account, including all their transactions, loans, investments, and personal data.
+            <div className="p-4 bg-amber-50 rounded-xl mb-4 border border-amber-200 text-xs text-amber-900">
+              <div className="flex gap-2">
+                <AlertCircle className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
+                <p>
+                  <strong className="block mb-0.5 font-bold">2-Step Graceful Account Termination</strong>
+                  The customer will receive an official notification pop-up upon logging in with your specified reason. Data will be completely purged once acknowledged.
                 </p>
               </div>
             </div>
 
-            <div className="mb-6">
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Type <span className="font-bold text-gray-900">DELETE</span> to confirm
-              </label>
-              <input
-                type="text"
-                value={deleteConfirmText}
-                onChange={(e) => setDeleteConfirmText(e.target.value.toUpperCase())}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 outline-none transition-all uppercase"
-                placeholder="DELETE"
-              />
+            <div className="space-y-4 mb-6">
+              <div>
+                <label className="block text-xs font-bold text-gray-700 mb-1">
+                  Reason for Deactivation / Deletion <span className="text-red-500">*</span>
+                </label>
+                <textarea
+                  required
+                  rows="3"
+                  value={deletionReason}
+                  onChange={(e) => setDeletionReason(e.target.value)}
+                  placeholder="Enter specific reason for account termination..."
+                  className="w-full p-3 border border-gray-200 rounded-xl text-xs font-medium outline-none focus:ring-2 focus:ring-red-500"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold text-gray-700 mb-1">
+                  Type <span className="font-bold text-red-600">DELETE</span> to confirm
+                </label>
+                <input
+                  type="text"
+                  value={deleteConfirmText}
+                  onChange={(e) => setDeleteConfirmText(e.target.value.toUpperCase())}
+                  className="w-full px-3 py-2 border border-gray-200 rounded-xl text-xs font-bold outline-none focus:ring-2 focus:ring-red-500 uppercase"
+                  placeholder="DELETE"
+                />
+              </div>
             </div>
 
             <div className="flex justify-end gap-3">
               <button
                 onClick={() => setShowDeleteModal(false)}
-                className="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-lg transition-colors font-medium text-sm"
+                className="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-xl font-bold text-xs"
               >
                 Cancel
               </button>
               <button
                 onClick={() => {
-                  if (deleteConfirmText === 'DELETE') {
-                    deleteUserMutation.mutate();
+                  if (deleteConfirmText === 'DELETE' && deletionReason.trim()) {
+                    deleteUserMutation.mutate(deletionReason.trim());
                   }
                 }}
-                disabled={deleteConfirmText !== 'DELETE' || deleteUserMutation.isPending}
-                className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors font-medium text-sm flex items-center gap-2"
+                disabled={deleteConfirmText !== 'DELETE' || !deletionReason.trim() || deleteUserMutation.isPending}
+                className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white font-bold rounded-xl text-xs disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-md"
               >
-                {deleteUserMutation.isPending ? 'Deleting...' : 'Delete Permanently'}
+                {deleteUserMutation.isPending ? 'Sending Termination Notice...' : 'Schedule Account Termination'}
               </button>
             </div>
           </div>

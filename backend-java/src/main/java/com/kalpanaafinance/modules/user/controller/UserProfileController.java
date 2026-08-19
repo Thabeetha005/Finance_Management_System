@@ -105,4 +105,39 @@ public class UserProfileController {
 
         return ResponseEntity.ok(Map.of("message", "Password updated successfully"));
     }
+
+    @PostMapping("/confirm-termination")
+    @org.springframework.transaction.annotation.Transactional
+    public ResponseEntity<?> confirmTermination(
+            @AuthenticationPrincipal UserDetails userDetails,
+            HttpServletRequest httpServletRequest) {
+        if (userDetails == null) return ResponseEntity.status(401).build();
+        String email = userDetails.getUsername();
+        User user = userRepository.findByEmail(email).orElse(null);
+        if (user == null) return ResponseEntity.notFound().build();
+
+        Long userId = user.getId();
+        String userName = user.getName();
+
+        // 1. Audit log confirmation
+        auditService.logAction(
+                email,
+                "CUSTOMER_TERMINATION_CONFIRMED",
+                "USER",
+                userId,
+                "Customer " + userName + " acknowledged termination pop-up and confirmed account deactivation.",
+                httpServletRequest != null ? httpServletRequest.getRemoteAddr() : "127.0.0.1"
+        );
+
+        // 2. Cascade purge all child records
+        jakarta.persistence.EntityManager entityManager = (jakarta.persistence.EntityManager) httpServletRequest.getAttribute("jakarta.persistence.EntityManager");
+        try {
+            userRepository.delete(user);
+        } catch (Exception e) {
+            // Hard fallback purge
+            userRepository.deleteById(userId);
+        }
+
+        return ResponseEntity.ok(Map.of("message", "Account purged successfully."));
+    }
 }
