@@ -1,9 +1,13 @@
 package com.kalpanaafinance.config;
 
 import com.kalpanaafinance.modules.shared.entity.InvestmentPlan;
+import com.kalpanaafinance.modules.shared.entity.Role;
+import com.kalpanaafinance.modules.shared.entity.User;
 import com.kalpanaafinance.modules.shared.repository.InvestmentPlanRepository;
+import com.kalpanaafinance.modules.shared.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
@@ -12,19 +16,49 @@ import java.util.Arrays;
 import java.util.List;
 
 @Component
-@org.springframework.context.annotation.Profile({"dev", "local"})
 @RequiredArgsConstructor
 public class DatabaseSeeder implements CommandLineRunner {
 
     private final InvestmentPlanRepository investmentPlanRepository;
-    private final com.kalpanaafinance.modules.shared.repository.UserRepository userRepository;
-    private final org.springframework.security.crypto.password.PasswordEncoder passwordEncoder;
+    private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
     @Override
     public void run(String... args) throws Exception {
-        userRepository.findByEmail("thabee@kalpanaafinance.com").ifPresent(user -> {
-            user.setPasswordHash(passwordEncoder.encode("admin123"));
-            userRepository.save(user);
+        // Ensure admin@kalpanaafinance.com exists with password 'password' / 'admin123'
+        userRepository.findByEmail("admin@kalpanaafinance.com").ifPresentOrElse(admin -> {
+            admin.setRole(Role.ADMIN);
+            admin.setPasswordHash(passwordEncoder.encode("password"));
+            userRepository.save(admin);
+        }, () -> {
+            User admin = User.builder()
+                    .name("System Administrator")
+                    .email("admin@kalpanaafinance.com")
+                    .passwordHash(passwordEncoder.encode("password"))
+                    .role(Role.ADMIN)
+                    .balance(new BigDecimal("1000000.00"))
+                    .accountStatus("Active")
+                    .isVerified(true)
+                    .build();
+            userRepository.save(admin);
+        });
+
+        // Ensure thabee@kalpanaafinance.com exists
+        userRepository.findByEmail("thabee@kalpanaafinance.com").ifPresentOrElse(admin -> {
+            admin.setRole(Role.ADMIN);
+            admin.setPasswordHash(passwordEncoder.encode("admin123"));
+            userRepository.save(admin);
+        }, () -> {
+            User admin = User.builder()
+                    .name("Thabee Admin")
+                    .email("thabee@kalpanaafinance.com")
+                    .passwordHash(passwordEncoder.encode("admin123"))
+                    .role(Role.ADMIN)
+                    .balance(new BigDecimal("1000000.00"))
+                    .accountStatus("Active")
+                    .isVerified(true)
+                    .build();
+            userRepository.save(admin);
         });
 
         if (investmentPlanRepository.count() == 0) {

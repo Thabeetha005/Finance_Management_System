@@ -39,7 +39,7 @@ const LoginPage = () => {
     <div className="min-h-screen bg-brandWhite-off flex flex-col justify-center py-12 sm:px-6 lg:px-8">
       <div className="sm:mx-auto sm:w-full sm:max-w-md">
         <a href="/" className="flex items-center justify-center gap-3">
-          <img src="/kalpanaa-logo-new.png" alt="Kalpanaa Finance" className="w-[24rem] md:w-[32rem] h-24 md:h-28 object-contain" />
+          <img src="/kalpanaa-logo-new.png" alt="Kalpanaa Finance" className="h-32 md:h-40 w-auto max-w-full object-contain mx-auto transition-transform hover:scale-105 duration-300" />
         </a>
         <h2 className="mt-6 text-center text-3xl font-extrabold text-brandBlack">
           Log in to your account
@@ -120,25 +120,6 @@ const LoginPage = () => {
               </div>
             </div>
 
-            <div className="flex items-center justify-between">
-              <div className="flex items-center">
-                <input
-                  id="remember-me"
-                  name="remember-me"
-                  type="checkbox"
-                  className="h-4 w-4 text-primary focus:ring-primary border-gray-300 rounded"
-                />
-                <label htmlFor="remember-me" className="ml-2 block text-sm text-brandBlack-muted">
-                  Remember me
-                </label>
-              </div>
-
-              <div className="text-sm">
-                <Link to="/forgot-password" className="font-medium text-primary hover:text-primary-hover">
-                  Forgot your password?
-                </Link>
-              </div>
-            </div>
 
             <div>
               <button

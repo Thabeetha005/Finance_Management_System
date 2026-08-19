@@ -73,9 +73,13 @@ export const AuthProvider = ({ children }) => {
         return { success: false, message: 'Login failed' };
       }
     } catch (error) {
+      const errorMsg = error.response?.data?.message || 
+                       (typeof error.response?.data === 'string' ? error.response.data : null) || 
+                       error.response?.data?.error || 
+                       'Invalid email or password. Please verify your credentials.';
       return { 
         success: false, 
-        message: error.response?.data?.message || 'Network error occurred during login' 
+        message: errorMsg 
       };
     }
   };
