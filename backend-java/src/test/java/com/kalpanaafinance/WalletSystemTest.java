@@ -1,15 +1,15 @@
 package com.kalpanaafinance;
 
-import com.kalpanaafinance.dto.WalletSummaryResponse;
-import com.kalpanaafinance.dto.WalletTransactionResponse;
-import com.kalpanaafinance.entity.Account;
-import com.kalpanaafinance.entity.Role;
-import com.kalpanaafinance.entity.Transaction;
-import com.kalpanaafinance.entity.User;
-import com.kalpanaafinance.repository.AccountRepository;
-import com.kalpanaafinance.repository.TransactionRepository;
-import com.kalpanaafinance.repository.UserRepository;
-import com.kalpanaafinance.service.WalletService;
+import com.kalpanaafinance.modules.shared.dto.WalletSummaryResponse;
+import com.kalpanaafinance.modules.shared.dto.WalletTransactionResponse;
+import com.kalpanaafinance.modules.shared.entity.Account;
+import com.kalpanaafinance.modules.shared.entity.Role;
+import com.kalpanaafinance.modules.shared.entity.Transaction;
+import com.kalpanaafinance.modules.shared.entity.User;
+import com.kalpanaafinance.modules.shared.repository.AccountRepository;
+import com.kalpanaafinance.modules.shared.repository.TransactionRepository;
+import com.kalpanaafinance.modules.shared.repository.UserRepository;
+import com.kalpanaafinance.modules.user.service.WalletService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

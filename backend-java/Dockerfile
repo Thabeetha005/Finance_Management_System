@@ -1,20 +1,13 @@
-# Stage 1: Build Java application with Maven
-FROM eclipse-temurin:21-jdk-alpine AS build
+# Stage 1: Build Java application with official Maven image
+FROM maven:3.9.6-eclipse-temurin-21-alpine AS build
 WORKDIR /app
 
-# Copy maven wrapper and pom.xml
-COPY .mvn/ .mvn/
-COPY mvnw pom.xml ./
-
-# Grant execution rights on mvnw
-RUN chmod +x mvnw
-
-# Download dependencies
-RUN ./mvnw dependency:go-offline -B
-
-# Copy source code and build production jar without tests
+# Copy pom.xml and source code
+COPY pom.xml ./
 COPY src ./src
-RUN ./mvnw clean package -DskipTests
+
+# Build production jar skipping tests
+RUN mvn clean package -DskipTests
 
 # Stage 2: Minimal JRE runtime
 FROM eclipse-temurin:21-jre-alpine

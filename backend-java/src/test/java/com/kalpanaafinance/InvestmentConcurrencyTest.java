@@ -1,13 +1,14 @@
 package com.kalpanaafinance;
 
-import com.kalpanaafinance.dto.InvestmentConfirmRequest;
-import com.kalpanaafinance.dto.InvestmentDTO;
-import com.kalpanaafinance.entity.Account;
-import com.kalpanaafinance.entity.Investment;
-import com.kalpanaafinance.entity.InvestmentPlan;
-import com.kalpanaafinance.entity.User;
-import com.kalpanaafinance.repository.*;
-import com.kalpanaafinance.service.InvestmentService;
+import com.kalpanaafinance.modules.shared.dto.InvestmentConfirmRequest;
+import com.kalpanaafinance.modules.shared.dto.InvestmentDTO;
+import com.kalpanaafinance.modules.shared.entity.Account;
+import com.kalpanaafinance.modules.shared.entity.Investment;
+import com.kalpanaafinance.modules.shared.entity.InvestmentPlan;
+import com.kalpanaafinance.modules.shared.entity.User;
+import com.kalpanaafinance.modules.shared.entity.Role;
+import com.kalpanaafinance.modules.shared.repository.*;
+import com.kalpanaafinance.modules.user.service.InvestmentService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -57,7 +58,7 @@ public class InvestmentConcurrencyTest {
                 .name("Concurrency Test User " + uniqueSuffix)
                 .email("concurrency." + uniqueSuffix + "@example.com")
                 .passwordHash("password")
-                .role(com.kalpanaafinance.entity.Role.CUSTOMER)
+                .role(Role.CUSTOMER)
                 .balance(new BigDecimal("100000.00"))
                 .customerId("CUST-" + uniqueSuffix)
                 .build());

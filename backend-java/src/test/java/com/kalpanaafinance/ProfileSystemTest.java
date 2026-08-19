@@ -1,11 +1,11 @@
 package com.kalpanaafinance;
 
-import com.kalpanaafinance.dto.*;
-import com.kalpanaafinance.entity.Role;
-import com.kalpanaafinance.entity.User;
-import com.kalpanaafinance.repository.UserRepository;
-import com.kalpanaafinance.security.JwtUtils;
-import com.kalpanaafinance.service.ProfileService;
+import com.kalpanaafinance.modules.shared.dto.*;
+import com.kalpanaafinance.modules.shared.entity.Role;
+import com.kalpanaafinance.modules.shared.entity.User;
+import com.kalpanaafinance.modules.shared.repository.UserRepository;
+import com.kalpanaafinance.modules.shared.security.JwtUtils;
+import com.kalpanaafinance.modules.shared.service.ProfileService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

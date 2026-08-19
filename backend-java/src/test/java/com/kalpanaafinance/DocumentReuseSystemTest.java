@@ -1,10 +1,11 @@
 package com.kalpanaafinance;
 
-import com.kalpanaafinance.dto.LinkDocumentRequest;
-import com.kalpanaafinance.dto.LoanApplyRequest;
-import com.kalpanaafinance.entity.*;
-import com.kalpanaafinance.repository.*;
-import com.kalpanaafinance.service.LoanService;
+import com.kalpanaafinance.modules.shared.dto.LinkDocumentRequest;
+import com.kalpanaafinance.modules.shared.dto.LoanApplyRequest;
+import com.kalpanaafinance.modules.shared.entity.*;
+import com.kalpanaafinance.modules.shared.entity.Role;
+import com.kalpanaafinance.modules.shared.repository.*;
+import com.kalpanaafinance.modules.user.service.LoanService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -24,7 +25,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class DocumentReuseSystemTest {
 
     @Autowired
-    private com.kalpanaafinance.controller.DocumentController documentController;
+    private com.kalpanaafinance.modules.user.controller.DocumentController documentController;
 
     @Autowired
     private LoanService loanService;

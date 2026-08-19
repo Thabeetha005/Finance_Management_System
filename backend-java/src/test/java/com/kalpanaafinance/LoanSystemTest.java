@@ -1,10 +1,10 @@
 package com.kalpanaafinance;
 
-import com.kalpanaafinance.dto.LoanCalculateRequest;
-import com.kalpanaafinance.dto.LoanCalculateResponse;
-import com.kalpanaafinance.entity.*;
-import com.kalpanaafinance.repository.*;
-import com.kalpanaafinance.service.LoanService;
+import com.kalpanaafinance.modules.shared.dto.LoanCalculateRequest;
+import com.kalpanaafinance.modules.shared.dto.LoanCalculateResponse;
+import com.kalpanaafinance.modules.shared.entity.*;
+import com.kalpanaafinance.modules.shared.repository.*;
+import com.kalpanaafinance.modules.user.service.LoanService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -119,7 +119,7 @@ public class LoanSystemTest {
     @Test
     @DisplayName("Test 2: Rate Locking Rule at Approval Time")
     void testRateLockingAtApprovalTime() {
-        Loan loan = loanService.applyForLoan(testUser, com.kalpanaafinance.dto.LoanApplyRequest.builder()
+        Loan loan = loanService.applyForLoan(testUser, com.kalpanaafinance.modules.shared.dto.LoanApplyRequest.builder()
                 .planId(personalPlan.getId())
                 .amount(new BigDecimal("100000.00"))
                 .durationMonths(12)
@@ -148,7 +148,7 @@ public class LoanSystemTest {
         BigDecimal initialUserBal = testUser.getBalance();
         BigDecimal initialAccBal = testAccount.getBalance();
 
-        Loan loan = loanService.applyForLoan(testUser, com.kalpanaafinance.dto.LoanApplyRequest.builder()
+        Loan loan = loanService.applyForLoan(testUser, com.kalpanaafinance.modules.shared.dto.LoanApplyRequest.builder()
                 .planId(personalPlan.getId())
                 .amount(new BigDecimal("50000.00"))
                 .durationMonths(12)
@@ -168,7 +168,7 @@ public class LoanSystemTest {
     @DisplayName("Test 4: Pay-EMI Atomic Concurrency Guard (2 Parallel Threads)")
     void testConcurrentDoubleEmiPayment() throws InterruptedException {
         // Setup approved loan with funds
-        Loan loan = loanService.applyForLoan(testUser, com.kalpanaafinance.dto.LoanApplyRequest.builder()
+        Loan loan = loanService.applyForLoan(testUser, com.kalpanaafinance.modules.shared.dto.LoanApplyRequest.builder()
                 .planId(personalPlan.getId())
                 .amount(new BigDecimal("10000.00"))
                 .durationMonths(6)
@@ -211,7 +211,7 @@ public class LoanSystemTest {
     @Test
     @DisplayName("Test 5: Early Payoff Calculation & Cancellation of Remaining EMIs")
     void testEarlyPayoffCalculationAndCancellation() {
-        Loan loan = loanService.applyForLoan(testUser, com.kalpanaafinance.dto.LoanApplyRequest.builder()
+        Loan loan = loanService.applyForLoan(testUser, com.kalpanaafinance.modules.shared.dto.LoanApplyRequest.builder()
                 .planId(personalPlan.getId())
                 .amount(new BigDecimal("10000.00"))
                 .durationMonths(6)

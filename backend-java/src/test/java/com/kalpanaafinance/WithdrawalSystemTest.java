@@ -1,16 +1,16 @@
 package com.kalpanaafinance;
 
-import com.kalpanaafinance.dto.WithdrawalEligibilityResponse;
-import com.kalpanaafinance.dto.WithdrawalRequest;
-import com.kalpanaafinance.dto.WithdrawalResponse;
-import com.kalpanaafinance.entity.Account;
-import com.kalpanaafinance.entity.BankAccount;
-import com.kalpanaafinance.entity.Role;
-import com.kalpanaafinance.entity.User;
-import com.kalpanaafinance.repository.AccountRepository;
-import com.kalpanaafinance.repository.BankAccountRepository;
-import com.kalpanaafinance.repository.UserRepository;
-import com.kalpanaafinance.service.WithdrawalService;
+import com.kalpanaafinance.modules.shared.dto.WithdrawalEligibilityResponse;
+import com.kalpanaafinance.modules.shared.dto.WithdrawalRequest;
+import com.kalpanaafinance.modules.shared.dto.WithdrawalResponse;
+import com.kalpanaafinance.modules.shared.entity.Account;
+import com.kalpanaafinance.modules.shared.entity.BankAccount;
+import com.kalpanaafinance.modules.shared.entity.Role;
+import com.kalpanaafinance.modules.shared.entity.User;
+import com.kalpanaafinance.modules.shared.repository.AccountRepository;
+import com.kalpanaafinance.modules.shared.repository.BankAccountRepository;
+import com.kalpanaafinance.modules.shared.repository.UserRepository;
+import com.kalpanaafinance.modules.user.service.WithdrawalService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
