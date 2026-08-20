@@ -77,6 +77,7 @@ import ConsultantSessionDetails from './apps/consultant/pages/ConsultantSessionD
 import ConsultantSettings from './apps/consultant/pages/ConsultantSettings';
 import ConsultantLogs from './apps/consultant/pages/ConsultantLogs';
 import ConsultantReports from './apps/consultant/pages/ConsultantReports';
+import ConsultantEarnings from './apps/consultant/pages/ConsultantEarnings';
 
 const ProtectedRoute = ({ children, allowedRoles }) => {
   const { user, loading } = useAuth();
@@ -210,7 +211,8 @@ function AppContent() {
         <Route path="sessions/:id" element={<ConsultantSessionDetails />} />
         <Route path="settings" element={<ConsultantSettings />} />
         <Route path="logs" element={<ConsultantLogs />} />
-        <Route path="reports" element={<ConsultantReports />} />
+        <Route path="reports"   element={<ConsultantReports />} />
+        <Route path="earnings"  element={<ConsultantEarnings />} />
       </Route>
 
       {/* Fallback Route */}

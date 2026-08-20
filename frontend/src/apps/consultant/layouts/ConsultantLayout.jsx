@@ -12,7 +12,8 @@ import {
   PieChart,
   Power,
   ShieldAlert,
-  RefreshCw
+  RefreshCw,
+  DollarSign
 } from 'lucide-react';
 import api from '../../../shared/api/axios';
 import { toast } from 'react-hot-toast';
@@ -27,10 +28,11 @@ const ConsultantLayout = () => {
   const navigate = useNavigate();
 
   const navigation = [
-    { name: 'Dashboard', href: '/consultant', icon: LayoutDashboard },
-    { name: 'My Sessions', href: '/consultant/sessions', icon: Video },
-    { name: 'Logs', href: '/consultant/logs', icon: FileText },
-    { name: 'Reports', href: '/consultant/reports', icon: PieChart },
+    { name: 'Dashboard',   href: '/consultant',          icon: LayoutDashboard },
+    { name: 'My Sessions', href: '/consultant/sessions', icon: Video           },
+    { name: 'Reports',     href: '/consultant/reports',  icon: PieChart        },
+    { name: 'Earnings',    href: '/consultant/earnings', icon: DollarSign      },
+    { name: 'Logs',        href: '/consultant/logs',     icon: FileText        },
   ];
 
   React.useEffect(() => {
