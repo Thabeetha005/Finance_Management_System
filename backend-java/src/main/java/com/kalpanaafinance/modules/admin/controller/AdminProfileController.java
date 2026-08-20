@@ -55,16 +55,22 @@ public class AdminProfileController {
                     "Admin username updated to: " + request.getUsername(), httpRequest.getRemoteAddr());
         }
 
+        // Track whether email is changing — JWT subject = email, so a new token is needed
+        boolean emailChanged = request.getEmail() != null && !request.getEmail().isBlank()
+                && !request.getEmail().equalsIgnoreCase(admin.getEmail());
+
         // Validation for Email Uniqueness
-        if (request.getEmail() != null && !request.getEmail().isBlank() 
-                && !request.getEmail().equalsIgnoreCase(admin.getEmail())) {
+        if (emailChanged) {
             Optional<User> existingEmailUser = userRepository.findByEmail(request.getEmail());
             if (existingEmailUser.isPresent() && !existingEmailUser.get().getId().equals(admin.getId())) {
                 return ResponseEntity.badRequest().body(Map.of("message", "Email address is already registered to another account."));
             }
             admin.setEmail(request.getEmail());
-            auditService.logAction(admin.getEmail(), "ADMIN_EMAIL_CHANGED", "ADMIN_PROFILE", admin.getId(), 
-                    "Admin email updated to: " + request.getEmail(), httpRequest.getRemoteAddr());
+            // Increment tokenVersion so any other active sessions (other browsers/devices)
+            // carrying the old email in their JWT subject are immediately invalidated
+            admin.setTokenVersion((admin.getTokenVersion() != null ? admin.getTokenVersion() : 1) + 1);
+            auditService.logAction(request.getEmail(), "ADMIN_EMAIL_CHANGED", "ADMIN_PROFILE", admin.getId(),
+                    "Admin email updated. All other active sessions invalidated.", httpRequest.getRemoteAddr());
         }
 
         // Update Name & Phone
@@ -75,14 +81,25 @@ public class AdminProfileController {
         if (request.getPhoneNumber() != null) {
             if (!request.getPhoneNumber().equals(admin.getPhone())) {
                 admin.setPhone(request.getPhoneNumber());
-                auditService.logAction(admin.getEmail(), "ADMIN_PHONE_CHANGED", "ADMIN_PROFILE", admin.getId(), 
+                auditService.logAction(admin.getEmail(), "ADMIN_PHONE_CHANGED", "ADMIN_PROFILE", admin.getId(),
                         "Admin phone number updated to: " + request.getPhoneNumber(), httpRequest.getRemoteAddr());
             }
         }
 
         User savedAdmin = userRepository.save(admin);
-        auditService.logAction(savedAdmin.getEmail(), "ADMIN_PROFILE_UPDATED", "ADMIN_PROFILE", savedAdmin.getId(), 
+        auditService.logAction(savedAdmin.getEmail(), "ADMIN_PROFILE_UPDATED", "ADMIN_PROFILE", savedAdmin.getId(),
                 "Admin profile details updated successfully", httpRequest.getRemoteAddr());
+
+        // If email changed: return a fresh JWT (new subject = new email) so the current
+        // browser session stays alive seamlessly — same shape as the password-change response
+        if (emailChanged) {
+            String newToken = jwtUtils.generateToken(savedAdmin);
+            return ResponseEntity.ok(Map.of(
+                    "message", "Profile updated. Email changed — your session has been refreshed.",
+                    "token", newToken,
+                    "profile", convertToDTO(savedAdmin)
+            ));
+        }
 
         return ResponseEntity.ok(convertToDTO(savedAdmin));
     }

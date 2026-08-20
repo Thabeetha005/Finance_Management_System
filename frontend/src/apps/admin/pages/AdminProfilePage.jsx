@@ -24,7 +24,7 @@ const AdminProfilePage = () => {
   const queryClient = useQueryClient();
   const [searchParams, setSearchParams] = useSearchParams();
   const navigate = useNavigate();
-  const { user: authUser } = useAuth();
+  const { user: authUser, updateUser } = useAuth();
 
   const tabParam = searchParams.get('tab') || 'profile';
   const [activeTab, setActiveTab] = useState(tabParam);
@@ -84,7 +84,17 @@ const AdminProfilePage = () => {
       const res = await api.put('/admin/profile', payload);
       return res.data;
     },
-    onSuccess: (updatedData) => {
+    onSuccess: (data) => {
+      // When email changed, backend returns {message, token, profile}
+      // Store the fresh JWT so the current session keeps working with the new email
+      if (data?.token) {
+        updateUser({
+          token: data.token,
+          email: data.profile?.email ?? authUser?.email,
+          name:  data.profile?.name  ?? authUser?.name,
+          role:  authUser?.role,
+        });
+      }
       queryClient.invalidateQueries(['adminProfile']);
       queryClient.invalidateQueries(['currentUser']);
       setProfileMsg({ type: 'success', text: 'Admin profile updated successfully!' });
@@ -104,9 +114,19 @@ const AdminProfilePage = () => {
       const res = await api.put('/admin/profile/password', payload);
       return res.data;
     },
-    onSuccess: () => {
+    onSuccess: (data) => {
+      // Backend returns {message, token} — store the fresh JWT so the new tokenVersion
+      // is in localStorage immediately (old token with stale version would be rejected)
+      if (data?.token) {
+        updateUser({
+          token: data.token,
+          email: authUser?.email,
+          name:  authUser?.name,
+          role:  authUser?.role,
+        });
+      }
       setPasswordData({ oldPassword: '', newPassword: '', confirmPassword: '' });
-      setPasswordMsg({ type: 'success', text: 'Password updated successfully! Next login will require your new password.' });
+      setPasswordMsg({ type: 'success', text: 'Password updated. All other sessions have been logged out.' });
       toast.success('Password updated successfully!');
     },
     onError: (err) => {
