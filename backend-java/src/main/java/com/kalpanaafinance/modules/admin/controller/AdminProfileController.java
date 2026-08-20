@@ -5,6 +5,7 @@ import com.kalpanaafinance.modules.shared.dto.UpdatePasswordRequest;
 import com.kalpanaafinance.modules.shared.dto.UpdateProfileRequest;
 import com.kalpanaafinance.modules.shared.entity.User;
 import com.kalpanaafinance.modules.shared.repository.UserRepository;
+import com.kalpanaafinance.modules.shared.security.JwtUtils;
 import com.kalpanaafinance.modules.shared.service.AuditService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -26,6 +27,7 @@ public class AdminProfileController {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final AuditService auditService;
+    private final JwtUtils jwtUtils;
 
     @GetMapping
     public ResponseEntity<ProfileDTO> getAdminProfile(Authentication authentication) {
@@ -109,13 +111,25 @@ public class AdminProfileController {
             return ResponseEntity.badRequest().body(Map.of("message", "New password and confirmation do not match."));
         }
 
+        // 1. Hash and overwrite password_hash column (direct UPDATE on existing row)
         admin.setPasswordHash(passwordEncoder.encode(request.getNewPassword()));
+
+        // 2. Increment tokenVersion — invalidates ALL other active JWT sessions for this admin
+        //    (same pattern as ProfileService.changePassword() used for customers)
+        admin.setTokenVersion((admin.getTokenVersion() != null ? admin.getTokenVersion() : 1) + 1);
         userRepository.save(admin);
 
-        auditService.logAction(admin.getEmail(), "ADMIN_PASSWORD_CHANGED", "ADMIN_PROFILE", admin.getId(), 
-                "Admin password changed successfully", httpRequest.getRemoteAddr());
+        // 3. Generate a fresh JWT carrying the new tokenVersion so the current browser session
+        //    keeps working seamlessly while every other token is rejected by JwtAuthFilter
+        String newToken = jwtUtils.generateToken(admin);
 
-        return ResponseEntity.ok(Map.of("message", "Password updated successfully"));
+        auditService.logAction(admin.getEmail(), "ADMIN_PASSWORD_CHANGED", "ADMIN_PROFILE", admin.getId(),
+                "Admin password changed successfully. All other active sessions invalidated.", httpRequest.getRemoteAddr());
+
+        return ResponseEntity.ok(Map.of(
+                "message", "Password updated successfully. Other sessions have been logged out.",
+                "token", newToken
+        ));
     }
 
     private User getAuthenticatedAdmin(Authentication authentication) {
