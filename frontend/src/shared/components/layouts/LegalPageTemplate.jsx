@@ -30,7 +30,7 @@ const LegalPageTemplate = ({ title, subtitle, lastUpdated, children }) => {
         <div className="mt-16 text-center">
           <h3 className="text-xl font-semibold text-slate-900 mb-4">Have questions about our services?</h3>
           <a href="/contact" className="inline-flex items-center justify-center px-8 py-3 bg-[#05231e] hover:bg-emerald-800 text-white font-medium rounded-lg transition-colors">
-            Contact Kalpanaa Finance &rarr;
+            Contact Kalpanaaa Finance &rarr;
           </a>
         </div>
       </div>

@@ -54,7 +54,7 @@ const ContactPage = () => {
             animate={{ opacity: 1, y: 0 }}
             className="text-4xl md:text-6xl font-bold mb-6 tracking-tight"
           >
-            Get in Touch with Kalpanaa Finance
+            Get in Touch with Kalpanaaa Finance
           </motion.h1>
           <motion.p 
             initial={{ opacity: 0, y: 20 }}
@@ -80,7 +80,7 @@ const ContactPage = () => {
             </div>
             <h3 className="font-bold text-gray-900 text-lg mb-1">Corporate HQ</h3>
             <p className="text-gray-600 text-sm leading-relaxed">
-              Kalpanaa Towers, Suite 802,<br />Bandra-Kurla Complex (BKC),<br />Mumbai, Maharashtra 400051
+              Kalpanaaa Towers, Suite 802,<br />Bandra-Kurla Complex (BKC),<br />Mumbai, Maharashtra 400051
             </p>
           </motion.div>
 
@@ -104,8 +104,8 @@ const ContactPage = () => {
               <Mail className="w-6 h-6" />
             </div>
             <h3 className="font-bold text-gray-900 text-lg mb-1">Email Support</h3>
-            <p className="text-gray-600 text-sm mb-1">support@kalpanaafinance.com</p>
-            <p className="text-gray-500 text-xs">info@kalpanaafinance.com</p>
+            <p className="text-gray-600 text-sm mb-1">support@kalpanaaafinance.com</p>
+            <p className="text-gray-500 text-xs">info@kalpanaaafinance.com</p>
           </motion.div>
 
           <motion.div 
@@ -139,7 +139,7 @@ const ContactPage = () => {
                 </div>
                 <h3 className="text-2xl font-bold text-[#05231e] mb-2">Message Received!</h3>
                 <p className="text-gray-600 text-sm mb-6 max-w-md mx-auto">
-                  Thank you for reaching out to Kalpanaa Finance. Your inquiry has been routed to our advisory team. We will be in touch shortly.
+                  Thank you for reaching out to Kalpanaaa Finance. Your inquiry has been routed to our advisory team. We will be in touch shortly.
                 </p>
                 <button 
                   onClick={() => { setSubmitted(false); setFormData({ name: '', email: '', phone: '', subject: '', category: 'General Inquiry', message: '' }); }}

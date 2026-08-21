@@ -6,7 +6,7 @@ import { servicesData } from './src/data/servicesData.js';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-console.log('--- Kalpanaa Finance Services Validation ---');
+console.log('--- Kalpanaaa Finance Services Validation ---');
 
 // 1. Verify we have 27 services
 if (servicesData.length !== 27) {

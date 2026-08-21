@@ -105,7 +105,7 @@ const ConsultantLayout = () => {
               K
             </div>
             <div className="flex flex-col">
-              <span className="text-lg font-bold text-white tracking-tight leading-none">Kalpanaa</span>
+              <span className="text-lg font-bold text-white tracking-tight leading-none">Kalpanaaa</span>
               <span className="text-[10px] font-semibold text-gold tracking-widest uppercase">Consultant Portal</span>
             </div>
           </Link>
@@ -134,36 +134,9 @@ const ConsultantLayout = () => {
               );
             })}
           </nav>
-
-          <div className="mt-auto absolute bottom-0 left-0 right-0 p-4 border-t border-[#4E8B83]/20 bg-[#0a1411]">
-            <div className="flex items-center justify-between px-3 py-3 rounded-xl bg-white/5 border border-white/10">
-              <div className="flex items-center gap-3">
-                <div className={`p-2 rounded-lg ${profileStatus === 'ACTIVE' ? 'bg-green-500/20 text-green-400' : 'bg-red-500/20 text-red-400'}`}>
-                  <Power className="w-4 h-4" />
-                </div>
-                <div>
-                  <p className="text-sm font-medium text-white">Status</p>
-                  <p className={`text-xs ${profileStatus === 'ACTIVE' ? 'text-green-400' : 'text-red-400'}`}>
-                    {profileStatus === 'ACTIVE' ? 'Taking Sessions' : 'Not Available'}
-                  </p>
-                </div>
-              </div>
-              <button
-                onClick={toggleStatus}
-                className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none ${
-                  profileStatus === 'ACTIVE' ? 'bg-green-500' : 'bg-gray-600'
-                }`}
-              >
-                <span
-                  className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
-                    profileStatus === 'ACTIVE' ? 'translate-x-6' : 'translate-x-1'
-                  }`}
-                />
-              </button>
-            </div>
-          </div>
         </div>
       </aside>
+
 
       <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
         <header className="flex-shrink-0 flex items-center justify-between h-16 px-4 bg-white shadow-sm lg:px-8 z-10">

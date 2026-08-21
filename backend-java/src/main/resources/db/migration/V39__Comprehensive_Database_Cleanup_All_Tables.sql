@@ -10,7 +10,7 @@ INSERT IGNORE INTO keep_user_ids (id)
 SELECT id FROM users WHERE role = 'ADMIN' OR role = 'CONSULTANT';
 
 INSERT IGNORE INTO keep_user_ids (id)
-SELECT id FROM users WHERE customer_id = 'CUS1021' OR email = 'cus1021@kalpanaafinance.com';
+SELECT id FROM users WHERE customer_id = 'CUS1021' OR email = 'cus1021@kalpanaaafinance.com';
 
 INSERT IGNORE INTO keep_user_ids (id)
 SELECT id FROM users 

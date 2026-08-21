@@ -4,15 +4,15 @@ import { Link } from 'react-router-dom';
 
 const faqs = [
   {
-    question: "What is Kalpanaa Finance?",
-    answer: "Kalpanaa Finance is a financial technology platform that offers a wide range of financial solutions including investments, loans, digital gold, and wealth management to help you achieve your financial goals."
+    question: "What is Kalpanaaa Finance?",
+    answer: "Kalpanaaa Finance is a financial technology platform that offers a wide range of financial solutions including investments, loans, digital gold, and wealth management to help you achieve your financial goals."
   },
   {
-    question: "How can I start investing with Kalpanaa Finance?",
+    question: "How can I start investing with Kalpanaaa Finance?",
     answer: "Getting started is easy. Simply create an account, complete your profile, add funds to your wallet, and navigate to the 'Invest' section to choose from our curated list of investment products."
   },
   {
-    question: "Is my money safe with Kalpanaa Finance?",
+    question: "Is my money safe with Kalpanaaa Finance?",
     answer: "Yes, security is our top priority. We use bank-level encryption, multi-factor authentication, and partner with regulated financial institutions to ensure your funds and data are always secure."
   },
   {
@@ -25,7 +25,7 @@ const faqs = [
   },
   {
     question: "How do I contact customer support?",
-    answer: "Our support team is available 24/7. You can reach out to us via the 'Contact Us' page, use the live chat feature in your dashboard, or email us directly at support@kalpanaafinance.com."
+    answer: "Our support team is available 24/7. You can reach out to us via the 'Contact Us' page, use the live chat feature in your dashboard, or email us directly at support@kalpanaaafinance.com."
   }
 ];
 

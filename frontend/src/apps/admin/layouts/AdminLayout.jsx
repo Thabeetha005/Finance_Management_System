@@ -57,7 +57,7 @@ export default function AdminLayout() {
         <div>
           <div className="flex items-center justify-between h-20 px-6 border-b border-white/10">
             <Link to="/" className="flex items-center">
-              <img src="/kalpanaa-logo-new.png" alt="Kalpanaa" className="h-10 w-auto object-contain" />
+              <img src="/kalpanaaa-logo-new.png" alt="Kalpanaaa" className="h-10 w-auto object-contain" />
             </Link>
             <button 
               onClick={() => setIsSidebarOpen(false)}

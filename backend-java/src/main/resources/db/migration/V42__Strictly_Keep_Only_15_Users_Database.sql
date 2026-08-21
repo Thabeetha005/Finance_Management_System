@@ -10,7 +10,7 @@ INSERT IGNORE INTO allowed_user_ids (id)
 SELECT id FROM users WHERE role IN ('ADMIN', 'CONSULTANT');
 
 INSERT IGNORE INTO allowed_user_ids (id)
-SELECT id FROM users WHERE customer_id = 'CUS1021' OR email = 'cus1021@kalpanaafinance.com';
+SELECT id FROM users WHERE customer_id = 'CUS1021' OR email = 'cus1021@kalpanaaafinance.com';
 
 INSERT IGNORE INTO allowed_user_ids (id)
 SELECT id FROM users 

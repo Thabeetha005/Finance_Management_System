@@ -62,10 +62,13 @@ import FaqPage from './apps/public/pages/FaqPage';
 import LatestNewsPage from './apps/public/pages/LatestNewsPage';
 import FinancialInsightsPage from './apps/public/pages/FinancialAnalyticsPage';
 import CompanyUpdatesPage from './apps/public/pages/CompanyUpdatesPage';
+import BlogPostDetailsPage from './apps/public/pages/BlogPostDetailsPage';
+
 
 import RiskCompliancePage from './apps/public/pages/RiskCompliancePage';
 import LendingCreditPage from './apps/public/pages/LendingCreditPage';
 import InvestmentWealthPage from './apps/public/pages/InvestmentWealthPage';
+import BusinessFinancePage from './apps/public/pages/BusinessFinancePage';
 
 import PrivacyPolicyPage from './apps/public/pages/PrivacyPolicyPage';
 import TermsOfServicePage from './apps/public/pages/TermsOfServicePage';
@@ -115,21 +118,41 @@ function AppContent() {
         <Route path="/services" element={<ServicesLandingPage />} />
         <Route path="/services/category/:category" element={<CategoryPage />} />
         <Route path="/services/:slug" element={<ServicePage />} />
+        <Route path="/services/digital-finance" element={<DigitalFinancePage />} />
         <Route path="/services/digital-finance-platform" element={<DigitalFinancePage />} />
+
+        <Route path="/services/lending-credit" element={<LendingCreditPage />} />
+        <Route path="/services/lending-and-credit" element={<LendingCreditPage />} />
+        <Route path="/services/loan-management" element={<LendingCreditPage />} />
+
+        <Route path="/services/investment-wealth" element={<InvestmentWealthPage />} />
+        <Route path="/services/investment-and-wealth" element={<InvestmentWealthPage />} />
+        <Route path="/services/investment-management" element={<InvestmentWealthPage />} />
+
+        <Route path="/services/business-finance" element={<BusinessFinancePage />} />
+        <Route path="/services/corporate-finance" element={<BusinessFinancePage />} />
+
+        <Route path="/services/risk-compliance" element={<RiskCompliancePage />} />
+        <Route path="/services/risk-and-compliance" element={<RiskCompliancePage />} />
+        <Route path="/services/risk-management" element={<RiskCompliancePage />} />
+
         <Route path="/services/consulting" element={<ConsultingPage />} />
         <Route path="/consulting" element={<ConsultingPage />} />
         <Route path="/consultants" element={<ConsultingPage />} />
-        <Route path="/services/risk-management" element={<RiskCompliancePage />} />
-        <Route path="/services/loan-management" element={<LendingCreditPage />} />
-        <Route path="/services/investment-management" element={<InvestmentWealthPage />} />
+
         <Route path="/testimonials" element={<TestimonialsPage />} />
         <Route path="/team" element={<TeamPage />} />
         <Route path="/faq" element={<FaqPage />} />
         <Route path="/privacy-policy" element={<PrivacyPolicyPage />} />
         <Route path="/terms-of-service" element={<TermsOfServicePage />} />
+        <Route path="/blog" element={<LatestNewsPage />} />
+        <Route path="/blogs" element={<LatestNewsPage />} />
         <Route path="/blog/latest-news" element={<LatestNewsPage />} />
         <Route path="/blog/financial-insights" element={<FinancialInsightsPage />} />
         <Route path="/blog/company-updates" element={<CompanyUpdatesPage />} />
+        <Route path="/blog/post/:id" element={<BlogPostDetailsPage />} />
+        <Route path="/blog/:id" element={<BlogPostDetailsPage />} />
+
       </Route>
 
       {/* Auth Pages */}
@@ -199,6 +222,8 @@ function AppContent() {
       {/* Top-Level Shortcuts */}
       <Route path="/dashboard" element={<Navigate to="/profile" replace />} />
       <Route path="/wallet" element={<Navigate to="/profile/wallet" replace />} />
+      <Route path="/inbox" element={<Navigate to="/profile/inbox" replace />} />
+      <Route path="/messages" element={<Navigate to="/profile/inbox" replace />} />
 
       {/* Protected Consultant Routes */}
       <Route path="/consultant" element={

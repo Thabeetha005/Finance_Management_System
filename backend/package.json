@@ -1,7 +1,7 @@
 {
-  "name": "kalpanaa-finance-backend",
+  "name": "kalpanaaa-finance-backend",
   "version": "1.0.0",
-  "description": "Express backend for Kalpanaa Finance",
+  "description": "Express backend for Kalpanaaa Finance",
   "main": "index.js",
   "scripts": {
     "start": "node index.js"

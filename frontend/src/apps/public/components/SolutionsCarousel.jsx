@@ -34,37 +34,43 @@ const staticSolutionsData = [
     id: '01',
     title: 'Digital Finance Platform',
     desc: 'Streamline your digital transactions with our robust and secure finance platform.',
-    image: '/service-digital-finance.jpg'
+    image: '/service-digital-finance.jpg',
+    link: '/services/digital-finance'
   },
   {
     id: '02',
     title: 'Loan Management',
     desc: 'End-to-end loan lifecycle management, ensuring compliance and efficiency.',
-    image: '/service-lending-credit.jpg'
+    image: '/service-lending-credit.jpg',
+    link: '/services/lending-credit'
   },
   {
     id: '03',
     title: 'Investment Management',
     desc: 'Grow your wealth with tailored investment strategies and expert guidance.',
-    image: '/service-investment-wealth.jpg'
+    image: '/service-investment-wealth.jpg',
+    link: '/services/investment-wealth'
   },
   {
     id: '04',
     title: 'Business Finance Management',
     desc: 'Comprehensive financial planning and analysis for corporate success.',
-    image: '/service-business-finance.jpg'
+    image: '/service-business-finance.jpg',
+    link: '/services/business-finance'
   },
   {
     id: '05',
     title: 'Risk Management',
     desc: 'Identify, assess, and mitigate financial risks with our advanced tools.',
-    image: '/service-risk-compliance.jpg'
+    image: '/service-risk-compliance.jpg',
+    link: '/services/risk-compliance'
   },
   {
     id: '06',
     title: 'Audit & Compliance',
     desc: 'Ensure full regulatory compliance with our thorough auditing services.',
-    image: '/service-digital-finance.jpg'
+    image: '/service-digital-finance.jpg',
+    link: '/services/risk-compliance'
   }
 ];
 
@@ -97,9 +103,10 @@ export const SolutionsCarousel = () => {
               className="flex gap-6 h-[75vh] items-center"
             >
               {staticSolutionsData.map((solution) => (
-                <div
+                <a
+                  href={solution.link}
                   key={solution.id}
-                  className="relative flex-shrink-0 w-[280px] md:w-[340px] lg:w-[400px] h-[65vh] rounded-2xl overflow-hidden group shadow-xl hover:shadow-2xl transition-all duration-500"
+                  className="relative flex-shrink-0 w-[280px] md:w-[340px] lg:w-[400px] h-[65vh] rounded-2xl overflow-hidden group shadow-xl hover:shadow-2xl transition-all duration-500 block cursor-pointer"
                 >
                   <img
                     src={solution.image}
@@ -117,11 +124,12 @@ export const SolutionsCarousel = () => {
                       </p>
                     </div>
                   </div>
-                </div>
+                </a>
               ))}
             </motion.div>
           </div>
         </div>
+
 
         {/* Left Text Panel — always on top */}
         <div className="relative z-20 w-[36%] flex-shrink-0 px-8 lg:px-16 flex flex-col justify-center">

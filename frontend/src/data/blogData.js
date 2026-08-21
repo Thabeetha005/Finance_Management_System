@@ -21,7 +21,7 @@ export const financialInsightsData = {
 export const companyUpdatesData = {
   title: 'Company Updates',
   category: 'COMPANY UPDATES',
-  description: 'Important announcements, achievements and updates from Kalpanaa Finance.',
+  description: 'Important announcements, achievements and updates from Kalpanaaa Finance.',
   heroImage: 'https://images.unsplash.com/photo-1497366216548-37526070297c?q=80&w=2069&auto=format&fit=crop',
   sidebarTitle: 'Recent Updates',
   viewAllLink: '/blog/company-updates',

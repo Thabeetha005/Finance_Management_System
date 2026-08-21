@@ -380,7 +380,7 @@ const CustomerProfilePage = () => {
                   <div className="space-y-1">
                     <h4 className="font-bold text-emerald-900 text-sm">✓ Your account is fully verified</h4>
                     <p className="text-xs text-emerald-800 leading-relaxed">
-                      Your identity documents (PAN / Aadhaar) and bank account have been reviewed and approved by Kalpanaa Finance compliance administrators. You have unlocked full access to instant loan processing, higher investment tiers, and wallet withdrawals.
+                      Your identity documents (PAN / Aadhaar) and bank account have been reviewed and approved by Kalpanaaa Finance compliance administrators. You have unlocked full access to instant loan processing, higher investment tiers, and wallet withdrawals.
                     </p>
                   </div>
                 </div>

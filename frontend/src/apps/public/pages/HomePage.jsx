@@ -97,7 +97,7 @@ const HomePage = () => {
           className="max-w-7xl mx-auto px-6 lg:px-8 relative z-[2] w-full flex flex-col items-start text-left mt-16 md:mt-24"
         >
           <motion.div variants={fadeInUp} className="inline-flex items-center px-4 py-1.5 rounded-full border border-white/20 bg-white/10 backdrop-blur-md mb-8">
-            <span className="text-xs font-bold tracking-widest uppercase text-white">Kalpanaa Finance</span>
+            <span className="text-xs font-bold tracking-widest uppercase text-white">Kalpanaaa Finance</span>
           </motion.div>
           
           <motion.h1 variants={fadeInUp} className="text-5xl md:text-7xl lg:text-[80px] font-extrabold tracking-tight text-white max-w-4xl leading-[1.1] mb-6">
@@ -129,7 +129,7 @@ const HomePage = () => {
                 Technology Designed Around Financial Operations
               </h2>
               <p className="text-gray-600 text-lg leading-relaxed mb-8">
-                Financial organizations require technology that is secure, reliable, scalable, and adaptable. Kalpanaa Finance combines software engineering capabilities with financial-domain workflows to create digital platforms that simplify operations, connect data, and support better decision-making.
+                Financial organizations require technology that is secure, reliable, scalable, and adaptable. Kalpanaaa Finance combines software engineering capabilities with financial-domain workflows to create digital platforms that simplify operations, connect data, and support better decision-making.
               </p>
               <Link to="/about" className="inline-flex items-center text-primary font-semibold hover:text-primary-light transition-colors">
                 Discover Our Approach <ArrowRight className="ml-2 w-4 h-4" />
@@ -238,7 +238,7 @@ const HomePage = () => {
         <SolutionsCarousel />
       </div>
 
-      {/* WHY Kalpanaa Finance */}
+      {/* WHY Kalpanaaa Finance */}
       <section className="py-24 bg-white border-t border-gray-100">
          <div className="max-w-7xl mx-auto px-6 lg:px-8">
             <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-16 text-center">Built for the Complexity of Finance</h2>

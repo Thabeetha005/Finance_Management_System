@@ -104,7 +104,7 @@ const DashboardLayout = () => {
         {/* Logo Area */}
         <div className="h-16 flex items-center justify-between px-6 border-b border-white/10">
           <Link to="/" className="flex items-center">
-            <img src="/kalpanaa-logo-new.png" alt="Kalpanaa" className="h-10 w-auto object-contain" />
+            <img src="/kalpanaaa-logo-new.png" alt="Kalpanaaa" className="h-10 w-auto object-contain" />
           </Link>
           <button className="lg:hidden text-gray-400" onClick={() => setSidebarOpen(false)}>
             <X className="w-5 h-5" />

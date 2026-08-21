@@ -55,7 +55,7 @@ export const categoryConfig = [
 
 const ServicesLandingPage = () => {
   useEffect(() => {
-    document.title = 'Our Services | Kalpanaa Finance';
+    document.title = 'Our Services | Kalpanaaa Finance';
     window.scrollTo(0, 0);
   }, []);
 
@@ -126,7 +126,12 @@ const ServicesLandingPage = () => {
             {categoryConfig.map((cat, idx) => {
               const IconComp = cat.icon;
               const categorySlug = cat.name.replace(/&/g, 'and').replace(/\s+/g, '-').toLowerCase();
-              const targetLink = cat.name === 'Digital Finance' ? '/services/digital-finance' : cat.name === 'Risk & Compliance' ? '/services/risk-compliance' : cat.name === 'Lending & Credit' ? '/services/lending-credit' : cat.name === 'Investment & Wealth' ? '/services/investment-wealth' : `/services/category/${categorySlug}`;
+              const targetLink = cat.name === 'Digital Finance' ? '/services/digital-finance' 
+                : cat.name === 'Risk & Compliance' ? '/services/risk-compliance' 
+                : cat.name === 'Lending & Credit' ? '/services/lending-credit' 
+                : cat.name === 'Investment & Wealth' ? '/services/investment-wealth' 
+                : cat.name === 'Business Finance' ? '/services/business-finance'
+                : `/services/category/${categorySlug}`;
               
               return (
                 <motion.div variants={fadeInUp} key={cat.name}>

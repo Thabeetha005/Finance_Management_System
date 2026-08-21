@@ -1,6 +1,6 @@
 # Walkthrough: Implementing Document Verification Frontend
 
-This walkthrough explains the frontend changes made to support the new BLOB-based Document Verification workflow in the Kalpanaa Finance application.
+This walkthrough explains the frontend changes made to support the new BLOB-based Document Verification workflow in the Kalpanaaa Finance application.
 
 ## 1. Customer Loan Wizard Document Upload
 **File:** `frontend/src/pages/customer/CustomerLoansPage.jsx`
@@ -41,15 +41,15 @@ The React app was successfully compiled using `npm run build`, ensuring no synta
 This walkthrough explains the backend changes made to support displaying a single current EMI and the EMI history.
 
 ## 1. Repository Enhancements
-**File:** `backend-java/src/main/java/com/kalpanaafinance/repository/LoanInstallmentRepository.java`
+**File:** `backend-java/src/main/java/com/kalpanaaafinance/repository/LoanInstallmentRepository.java`
 
 We introduced custom JPA methods to efficiently query EMIs:
 - `findFirstByLoanIdAndStatusInOrderByDueDateAsc`: Grabs the single most pressing EMI by filtering for actionable statuses (`PENDING`, `OVERDUE`, `PARTIALLY_PAID`) and sorting by due date.
 - `findByLoanIdAndStatusOrderByDueDateDesc`: Grabs the history of EMIs by finding those marked as `PAID`.
 
 ## 2. Customer Loan Controller
-**File:** `backend-java/src/main/java/com/kalpanaafinance/controller/LoanController.java`
-**File:** `backend-java/src/main/java/com/kalpanaafinance/entity/LoanInstallment.java`
+**File:** `backend-java/src/main/java/com/kalpanaaafinance/controller/LoanController.java`
+**File:** `backend-java/src/main/java/com/kalpanaaafinance/entity/LoanInstallment.java`
 
 Created a new `LoanController` specifically serving customer-facing EMI endpoints:
 - `GET /api/loans/{id}/current-emi`: Returns the next actionable EMI for a given loan ID.
@@ -57,7 +57,7 @@ Created a new `LoanController` specifically serving customer-facing EMI endpoint
 - To prevent Jackson from entering an infinite recursion loop between `Loan` and `LoanInstallment`, we added `@JsonIgnore` to the `loan` field in the `LoanInstallment` entity.
 
 ## 3. Admin User Controller
-**File:** `backend-java/src/main/java/com/kalpanaafinance/controller/AdminUserController.java`
+**File:** `backend-java/src/main/java/com/kalpanaaafinance/controller/AdminUserController.java`
 
 Refactored the `GET /api/admin/users/{userId}/loan-installments` endpoint to structure the data appropriately for the admin UI.
 - Instead of returning a raw list of all installments across all of a user's loans, it now calculates the most pressing `currentEmi` overall and aggregates the paid `history`, returning them as a JSON object: `{ currentEmi: ..., history: [...] }`.

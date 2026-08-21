@@ -9,12 +9,15 @@ import {
   Lock, Calendar, DollarSign, Clock, AlertCircle, Award
 } from 'lucide-react';
 
+import { toast } from 'react-hot-toast';
+
 const durationOptions = [
   { label: '6 Months', value: 6 },
   { label: '1 Year', value: 12 },
   { label: '3 Years', value: 36 },
   { label: '5 Years', value: 60 }
 ];
+
 
 const getIconForPlan = (name) => {
   switch (name) {
@@ -93,25 +96,32 @@ const CustomerInvestPage = () => {
   // Confirmation Mutation
   const confirmMutation = useMutation({
     mutationFn: async () => {
+      if (!selectedPlan) throw new Error('Please select an investment plan first.');
+      if (!investAmount || Number(investAmount) <= 0) throw new Error('Please enter a valid investment amount.');
+      
       const res = await api.post('/investments/confirm', {
-        planId: selectedPlan.id,
+        planId: Number(selectedPlan.id),
         investedAmount: Number(investAmount),
         durationMonths: Number(selectedDuration)
       });
       return res.data;
     },
     onSuccess: async () => {
+      toast.success('🎉 Investment created successfully!');
       setSuccessMsg('Investment created successfully!');
       setShowInvestModal(false);
       setSelectedPlan(null);
       queryClient.invalidateQueries(['myInvestments']);
       if (refreshBalance) await refreshBalance();
-      setTimeout(() => setSuccessMsg(''), 4000);
+      setTimeout(() => setSuccessMsg(''), 5000);
     },
     onError: (err) => {
-      setErrorMsg(err.response?.data?.message || err.response?.data?.errorCode || 'Investment failed');
+      const msg = err.response?.data?.message || err.response?.data?.errorCode || err.message || 'Investment failed';
+      toast.error(msg);
+      setErrorMsg(msg);
     }
   });
+
 
   // Redemption Mutation
   const redeemMutation = useMutation({

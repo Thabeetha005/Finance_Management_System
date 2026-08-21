@@ -22,7 +22,7 @@ const AboutPage = () => {
             animate={{ opacity: 1, y: 0 }}
             className="text-4xl md:text-6xl font-bold mb-6 tracking-tight"
           >
-            About Kalpanaa Finance
+            About Kalpanaaa Finance
           </motion.h1>
           <motion.p 
             initial={{ opacity: 0, y: 20 }}

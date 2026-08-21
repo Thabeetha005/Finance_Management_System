@@ -3,7 +3,7 @@ INSERT IGNORE INTO users (name, email, password_hash, role, balance, created_at,
 ('Alice Smith', 'alice@example.com', '$2a$10$93dk.v7w4VmpwShh8JtldeEpzKBWJ6UDZNcSOi7ScNBaY8BzaYwlS', 'CUSTOMER', 15000.00, NOW(), NOW()),
 ('Bob Jones', 'bob@example.com', '$2a$10$93dk.v7w4VmpwShh8JtldeEpzKBWJ6UDZNcSOi7ScNBaY8BzaYwlS', 'CUSTOMER', 2450.50, NOW(), NOW()),
 ('Charlie Brown', 'charlie@example.com', '$2a$10$93dk.v7w4VmpwShh8JtldeEpzKBWJ6UDZNcSOi7ScNBaY8BzaYwlS', 'CUSTOMER', 10200.75, NOW(), NOW()),
-('Admin User', 'admin@kalpanaafinance.com', '$2a$10$93dk.v7w4VmpwShh8JtldeEpzKBWJ6UDZNcSOi7ScNBaY8BzaYwlS', 'ADMIN', 0.00, NOW(), NOW());
+('Admin User', 'admin@kalpanaaafinance.com', '$2a$10$93dk.v7w4VmpwShh8JtldeEpzKBWJ6UDZNcSOi7ScNBaY8BzaYwlS', 'ADMIN', 0.00, NOW(), NOW());
 
 -- Seed accounts using subqueries keyed by email
 INSERT IGNORE INTO accounts (user_id, name, balance, type) 

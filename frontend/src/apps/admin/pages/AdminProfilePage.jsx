@@ -201,7 +201,7 @@ const AdminProfilePage = () => {
   const currentProfile = profile || {
     name: authUser?.name || 'Administrator',
     username: authUser?.username || 'admin',
-    email: authUser?.email || 'admin@kalpanaafinance.com',
+    email: authUser?.email || 'admin@kalpanaaafinance.com',
     phone: '+91 98765 43210',
     accountStatus: 'Active',
     role: 'ADMIN',
@@ -428,7 +428,7 @@ const AdminProfilePage = () => {
                     value={formData.email}
                     onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                     className="w-full pl-10 pr-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#106354] focus:border-transparent text-sm font-medium text-gray-900 bg-gray-50/30"
-                    placeholder="admin@kalpanaafinance.com"
+                    placeholder="admin@kalpanaaafinance.com"
                     required
                   />
                 </div>

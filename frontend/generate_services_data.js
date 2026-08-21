@@ -51,13 +51,13 @@ for (const [category, services] of Object.entries(categories)) {
       heroDescription: `Empower your financial future with our comprehensive ${title.toLowerCase()} platform, designed for modern scalability and uncompromising security.`,
       heroImage: "/finance_hero_bg_1786467171882.jpg", // default hero bg
       seo: {
-        title: `${title} | Kalpanaa Finance`,
-        description: `Discover how Kalpanaa Finance transforms ${title.toLowerCase()} with innovative, secure, and scalable financial solutions.`
+        title: `${title} | Kalpanaaa Finance`,
+        description: `Discover how Kalpanaaa Finance transforms ${title.toLowerCase()} with innovative, secure, and scalable financial solutions.`
       },
       introduction: {
         eyebrow: category.toUpperCase(),
         title: `Transform Your ${title.split(' ')[0]} Workflows`,
-        description: `Our ${title} services provide end-to-end visibility and control. Whether you're a scaling startup or an established enterprise, Kalpanaa Finance ensures your financial operations run smoothly, securely, and efficiently.`
+        description: `Our ${title} services provide end-to-end visibility and control. Whether you're a scaling startup or an established enterprise, Kalpanaaa Finance ensures your financial operations run smoothly, securely, and efficiently.`
       },
       features: [
         { title: "Real-time Dashboard", description: "Monitor all metrics in real-time.", icon: "Activity" },
@@ -91,7 +91,7 @@ for (const [category, services] of Object.entries(categories)) {
       relatedServices: related,
       cta: {
         title: `Ready to upgrade your ${title.toLowerCase()}?`,
-        description: "Join hundreds of forward-thinking businesses using Kalpanaa Finance.",
+        description: "Join hundreds of forward-thinking businesses using Kalpanaaa Finance.",
         primary: "Talk to Our Experts",
         secondary: "Explore Other Services"
       }

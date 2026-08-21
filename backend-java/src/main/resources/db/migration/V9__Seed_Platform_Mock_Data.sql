@@ -83,10 +83,10 @@ SELECT id, 'LOAN_APPLICATION', 'Applied for personal loan of 100,000', '2026-08-
 
 -- Insert Audit Logs using email-based subqueries
 INSERT IGNORE INTO audit_logs (admin_id, action, target_type, target_id, description, ip_address, created_at)
-SELECT u.id, 'ADMIN_LOGIN', 'USER', u.id, 'Admin successfully logged in', '192.168.1.100', '2026-08-13 09:00:00' FROM users u WHERE u.email = 'admin@kalpanaafinance.com' LIMIT 1;
+SELECT u.id, 'ADMIN_LOGIN', 'USER', u.id, 'Admin successfully logged in', '192.168.1.100', '2026-08-13 09:00:00' FROM users u WHERE u.email = 'admin@kalpanaaafinance.com' LIMIT 1;
 INSERT IGNORE INTO audit_logs (admin_id, action, target_type, target_id, description, ip_address, created_at)
 SELECT a.id, 'ADMIN_VIEWED_USER_PROFILE', 'USER', c.id, 'Admin viewed user profile', '192.168.1.100', '2026-08-13 09:15:00'
-FROM users a, users c WHERE a.email = 'admin@kalpanaafinance.com' AND c.email = 'alice@example.com' LIMIT 1;
+FROM users a, users c WHERE a.email = 'admin@kalpanaaafinance.com' AND c.email = 'alice@example.com' LIMIT 1;
 
 -- Insert Services
 INSERT IGNORE INTO services (title, description, image_url, features, benefits, cta, category, is_published) VALUES 

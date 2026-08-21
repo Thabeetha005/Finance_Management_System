@@ -5,7 +5,8 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import api from '../../../shared/api/axios';
 import { 
   ArrowLeft, Wallet, ArrowRightLeft, TrendingUp, CreditCard, PieChart, 
-  Activity, Shield, FileText, Landmark, Video, Users, Calendar, AlertCircle, MessageSquare, Trash2, X, CheckCircle
+  Activity, Shield, FileText, Landmark, Video, Users, Calendar, AlertCircle, MessageSquare, Trash2, X, CheckCircle,
+  Mail, EyeOff, Inbox
 } from 'lucide-react';
 import { PieChart as RePieChart, Pie, Cell, ResponsiveContainer, Tooltip as RechartsTooltip, Legend } from 'recharts';
 
@@ -686,6 +687,139 @@ const TabMessages = ({ userId }) => {
   );
 };
 
+const TabInbox = ({ userId }) => {
+  const [filter, setFilter] = useState('ALL');
+
+  const { data = [], isLoading } = useQuery({
+    queryKey: ['adminUserMessages', userId],
+    queryFn: async () => {
+      const res = await api.get(`/admin/users/${userId}/messages`);
+      return Array.isArray(res.data) ? res.data : [];
+    }
+  });
+
+  if (isLoading) return <div className="p-6 text-xs text-gray-500">Loading user inbox notifications...</div>;
+
+  const unreadCount = data.filter(m => !m.isRead).length;
+  const readCount = data.filter(m => m.isRead).length;
+
+  const filteredMessages = data.filter(m => {
+    if (filter === 'UNREAD') return !m.isRead;
+    if (filter === 'READ') return m.isRead;
+    return true;
+  });
+
+  const formatDateTime = (dtStr) => {
+    if (!dtStr) return 'N/A';
+    try {
+      return new Date(dtStr).toLocaleString('en-IN', {
+        day: '2-digit',
+        month: 'short',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
+      });
+    } catch (e) {
+      return String(dtStr);
+    }
+  };
+
+  return (
+    <div className="space-y-6">
+      {/* Header Card */}
+      <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+        <div>
+          <div className="flex items-center gap-2">
+            <h3 className="text-lg font-bold text-gray-900 flex items-center gap-2">
+              <Mail className="w-5 h-5 text-[#1b4d3e]" />
+              User Inbox & Notifications
+            </h3>
+            {unreadCount > 0 && (
+              <span className="px-2.5 py-0.5 text-xs font-bold bg-amber-500 text-white rounded-full">
+                {unreadCount} Unseen
+              </span>
+            )}
+          </div>
+          <p className="text-xs text-gray-500 mt-1">Audit log of all inbox notifications delivered to this customer and their seen/unseen status.</p>
+        </div>
+
+        {/* Filter Buttons */}
+        <div className="flex bg-gray-100 p-1 rounded-xl text-xs font-bold">
+          <button
+            onClick={() => setFilter('ALL')}
+            className={`px-3 py-1.5 rounded-lg transition-all ${filter === 'ALL' ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500 hover:text-gray-900'}`}
+          >
+            All ({data.length})
+          </button>
+          <button
+            onClick={() => setFilter('UNREAD')}
+            className={`px-3 py-1.5 rounded-lg transition-all ${filter === 'UNREAD' ? 'bg-white text-amber-800 shadow-sm' : 'text-gray-500 hover:text-gray-900'}`}
+          >
+            Unseen ({unreadCount})
+          </button>
+          <button
+            onClick={() => setFilter('READ')}
+            className={`px-3 py-1.5 rounded-lg transition-all ${filter === 'READ' ? 'bg-white text-emerald-800 shadow-sm' : 'text-gray-500 hover:text-gray-900'}`}
+          >
+            Seen ({readCount})
+          </button>
+        </div>
+      </div>
+
+      {/* Notifications List */}
+      <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+        {filteredMessages.length === 0 ? (
+          <div className="text-center py-12 text-gray-400 text-xs">
+            <Inbox className="w-8 h-8 mx-auto text-gray-300 mb-2 stroke-[1.5]" />
+            <p className="font-semibold text-gray-500">No inbox notifications found for this user.</p>
+          </div>
+        ) : (
+          <div className="space-y-4">
+            {filteredMessages.map((msg, i) => {
+              const isUnread = !msg.isRead;
+              return (
+                <div key={i} className={`p-4 border rounded-2xl transition-all ${isUnread ? 'bg-amber-50/40 border-amber-200' : 'bg-gray-50/60 border-gray-100'}`}>
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-2">
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <span className="text-[10px] font-extrabold px-2.5 py-0.5 bg-gray-200 text-gray-700 rounded-md uppercase tracking-wider">
+                        {msg.type || msg.messageType || msg.relatedEntityType || 'SYSTEM'}
+                      </span>
+                      <h4 className="font-bold text-sm text-gray-900">{msg.subject || 'Notification'}</h4>
+                    </div>
+
+                    {/* SEEN vs UNSEEN STATUS BADGE */}
+                    <div className="flex items-center gap-2">
+                      {isUnread ? (
+                        <span className="px-2.5 py-1 text-xs font-bold bg-amber-100 text-amber-800 border border-amber-200 rounded-full flex items-center gap-1">
+                          <EyeOff className="w-3.5 h-3.5 text-amber-600" />
+                          Unseen by Customer
+                        </span>
+                      ) : (
+                        <span className="px-2.5 py-1 text-xs font-bold bg-emerald-100 text-emerald-800 border border-emerald-200 rounded-full flex items-center gap-1">
+                          <CheckCircle className="w-3.5 h-3.5 text-emerald-600" />
+                          Seen {msg.readAt ? formatDateTime(msg.readAt) : ''}
+                        </span>
+                      )}
+                      <span className="text-xs text-gray-400 font-medium ml-1">
+                        Sent {formatDateTime(msg.createdAt)}
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Body Content */}
+                  <div className="p-3 bg-white rounded-xl border border-gray-100 text-xs text-gray-700 leading-relaxed font-medium whitespace-pre-wrap mt-2">
+                    {msg.messageContent || msg.message || msg.body || 'No message content.'}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
+
 const AdminUserDetails = () => {
   const { userId } = useParams();
   const [activeTab, setActiveTab] = useState('overview');
@@ -735,8 +869,10 @@ const AdminUserDetails = () => {
     { id: 'consultations', label: 'Consultations', icon: Video },
     { id: 'activity', label: 'Activity', icon: Activity },
     { id: 'documents', label: 'Documents', icon: FileText },
-    { id: 'messages', label: 'Messages', icon: MessageSquare }
+    { id: 'messages', label: 'Messages', icon: MessageSquare },
+    { id: 'inbox', label: 'Inbox', icon: Mail }
   ];
+
 
   return (
     <div className="space-y-6 max-w-7xl mx-auto">
@@ -809,6 +945,7 @@ const AdminUserDetails = () => {
           {activeTab === 'activity' && <TabActivity userId={userId} />}
           {activeTab === 'documents' && <TabDocuments userId={userId} />}
           {activeTab === 'messages' && <TabMessages userId={userId} />}
+          {activeTab === 'inbox' && <TabInbox userId={userId} />}
         </div>
       </div>
 

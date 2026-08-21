@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { CheckCircle, Clock, BarChart2, FileText, Calendar, TrendingUp } from 'lucide-react';
+import { CheckCircle, Clock, BarChart2, FileText, Calendar } from 'lucide-react';
 import api from '../../../shared/api/axios';
 
 const ConsultantReports = () => {
@@ -20,13 +20,30 @@ const ConsultantReports = () => {
     try {
       setLoading(true);
       const [dashRes, sessRes] = await Promise.all([
-        api.get('/consultant/dashboard'),
+        api.get('/consultant/dashboard').catch(() => ({ data: {} })),
         api.get('/consultant/sessions').catch(() => ({ data: [] }))
       ]);
-      if (dashRes.data?.stats) setStats(dashRes.data.stats);
-      if (Array.isArray(sessRes.data)) setSessions(sessRes.data);
+
+      const fetchedSessions = Array.isArray(sessRes.data) 
+        ? sessRes.data 
+        : (sessRes.data?.success ? sessRes.data.data : []);
+
+      setSessions(fetchedSessions);
+
+      // Compute live stats directly from sessions list as robust source of truth
+      const total = fetchedSessions.length;
+      const completed = fetchedSessions.filter(s => s.status === 'COMPLETED').length;
+      const upcoming = fetchedSessions.filter(s => s.status !== 'COMPLETED').length;
+      const pending = fetchedSessions.filter(s => s.status !== 'COMPLETED').length;
+
+      setStats({
+        totalSessions: dashRes.data?.stats?.totalSessions || total,
+        completedSessions: dashRes.data?.stats?.completedSessions || completed,
+        upcomingSessions: dashRes.data?.stats?.upcomingSessions || upcoming,
+        pendingReports: dashRes.data?.stats?.pendingReports || pending
+      });
     } catch (error) {
-      console.error('Failed to fetch reports:', error);
+      console.error('Failed to fetch reports data:', error);
     } finally {
       setLoading(false);
     }
@@ -35,21 +52,17 @@ const ConsultantReports = () => {
   if (loading) {
     return (
       <div className="flex justify-center items-center h-64">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#4E8B83]"></div>
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#1b4d3e]"></div>
       </div>
     );
   }
-
-  const completionRate = stats.totalSessions > 0
-    ? Math.round((stats.completedSessions / stats.totalSessions) * 100)
-    : 0;
 
   return (
     <div className="space-y-6 max-w-5xl mx-auto">
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold text-gray-900">Reports</h1>
-          <p className="text-sm text-gray-500 mt-0.5">Session performance and activity overview</p>
+          <p className="text-xs text-gray-500 mt-0.5">Session performance and activity overview</p>
         </div>
       </div>
 
@@ -100,67 +113,54 @@ const ConsultantReports = () => {
         </div>
       </div>
 
-      {/* Completion Rate */}
-      <div className="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm">
-        <div className="flex items-center justify-between mb-4">
-          <h2 className="text-base font-semibold text-gray-900 flex items-center gap-2">
-            <TrendingUp className="w-4 h-4 text-[#4E8B83]" />
-            Session Completion Rate
-          </h2>
-          <span className="text-sm font-bold text-[#4E8B83]">{completionRate}%</span>
-        </div>
-        <div className="w-full bg-gray-100 rounded-full h-3">
-          <div
-            className="bg-gradient-to-r from-[#4E8B83] to-[#D4AF37] h-3 rounded-full transition-all duration-700"
-            style={{ width: `${completionRate}%` }}
-          />
-        </div>
-        <p className="text-xs text-gray-400 mt-2">
-          {stats.completedSessions} of {stats.totalSessions} sessions completed
-        </p>
-      </div>
-
-      {/* Recent Sessions Table */}
+      {/* Recent Sessions Activity Table */}
       <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
-        <div className="px-6 py-4 border-b border-gray-50 flex items-center gap-2">
-          <FileText className="w-4 h-4 text-gray-400" />
-          <h2 className="text-base font-semibold text-gray-900">Recent Session Activity</h2>
+        <div className="px-6 py-4 border-b border-gray-100 flex items-center gap-2">
+          <FileText className="w-4 h-4 text-[#1b4d3e]" />
+          <h2 className="text-base font-bold text-gray-900">Recent Session Activity</h2>
         </div>
         {sessions.length === 0 ? (
-          <div className="text-center py-14 text-gray-400 text-sm">
+          <div className="text-center py-14 text-gray-400 text-xs">
             No sessions recorded yet.
           </div>
         ) : (
           <div className="overflow-x-auto">
-            <table className="w-full text-sm">
-              <thead className="bg-gray-50 text-xs text-gray-500 uppercase tracking-wider">
+            <table className="w-full text-xs">
+              <thead className="bg-gray-50 text-gray-700 uppercase font-bold tracking-wider">
                 <tr>
-                  <th className="px-6 py-3 text-left">Customer</th>
-                  <th className="px-6 py-3 text-left">Date</th>
-                  <th className="px-6 py-3 text-left">Type</th>
-                  <th className="px-6 py-3 text-left">Status</th>
+                  <th className="px-6 py-3.5 text-left">Customer</th>
+                  <th className="px-6 py-3.5 text-left">Date & Time</th>
+                  <th className="px-6 py-3.5 text-left">Type</th>
+                  <th className="px-6 py-3.5 text-left">Status</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-gray-50">
-                {sessions.slice(0, 10).map((s, i) => (
-                  <tr key={s.id || i} className="hover:bg-gray-50/50 transition-colors">
-                    <td className="px-6 py-3 font-medium text-gray-800">{s.customerName || s.userName || '—'}</td>
-                    <td className="px-6 py-3 text-gray-500">
-                      {s.scheduledDate ? new Date(s.scheduledDate).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' }) : '—'}
-                    </td>
-                    <td className="px-6 py-3 text-gray-500 capitalize">{s.type || s.sessionType || 'Consultation'}</td>
-                    <td className="px-6 py-3">
-                      <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                        s.status === 'COMPLETED' ? 'bg-green-100 text-green-700' :
-                        s.status === 'SCHEDULED' || s.status === 'UPCOMING' ? 'bg-blue-100 text-blue-700' :
-                        s.status === 'CANCELLED' ? 'bg-red-100 text-red-700' :
-                        'bg-gray-100 text-gray-600'
-                      }`}>
-                        {s.status || 'Unknown'}
-                      </span>
-                    </td>
-                  </tr>
-                ))}
+              <tbody className="divide-y divide-gray-100">
+                {sessions.slice(0, 10).map((s, i) => {
+                  const consultation = s.assignment?.consultation;
+                  const customerName = s.customerName || consultation?.user?.name || consultation?.user?.username || 'Client';
+                  const dateStr = s.scheduledDate || consultation?.preferredDate;
+                  const timeStr = consultation?.preferredTime;
+                  const type = s.type || consultation?.type || consultation?.communicationMethod || 'Consultation';
+                  const isCompleted = s.status === 'COMPLETED';
+
+                  return (
+                    <tr key={s.id || i} className="hover:bg-gray-50/50 transition-colors">
+                      <td className="px-6 py-3.5 font-bold text-gray-900">{customerName}</td>
+                      <td className="px-6 py-3.5 text-gray-600 font-medium">
+                        {dateStr ? new Date(dateStr).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' }) : 'N/A'}
+                        {timeStr ? ` (${timeStr})` : ''}
+                      </td>
+                      <td className="px-6 py-3.5 text-indigo-700 font-semibold capitalize">{type}</td>
+                      <td className="px-6 py-3.5">
+                        <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold ${
+                          isCompleted ? 'bg-emerald-100 text-emerald-800' : 'bg-blue-100 text-blue-800'
+                        }`}>
+                          {isCompleted ? 'COMPLETED' : 'SCHEDULED'}
+                        </span>
+                      </td>
+                    </tr>
+                  );
+                })}
               </tbody>
             </table>
           </div>

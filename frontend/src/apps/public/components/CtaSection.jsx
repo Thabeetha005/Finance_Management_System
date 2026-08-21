@@ -90,7 +90,7 @@ const CtaSection = () => {
               Upgrade Your <br />Financial Operations
             </h2>
             <p className="text-white/90 text-[13px] md:text-sm mb-8 leading-relaxed font-light px-4">
-              Schedule a consultation with Kalpanaa Finance to discuss your needs and learn how we can support your growth.
+              Schedule a consultation with Kalpanaaa Finance to discuss your needs and learn how we can support your growth.
             </p>
             
             <div className="flex flex-col sm:flex-row items-center gap-4">

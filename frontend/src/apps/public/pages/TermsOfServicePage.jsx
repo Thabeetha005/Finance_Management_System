@@ -5,18 +5,18 @@ const TermsOfServicePage = () => {
   return (
     <LegalPageTemplate
       title="Terms of Service"
-      subtitle="Terms governing your use of the Kalpanaa Finance platform and services."
+      subtitle="Terms governing your use of the Kalpanaaa Finance platform and services."
       lastUpdated="August 15, 2026"
     >
       <LegalSection number={1} title="Acceptance of Terms">
         <p>
-          By accessing or using the Kalpanaa Finance platform, website, or any of our provided services, you agree to be bound by these Terms of Service. If you do not agree to these terms, you may not access the platform or utilize our services.
+          By accessing or using the Kalpanaaa Finance platform, website, or any of our provided services, you agree to be bound by these Terms of Service. If you do not agree to these terms, you may not access the platform or utilize our services.
         </p>
       </LegalSection>
 
       <LegalSection number={2} title="About the Platform">
         <p>
-          Kalpanaa Finance provides digital financial services and technology-enabled financial management capabilities. Our platform serves as an interface for users to manage investments, apply for loans, conduct payments, and utilize digital wallet functionalities within the bounds of our service offerings.
+          Kalpanaaa Finance provides digital financial services and technology-enabled financial management capabilities. Our platform serves as an interface for users to manage investments, apply for loans, conduct payments, and utilize digital wallet functionalities within the bounds of our service offerings.
         </p>
       </LegalSection>
 
@@ -112,13 +112,13 @@ const TermsOfServicePage = () => {
 
       <LegalSection number={12} title="Financial Disclaimer">
         <p>
-          Kalpanaa Finance provides technology and access to financial products, but does not provide guaranteed financial returns. Financial products and investments involve inherent risks. You should carefully review all applicable product terms, risks, and documentation before making any financial decisions on the platform.
+          Kalpanaaa Finance provides technology and access to financial products, but does not provide guaranteed financial returns. Financial products and investments involve inherent risks. You should carefully review all applicable product terms, risks, and documentation before making any financial decisions on the platform.
         </p>
       </LegalSection>
 
       <LegalSection number={13} title="Limitation of Liability">
         <p>
-          To the maximum extent permitted by applicable law, Kalpanaa Finance shall not be liable for any indirect, incidental, special, consequential, or punitive damages, or any loss of profits or revenues, whether incurred directly or indirectly, or any loss of data, use, goodwill, or other intangible losses resulting from your access to or use of, or inability to access or use, our services.
+          To the maximum extent permitted by applicable law, Kalpanaaa Finance shall not be liable for any indirect, incidental, special, consequential, or punitive damages, or any loss of profits or revenues, whether incurred directly or indirectly, or any loss of data, use, goodwill, or other intangible losses resulting from your access to or use of, or inability to access or use, our services.
         </p>
       </LegalSection>
 

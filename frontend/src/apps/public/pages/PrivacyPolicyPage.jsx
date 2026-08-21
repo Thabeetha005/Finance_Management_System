@@ -5,12 +5,12 @@ const PrivacyPolicyPage = () => {
   return (
     <LegalPageTemplate
       title="Privacy Policy"
-      subtitle="How Kalpanaa Finance collects, uses, protects, and manages your information."
+      subtitle="How Kalpanaaa Finance collects, uses, protects, and manages your information."
       lastUpdated="August 15, 2026"
     >
       <LegalSection number={1} title="Introduction">
         <p>
-          Kalpanaa Finance ("we," "our," or "us") respects your privacy and is committed to protecting your personal and financial information. This Privacy Policy explains how we handle your data when you access our website and use our authenticated finance platform.
+          Kalpanaaa Finance ("we," "our," or "us") respects your privacy and is committed to protecting your personal and financial information. This Privacy Policy explains how we handle your data when you access our website and use our authenticated finance platform.
         </p>
       </LegalSection>
 
