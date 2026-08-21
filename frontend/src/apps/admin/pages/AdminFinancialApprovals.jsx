@@ -29,6 +29,14 @@ const AdminFinancialApprovals = () => {
   const [resolving, setResolving] = useState(false);
   const [resolveSuccessMsg, setResolveSuccessMsg] = useState('');
 
+  const toSafeArray = (resData) => {
+    if (!resData) return [];
+    if (Array.isArray(resData)) return resData;
+    if (Array.isArray(resData.data)) return resData.data;
+    if (Array.isArray(resData.content)) return resData.content;
+    return [];
+  };
+
   const fetchData = async () => {
     try {
       setLoading(true);
@@ -37,7 +45,7 @@ const AdminFinancialApprovals = () => {
         api.get('/admin/clients')
       ]);
 
-      const clientsList = Array.isArray(clientsRes.data) ? clientsRes.data : clientsRes.data?.content || [];
+      const clientsList = toSafeArray(clientsRes.data);
       const validClientEmails = new Set(clientsList.map(c => (c.email || '').toLowerCase()));
       const validClientIds = new Set(clientsList.map(c => c.id));
 
@@ -47,7 +55,7 @@ const AdminFinancialApprovals = () => {
         return lower.startsWith('customer a') || lower.startsWith('test customer') || lower.startsWith('wallet customer') || lower.startsWith('withdrawal customer');
       };
 
-      const rawLoans = Array.isArray(loansRes.data) ? loansRes.data : (loansRes.data?.content || loansRes.data?.data || []);
+      const rawLoans = toSafeArray(loansRes.data);
       const loansData = rawLoans
         .filter(loan => {
           if (!loan.user) return false;
@@ -75,7 +83,7 @@ const AdminFinancialApprovals = () => {
       let invData = [];
       try {
         const invRes = await api.get('/admin/investments');
-        const rawInv = Array.isArray(invRes.data) ? invRes.data : (invRes.data?.content || invRes.data?.data || []);
+        const rawInv = toSafeArray(invRes.data);
         invData = rawInv.map(inv => ({
           id: `INV-${inv.id}`,
           originalId: inv.id,
@@ -94,7 +102,7 @@ const AdminFinancialApprovals = () => {
       let withdrawalData = [];
       try {
         const wdRes = await api.get('/admin/withdrawals');
-        const rawWd = Array.isArray(wdRes.data) ? wdRes.data : (wdRes.data?.content || wdRes.data?.data || []);
+        const rawWd = toSafeArray(wdRes.data);
         withdrawalData = rawWd.map(wd => ({
           id: `WD-${wd.id}`,
           originalId: wd.id,
@@ -125,7 +133,7 @@ const AdminFinancialApprovals = () => {
       // Fetch Legacy Unverified Investments
       try {
         const legacyRes = await api.get('/admin/investments/legacy-unverified');
-        setLegacyInvestments(legacyRes.data || []);
+        setLegacyInvestments(toSafeArray(legacyRes.data));
       } catch (e) {
         console.warn("Could not fetch legacy investments", e);
       }
@@ -133,7 +141,7 @@ const AdminFinancialApprovals = () => {
       // Fetch Investment Plans for dropdown
       try {
         const plansRes = await api.get('/admin/investment-plans');
-        setPlans(plansRes.data || []);
+        setPlans(toSafeArray(plansRes.data));
       } catch (e) {
         console.warn("Could not fetch investment plans", e);
       }

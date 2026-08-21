@@ -81,6 +81,7 @@ public class AdminConsultationController {
 
     private final com.kalpanaaafinance.modules.shared.service.AuditService auditService;
 
+    @org.springframework.transaction.annotation.Transactional
     @PatchMapping("/{id}/approve")
     public ResponseEntity<Consultation> approve(@PathVariable Long id, org.springframework.security.core.Authentication auth) {
         Consultation consultation = repository.findById(id).orElseThrow();
@@ -95,6 +96,7 @@ public class AdminConsultationController {
         return ResponseEntity.ok(consultation);
     }
 
+    @org.springframework.transaction.annotation.Transactional
     @PatchMapping("/{id}/reject")
     public ResponseEntity<Consultation> reject(@PathVariable Long id, @RequestBody(required = false) java.util.Map<String, String> payload, org.springframework.security.core.Authentication auth) {
         Consultation consultation = repository.findById(id).orElseThrow();
@@ -110,6 +112,7 @@ public class AdminConsultationController {
         return ResponseEntity.ok(consultation);
     }
 
+    @org.springframework.transaction.annotation.Transactional
     @PatchMapping("/{id}/assign")
     public ResponseEntity<ConsultationAssignment> assign(@PathVariable Long id, @RequestBody ConsultationAssignmentRequest request, org.springframework.security.core.Authentication auth) {
         Consultation consultation = repository.findById(id).orElseThrow();
@@ -141,6 +144,7 @@ public class AdminConsultationController {
         return ResponseEntity.ok(assignment);
     }
 
+    @org.springframework.transaction.annotation.Transactional
     @PatchMapping("/{id}/approve-assignment")
     public ResponseEntity<ConsultationSession> approveAssignment(@PathVariable Long id) {
         Consultation consultation = repository.findById(id).orElseThrow();
@@ -162,6 +166,7 @@ public class AdminConsultationController {
         return ResponseEntity.ok(session);
     }
 
+    @org.springframework.transaction.annotation.Transactional
     @PatchMapping("/{id}/cancel")
     public ResponseEntity<Consultation> cancel(@PathVariable Long id) {
         Consultation consultation = repository.findById(id).orElseThrow();
@@ -169,13 +174,14 @@ public class AdminConsultationController {
         return ResponseEntity.ok(repository.save(consultation));
     }
 
+    @org.springframework.transaction.annotation.Transactional
     @PatchMapping("/{id}/reschedule")
     public ResponseEntity<Consultation> reschedule(@PathVariable Long id, @RequestBody java.util.Map<String, String> payload) {
         Consultation consultation = repository.findById(id).orElseThrow();
-        if (payload.containsKey("date")) {
+        if (payload != null && payload.containsKey("date") && payload.get("date") != null && !payload.get("date").trim().isEmpty()) {
             consultation.setPreferredDate(java.time.LocalDate.parse(payload.get("date")));
         }
-        if (payload.containsKey("time")) {
+        if (payload != null && payload.containsKey("time") && payload.get("time") != null && !payload.get("time").trim().isEmpty()) {
             consultation.setPreferredTime(payload.get("time"));
         }
         consultation.setStatus("RESCHEDULED");
@@ -187,6 +193,7 @@ public class AdminConsultationController {
     }
 
     private void createConsultationMessage(Consultation consultation, String subject, String body) {
+        if (consultation == null || consultation.getUser() == null) return;
         Message message = new Message();
         message.setRecipientUserId(consultation.getUser().getId());
         message.setSenderRole("ADMIN");

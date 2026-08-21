@@ -104,7 +104,18 @@ public class SupportTicketService {
         SupportTicket ticket = supportTicketRepository.findById(ticketId)
                 .orElseThrow(() -> new RuntimeException("Ticket not found"));
 
-        SupportTicket.TicketStatus status = SupportTicket.TicketStatus.valueOf(statusString);
+        SupportTicket.TicketStatus status;
+        try {
+            status = SupportTicket.TicketStatus.valueOf(statusString != null ? statusString.trim().toUpperCase() : "OPEN");
+        } catch (Exception e) {
+            if ("PROGRESS".equalsIgnoreCase(statusString) || "IN_PROGRESS".equalsIgnoreCase(statusString)) {
+                status = SupportTicket.TicketStatus.IN_PROGRESS;
+            } else if ("PENDING".equalsIgnoreCase(statusString) || "NEW".equalsIgnoreCase(statusString)) {
+                status = SupportTicket.TicketStatus.OPEN;
+            } else {
+                status = SupportTicket.TicketStatus.IN_PROGRESS;
+            }
+        }
         ticket.setStatus(status);
 
         if (status == SupportTicket.TicketStatus.RESOLVED || status == SupportTicket.TicketStatus.CLOSED) {
