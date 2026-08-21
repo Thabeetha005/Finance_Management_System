@@ -7,34 +7,51 @@ const AdminBlogCategories = () => {
   const [loading, setLoading] = useState(true);
 
   const [showForm, setShowForm] = useState(false);
+  const [editingId, setEditingId] = useState(null);
   const [formData, setFormData] = useState({
     name: '', type: 'LATEST_NEWS'
   });
 
-  useEffect(() => {
-    const fetchCategories = async () => {
-      try {
-        const data = await blogService.getAllCategories();
-        setCategories(Array.isArray(data) ? data : []);
-      } catch (err) {
-        console.error(err);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchCategories();
-  }, []);
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const fetchCategories = async () => {
     try {
-      await blogService.createCategory(formData);
-      setShowForm(false);
       const data = await blogService.getAllCategories();
       setCategories(Array.isArray(data) ? data : []);
     } catch (err) {
       console.error(err);
-      alert("Failed to create category");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchCategories();
+  }, []);
+
+  const resetForm = () => {
+    setEditingId(null);
+    setFormData({ name: '', type: 'LATEST_NEWS' });
+  };
+
+  const handleEdit = (category) => {
+    setEditingId(category.id);
+    setFormData({ name: category.name || '', type: category.type || 'LATEST_NEWS' });
+    setShowForm(true);
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      if (editingId) {
+        await blogService.updateCategory(editingId, formData);
+      } else {
+        await blogService.createCategory(formData);
+      }
+      setShowForm(false);
+      resetForm();
+      fetchCategories();
+    } catch (err) {
+      console.error(err);
+      alert(editingId ? "Failed to update category" : "Failed to create category");
     }
   };
 
@@ -58,7 +75,10 @@ const AdminBlogCategories = () => {
           <p className="text-gray-500 mt-1">Manage categories for different blog types.</p>
         </div>
         <button 
-          onClick={() => setShowForm(!showForm)}
+          onClick={() => {
+            if (showForm) resetForm();
+            setShowForm(!showForm);
+          }}
           className="flex items-center gap-2 bg-[#4E8B83] text-white px-4 py-2 rounded-lg font-medium hover:bg-[#3d6f69] transition-colors"
         >
           {showForm ? 'Cancel' : <><Plus className="w-4 h-4" /> Add Category</>}
@@ -67,6 +87,7 @@ const AdminBlogCategories = () => {
 
       {showForm && (
         <form onSubmit={handleSubmit} className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 space-y-4">
+          <h2 className="text-lg font-bold mb-2">{editingId ? 'Edit Category' : 'Create New Category'}</h2>
           <div className="grid grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Name</label>
@@ -81,7 +102,20 @@ const AdminBlogCategories = () => {
               </select>
             </div>
           </div>
-          <button type="submit" className="bg-[#4E8B83] text-white px-4 py-2 rounded-lg font-medium">Save Category</button>
+          <div className="flex gap-2">
+            <button type="submit" className="bg-[#4E8B83] text-white px-4 py-2 rounded-lg font-medium">
+              {editingId ? 'Update Category' : 'Save Category'}
+            </button>
+            {editingId && (
+              <button 
+                type="button" 
+                onClick={() => { resetForm(); setShowForm(false); }}
+                className="bg-gray-100 text-gray-700 px-4 py-2 rounded-lg font-medium hover:bg-gray-200"
+              >
+                Cancel Edit
+              </button>
+            )}
+          </div>
         </form>
       )}
 
@@ -122,10 +156,10 @@ const AdminBlogCategories = () => {
                       {new Date(category.createdAt).toLocaleDateString()}
                     </td>
                     <td className="px-6 py-4 text-right space-x-2">
-                      <button className="text-gray-400 hover:text-blue-600 transition-colors p-1">
+                      <button onClick={() => handleEdit(category)} className="text-gray-400 hover:text-blue-600 transition-colors p-1" title="Edit Category">
                         <Edit className="w-4 h-4" />
                       </button>
-                      <button onClick={() => handleDelete(category.id)} className="text-gray-400 hover:text-red-600 transition-colors p-1">
+                      <button onClick={() => handleDelete(category.id)} className="text-gray-400 hover:text-red-600 transition-colors p-1" title="Delete Category">
                         <Trash2 className="w-4 h-4" />
                       </button>
                     </td>

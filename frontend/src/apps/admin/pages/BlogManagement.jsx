@@ -8,6 +8,7 @@ const BlogManagement = () => {
   const [showForm, setShowForm] = useState(false);
   const [editingId, setEditingId] = useState(null);
   const [selectedCategory, setSelectedCategory] = useState('');
+  const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 5;
   const [formData, setFormData] = useState({
@@ -88,6 +89,12 @@ const BlogManagement = () => {
 
   const filteredBlogs = (Array.isArray(blogs) ? blogs : []).filter(blog => {
     if (selectedCategory && blog.category?.id !== Number(selectedCategory)) return false;
+    if (searchTerm.trim()) {
+      const q = searchTerm.toLowerCase();
+      const title = (blog.title || '').toLowerCase();
+      const excerpt = (blog.excerpt || '').toLowerCase();
+      return title.includes(q) || excerpt.includes(q);
+    }
     return true;
   });
 
@@ -119,6 +126,11 @@ const BlogManagement = () => {
             <input 
               type="text" 
               placeholder="Search blog title..."
+              value={searchTerm}
+              onChange={e => {
+                setSearchTerm(e.target.value);
+                setCurrentPage(1);
+              }}
               className="w-full pl-10 pr-4 py-2.5 bg-white border border-gray-200 rounded-lg text-[13px] focus:outline-none focus:ring-2 focus:ring-[#1E4A40]/20 focus:border-[#1E4A40] text-gray-800 placeholder-gray-400 transition-shadow shadow-sm"
             />
           </div>
@@ -237,7 +249,11 @@ const BlogManagement = () => {
                       </span>
                     </td>
                     <td className="px-6 py-4 text-right space-x-3">
-                      <button className="text-gray-500 hover:text-gray-800 transition-colors">
+                      <button 
+                        onClick={() => window.open(`/blog/post/${blog.id}`, '_blank')}
+                        className="text-gray-500 hover:text-gray-800 transition-colors cursor-pointer"
+                        title="View Published Blog Post"
+                      >
                         <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>
                       </button>
                       <button onClick={() => handleEdit(blog)} className="text-gray-500 hover:text-blue-600 transition-colors">
