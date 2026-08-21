@@ -25,6 +25,7 @@ public class AuthService {
     private final PasswordEncoder passwordEncoder;
     private final JwtUtils jwtUtils;
     private final AuthenticationManager authenticationManager;
+    private final AuditService auditService;
 
     public AuthResponse signup(SignUpRequest request) {
         if (userRepository.existsByEmail(request.getEmail())) {
@@ -65,6 +66,17 @@ public class AuthService {
             transactionRepository.save(tx);
         }
 
+        if (auditService != null) {
+            auditService.logAction(
+                    user.getEmail(),
+                    "USER_REGISTER",
+                    "USER",
+                    user.getId(),
+                    "New customer account registered: " + user.getName() + " with welcome bonus",
+                    "127.0.0.1"
+            );
+        }
+
         var jwtToken = jwtUtils.generateToken(user);
 
         return AuthResponse.builder()
@@ -92,6 +104,17 @@ public class AuthService {
         );
 
         var jwtToken = jwtUtils.generateToken(user);
+
+        if (auditService != null) {
+            auditService.logAction(
+                    user.getEmail(),
+                    "USER_LOGIN",
+                    "AUTH",
+                    user.getId(),
+                    "User authenticated successfully as " + user.getRole(),
+                    "127.0.0.1"
+            );
+        }
 
         return AuthResponse.builder()
                 .token(jwtToken)
