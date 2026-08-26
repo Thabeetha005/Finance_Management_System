@@ -126,18 +126,18 @@ public class LoanService {
 
         Loan savedLoan = loanRepository.save(loan);
 
-        // Automatic Document Reuse & Linking
-        List<Document> userVerifiedDocs = documentRepository.findByUserId(user.getId()).stream()
-                .filter(d -> "VERIFIED".equalsIgnoreCase(d.getVerificationStatus()) || "APPROVED".equalsIgnoreCase(d.getVerificationStatus()))
+        // Automatic Document Reuse & Linking (fetch all submitted and verified user documents)
+        List<Document> userDocs = documentRepository.findByUserId(user.getId()).stream()
+                .filter(d -> !"REJECTED".equalsIgnoreCase(d.getVerificationStatus()))
                 .toList();
 
-        for (Document verifiedDoc : userVerifiedDocs) {
-            applicationDocumentRepository.findByApplicationIdAndApplicationTypeAndDocumentType(savedLoan.getId(), "LOAN", verifiedDoc.getDocumentType())
+        for (Document doc : userDocs) {
+            applicationDocumentRepository.findByApplicationIdAndApplicationTypeAndDocumentType(savedLoan.getId(), "LOAN", doc.getDocumentType())
                     .orElseGet(() -> applicationDocumentRepository.save(ApplicationDocument.builder()
                             .applicationId(savedLoan.getId())
                             .applicationType("LOAN")
-                            .document(verifiedDoc)
-                            .documentType(verifiedDoc.getDocumentType())
+                            .document(doc)
+                            .documentType(doc.getDocumentType())
                             .isNewlyUploaded(false)
                             .build()));
         }

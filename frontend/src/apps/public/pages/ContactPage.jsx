@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Mail, Phone, MapPin, Clock, Send, CheckCircle2, MessageSquare, ShieldCheck, ArrowRight, HelpCircle } from 'lucide-react';
+import { Mail, Phone, MapPin, Clock, Send, CheckCircle2, MessageSquare, ShieldCheck, ArrowRight, HelpCircle, AlertCircle } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import api from '../../../shared/api/axios';
@@ -29,8 +29,7 @@ const ContactPage = () => {
       await api.post('/public/contact', formData);
       setSubmitted(true);
     } catch (err) {
-      // Even if offline, show friendly success feedback for public UX
-      setSubmitted(true);
+      setErrorMsg(err.response?.data?.message || 'Failed to submit inquiry. Please check your connection and try again.');
     } finally {
       setSubmitting(false);
     }
@@ -68,65 +67,14 @@ const ContactPage = () => {
       </section>
 
       {/* Main Container */}
-      <div className="max-w-7xl mx-auto px-6 lg:px-8 py-16">
-        {/* Contact Information Cards Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-16">
-          <motion.div 
-            whileHover={{ y: -5 }}
-            className="bg-white p-6 rounded-2xl border border-gray-100 shadow-[0_4px_20px_rgb(0,0,0,0.03)] flex flex-col items-start"
-          >
-            <div className="w-12 h-12 rounded-xl bg-emerald-50 text-emerald-700 flex items-center justify-center mb-4">
-              <MapPin className="w-6 h-6" />
-            </div>
-            <h3 className="font-bold text-gray-900 text-lg mb-1">Corporate HQ</h3>
-            <p className="text-gray-600 text-sm leading-relaxed">
-              Kalpanaaa Towers, Suite 802,<br />Bandra-Kurla Complex (BKC),<br />Mumbai, Maharashtra 400051
-            </p>
-          </motion.div>
-
-          <motion.div 
-            whileHover={{ y: -5 }}
-            className="bg-white p-6 rounded-2xl border border-gray-100 shadow-[0_4px_20px_rgb(0,0,0,0.03)] flex flex-col items-start"
-          >
-            <div className="w-12 h-12 rounded-xl bg-emerald-50 text-emerald-700 flex items-center justify-center mb-4">
-              <Phone className="w-6 h-6" />
-            </div>
-            <h3 className="font-bold text-gray-900 text-lg mb-1">Call Us Directly</h3>
-            <p className="text-gray-600 text-sm mb-1">+91 98765 43210</p>
-            <p className="text-gray-500 text-xs">Toll-Free: 1800-123-4567</p>
-          </motion.div>
-
-          <motion.div 
-            whileHover={{ y: -5 }}
-            className="bg-white p-6 rounded-2xl border border-gray-100 shadow-[0_4px_20px_rgb(0,0,0,0.03)] flex flex-col items-start"
-          >
-            <div className="w-12 h-12 rounded-xl bg-emerald-50 text-emerald-700 flex items-center justify-center mb-4">
-              <Mail className="w-6 h-6" />
-            </div>
-            <h3 className="font-bold text-gray-900 text-lg mb-1">Email Support</h3>
-            <p className="text-gray-600 text-sm mb-1">support@kalpanaaafinance.com</p>
-            <p className="text-gray-500 text-xs">info@kalpanaaafinance.com</p>
-          </motion.div>
-
-          <motion.div 
-            whileHover={{ y: -5 }}
-            className="bg-white p-6 rounded-2xl border border-gray-100 shadow-[0_4px_20px_rgb(0,0,0,0.03)] flex flex-col items-start"
-          >
-            <div className="w-12 h-12 rounded-xl bg-emerald-50 text-emerald-700 flex items-center justify-center mb-4">
-              <Clock className="w-6 h-6" />
-            </div>
-            <h3 className="font-bold text-gray-900 text-lg mb-1">Working Hours</h3>
-            <p className="text-gray-600 text-sm mb-1">Monday – Friday: 9:00 AM – 6:00 PM</p>
-            <p className="text-gray-500 text-xs">Saturday: 10:00 AM – 2:00 PM</p>
-          </motion.div>
-        </div>
-
-        {/* Contact Form & Side Highlights */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-16">
+        
+        {/* 1. Contact Form & Side Highlights (FIRST after Hero) */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start mb-16 sm:mb-20">
           {/* Form Area */}
-          <div className="lg:col-span-7 bg-white p-8 md:p-10 rounded-3xl border border-gray-100 shadow-[0_10px_40px_rgb(0,0,0,0.04)]">
+          <div className="lg:col-span-7 bg-white p-6 sm:p-8 md:p-10 rounded-3xl border border-gray-100 shadow-[0_10px_40px_rgb(0,0,0,0.04)]">
             <h2 className="text-2xl md:text-3xl font-bold text-[#05231e] mb-2">Send Us a Message</h2>
-            <p className="text-gray-600 text-sm mb-8">Fill out the form below and one of our wealth advisors will respond within 24 hours.</p>
+            <p className="text-gray-600 text-xs sm:text-sm mb-8">Fill out the form below and one of our wealth advisors will respond within 24 hours.</p>
 
             {submitted ? (
               <motion.div 
@@ -150,9 +98,15 @@ const ContactPage = () => {
               </motion.div>
             ) : (
               <form onSubmit={handleSubmit} className="space-y-6">
+                {errorMsg && (
+                  <div className="p-4 rounded-xl bg-red-50 border border-red-200 text-red-700 text-xs sm:text-sm flex items-center gap-2">
+                    <AlertCircle className="w-5 h-5 shrink-0 text-red-500" />
+                    <span>{errorMsg}</span>
+                  </div>
+                )}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
-                    <label className="block text-sm font-semibold text-gray-700 mb-2">Your Full Name *</label>
+                    <label className="block text-xs sm:text-sm font-semibold text-gray-700 mb-2">Your Full Name *</label>
                     <input 
                       type="text" 
                       name="name" 
@@ -160,11 +114,11 @@ const ContactPage = () => {
                       value={formData.name}
                       onChange={handleChange}
                       placeholder="e.g. Rahul Sharma"
-                      className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 text-sm transition-all"
+                      className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 text-xs sm:text-sm transition-all"
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-semibold text-gray-700 mb-2">Email Address *</label>
+                    <label className="block text-xs sm:text-sm font-semibold text-gray-700 mb-2">Email Address *</label>
                     <input 
                       type="email" 
                       name="email" 
@@ -172,30 +126,30 @@ const ContactPage = () => {
                       value={formData.email}
                       onChange={handleChange}
                       placeholder="e.g. rahul@example.com"
-                      className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 text-sm transition-all"
+                      className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 text-xs sm:text-sm transition-all"
                     />
                   </div>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
-                    <label className="block text-sm font-semibold text-gray-700 mb-2">Phone Number</label>
+                    <label className="block text-xs sm:text-sm font-semibold text-gray-700 mb-2">Phone Number</label>
                     <input 
                       type="tel" 
                       name="phone" 
                       value={formData.phone}
                       onChange={handleChange}
                       placeholder="+91 98765 43210"
-                      className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 text-sm transition-all"
+                      className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 text-xs sm:text-sm transition-all"
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-semibold text-gray-700 mb-2">Inquiry Topic</label>
+                    <label className="block text-xs sm:text-sm font-semibold text-gray-700 mb-2">Inquiry Topic</label>
                     <select 
                       name="category"
                       value={formData.category}
                       onChange={handleChange}
-                      className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 text-sm bg-white transition-all"
+                      className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 text-xs sm:text-sm bg-white transition-all"
                     >
                       <option value="General Inquiry">General Inquiry</option>
                       <option value="Investment Wealth">Investment & Wealth Advisory</option>
@@ -207,7 +161,7 @@ const ContactPage = () => {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-2">Subject *</label>
+                  <label className="block text-xs sm:text-sm font-semibold text-gray-700 mb-2">Subject *</label>
                   <input 
                     type="text" 
                     name="subject" 
@@ -215,12 +169,12 @@ const ContactPage = () => {
                     value={formData.subject}
                     onChange={handleChange}
                     placeholder="Brief summary of your request"
-                    className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 text-sm transition-all"
+                    className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 text-xs sm:text-sm transition-all"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-2">Message *</label>
+                  <label className="block text-xs sm:text-sm font-semibold text-gray-700 mb-2">Message *</label>
                   <textarea 
                     name="message" 
                     required
@@ -228,14 +182,14 @@ const ContactPage = () => {
                     value={formData.message}
                     onChange={handleChange}
                     placeholder="Please describe how we can help you..."
-                    className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 text-sm transition-all resize-none"
+                    className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 text-xs sm:text-sm transition-all resize-none"
                   ></textarea>
                 </div>
 
                 <button 
                   type="submit" 
                   disabled={submitting}
-                  className="w-full py-4 bg-[#05231e] text-white rounded-xl font-bold text-sm hover:bg-emerald-800 transition-all flex items-center justify-center shadow-lg shadow-[#05231e]/10"
+                  className="w-full py-3.5 sm:py-4 bg-[#05231e] text-white rounded-xl font-bold text-xs sm:text-sm hover:bg-emerald-800 transition-all flex items-center justify-center shadow-lg shadow-[#05231e]/10"
                 >
                   {submitting ? (
                     <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
@@ -251,25 +205,25 @@ const ContactPage = () => {
 
           {/* Side Info & FAQ Card */}
           <div className="lg:col-span-5 space-y-6">
-            <div className="bg-[#05231e] text-white p-8 rounded-3xl relative overflow-hidden shadow-xl">
+            <div className="bg-[#05231e] text-white p-6 sm:p-8 rounded-3xl relative overflow-hidden shadow-xl">
               <div className="absolute top-0 right-0 -mr-16 -mt-16 w-48 h-48 bg-emerald-500/10 rounded-full blur-2xl pointer-events-none" />
-              <h3 className="text-xl font-bold mb-4 flex items-center">
-                <MessageSquare className="w-5 h-5 text-emerald-400 mr-2" /> Prefer Direct Consultation?
+              <h3 className="text-lg sm:text-xl font-bold mb-3 sm:mb-4 flex items-center">
+                <MessageSquare className="w-5 h-5 text-emerald-400 mr-2 shrink-0" /> Prefer Direct Consultation?
               </h3>
-              <p className="text-gray-300 text-sm leading-relaxed mb-6">
+              <p className="text-gray-300 text-xs sm:text-sm leading-relaxed mb-5 sm:mb-6">
                 Book an exclusive 1-on-1 session with our senior financial advisors to build personalized wealth portfolios or resolve lending requirements.
               </p>
               <Link 
                 to="/consulting"
-                className="inline-flex items-center px-5 py-3 bg-emerald-500 text-[#05231e] font-bold rounded-xl text-sm hover:bg-emerald-400 transition-all shadow-md"
+                className="inline-flex items-center px-5 py-3 bg-emerald-500 text-[#05231e] font-bold rounded-xl text-xs sm:text-sm hover:bg-emerald-400 transition-all shadow-md"
               >
                 Book Advisory Session <ArrowRight className="ml-2 w-4 h-4" />
               </Link>
             </div>
 
-            <div className="bg-white p-8 rounded-3xl border border-gray-100 shadow-[0_10px_30px_rgb(0,0,0,0.03)]">
-              <h3 className="text-lg font-bold text-[#05231e] mb-4 flex items-center">
-                <ShieldCheck className="w-5 h-5 text-emerald-600 mr-2" /> Our Promise & Privacy
+            <div className="bg-white p-6 sm:p-8 rounded-3xl border border-gray-100 shadow-[0_10px_30px_rgb(0,0,0,0.03)]">
+              <h3 className="text-base sm:text-lg font-bold text-[#05231e] mb-4 flex items-center">
+                <ShieldCheck className="w-5 h-5 text-emerald-600 mr-2 shrink-0" /> Our Promise & Privacy
               </h3>
               <ul className="space-y-3 text-xs text-gray-600">
                 <li className="flex items-start">
@@ -288,6 +242,105 @@ const ContactPage = () => {
             </div>
           </div>
         </div>
+
+        {/* 2. Location & Contact Details Cards Section (SECOND, Follows Form) */}
+        <div>
+          <div className="text-center sm:text-left mb-6 sm:mb-8">
+            <span className="text-[#4E8B83] font-bold tracking-widest text-xs uppercase block mb-1">
+              LOCATION & CONTACT DETAILS
+            </span>
+            <h2 className="text-2xl sm:text-3xl font-bold text-[#05231e]">
+              Visit or Contact Our Office
+            </h2>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+            {/* Corporate HQ */}
+            <motion.div 
+              whileHover={{ y: -4 }}
+              className="bg-white p-5 sm:p-6 rounded-2xl border border-gray-100 shadow-[0_4px_20px_rgb(0,0,0,0.04)] flex flex-col justify-between"
+            >
+              <div>
+                <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-emerald-50 text-emerald-700 flex items-center justify-center mb-3 sm:mb-4">
+                  <MapPin className="w-5 h-5 sm:w-6 sm:h-6" />
+                </div>
+                <h3 className="font-bold text-gray-900 text-base sm:text-lg mb-1">Corporate HQ</h3>
+                <p className="text-gray-600 text-xs sm:text-sm leading-relaxed mb-3">
+                  Kalpanaaa Towers, Suite 802,<br />Bandra-Kurla Complex (BKC),<br />Mumbai, Maharashtra 400051
+                </p>
+              </div>
+              <a 
+                href="https://maps.google.com/?q=Bandra+Kurla+Complex+Mumbai" 
+                target="_blank" 
+                rel="noreferrer"
+                className="inline-flex items-center text-xs font-bold text-emerald-700 hover:text-emerald-800 transition-colors"
+              >
+                Get Directions →
+              </a>
+            </motion.div>
+
+            {/* Call Us Directly */}
+            <motion.div 
+              whileHover={{ y: -4 }}
+              className="bg-white p-5 sm:p-6 rounded-2xl border border-gray-100 shadow-[0_4px_20px_rgb(0,0,0,0.04)] flex flex-col justify-between"
+            >
+              <div>
+                <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-emerald-50 text-emerald-700 flex items-center justify-center mb-3 sm:mb-4">
+                  <Phone className="w-5 h-5 sm:w-6 sm:h-6" />
+                </div>
+                <h3 className="font-bold text-gray-900 text-base sm:text-lg mb-1">Call Us Directly</h3>
+                <p className="text-gray-600 text-xs sm:text-sm mb-1 font-semibold">+91 98765 43210</p>
+                <p className="text-gray-500 text-xs">Toll-Free: 1800-123-4567</p>
+              </div>
+              <a 
+                href="tel:+919876543210" 
+                className="inline-flex items-center text-xs font-bold text-emerald-700 hover:text-emerald-800 transition-colors mt-3"
+              >
+                Tap to Call →
+              </a>
+            </motion.div>
+
+            {/* Email Support */}
+            <motion.div 
+              whileHover={{ y: -4 }}
+              className="bg-white p-5 sm:p-6 rounded-2xl border border-gray-100 shadow-[0_4px_20px_rgb(0,0,0,0.04)] flex flex-col justify-between"
+            >
+              <div>
+                <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-emerald-50 text-emerald-700 flex items-center justify-center mb-3 sm:mb-4">
+                  <Mail className="w-5 h-5 sm:w-6 sm:h-6" />
+                </div>
+                <h3 className="font-bold text-gray-900 text-base sm:text-lg mb-1">Email Support</h3>
+                <p className="text-gray-600 text-xs sm:text-sm mb-1 font-medium break-all">support@kalpanaaafinance.com</p>
+                <p className="text-gray-500 text-xs break-all">info@kalpanaaafinance.com</p>
+              </div>
+              <a 
+                href="mailto:support@kalpanaaafinance.com" 
+                className="inline-flex items-center text-xs font-bold text-emerald-700 hover:text-emerald-800 transition-colors mt-3"
+              >
+                Send Email →
+              </a>
+            </motion.div>
+
+            {/* Working Hours */}
+            <motion.div 
+              whileHover={{ y: -4 }}
+              className="bg-white p-5 sm:p-6 rounded-2xl border border-gray-100 shadow-[0_4px_20px_rgb(0,0,0,0.04)] flex flex-col justify-between"
+            >
+              <div>
+                <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-emerald-50 text-emerald-700 flex items-center justify-center mb-3 sm:mb-4">
+                  <Clock className="w-5 h-5 sm:w-6 sm:h-6" />
+                </div>
+                <h3 className="font-bold text-gray-900 text-base sm:text-lg mb-1">Working Hours</h3>
+                <p className="text-gray-600 text-xs sm:text-sm mb-1">Mon – Fri: 9:00 AM – 6:00 PM</p>
+                <p className="text-gray-500 text-xs">Sat: 10:00 AM – 2:00 PM</p>
+              </div>
+              <span className="text-[11px] font-semibold text-emerald-600 mt-3 inline-block">
+                ● Support Active Today
+              </span>
+            </motion.div>
+          </div>
+        </div>
+
       </div>
     </div>
   );

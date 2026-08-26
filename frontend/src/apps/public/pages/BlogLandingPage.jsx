@@ -5,7 +5,8 @@ import { useQuery } from '@tanstack/react-query';
 import api from '../../../shared/api/axios';
 import { 
   Search, Calendar, Clock, ChevronRight, ArrowRight, 
-  Tag, TrendingUp, Newspaper, Building2, BookOpen, Share2, Eye
+  Tag, TrendingUp, Newspaper, Building2, BookOpen, Share2, Eye,
+  Filter, ChevronDown
 } from 'lucide-react';
 
 const fadeInUp = {
@@ -113,13 +114,13 @@ const BlogLandingPage = ({ initialType = 'LATEST_NEWS' }) => {
       </section>
 
       {/* ══════════════════════════════════════════════
-          TAB NAVIGATION & SEARCH BAR
+          TAB NAVIGATION, SEARCH BAR & FILTER DROPDOWN
       ══════════════════════════════════════════════ */}
       <section className="border-b border-gray-100 bg-gray-50/50 sticky top-20 z-30 backdrop-blur-md">
         <div className="max-w-7xl mx-auto px-6 lg:px-8 py-4 flex flex-col md:flex-row items-center justify-between gap-4">
           
           {/* Tabs */}
-          <div className="flex items-center gap-2 overflow-x-auto w-full md:w-auto pb-2 md:pb-0">
+          <div className="grid grid-cols-3 md:flex md:items-center gap-1.5 sm:gap-2 w-full md:w-auto">
             {tabTypes.map(tab => {
               const Icon = tab.icon;
               const isActive = activeTab === tab.id;
@@ -131,69 +132,49 @@ const BlogLandingPage = ({ initialType = 'LATEST_NEWS' }) => {
                     navigate(tab.path);
                   }}
                   className={`
-                    px-5 py-2.5 rounded-full text-xs font-bold transition-all flex items-center gap-2 whitespace-nowrap
+                    px-1.5 sm:px-4 md:px-5 py-2 md:py-2.5 rounded-full text-[10px] sm:text-xs font-bold transition-all flex items-center justify-center gap-1 sm:gap-2 whitespace-nowrap
                     ${isActive 
                       ? 'bg-[#106354] text-white shadow-md shadow-[#106354]/20' 
                       : 'bg-white text-gray-600 hover:bg-gray-100 border border-gray-200'}
                   `}
                 >
-                  <Icon className="w-4 h-4" />
-                  <span>{tab.label}</span>
+                  <Icon className="w-3.5 h-3.5 sm:w-4 sm:h-4 shrink-0" />
+                  <span className="truncate">{tab.label}</span>
                 </button>
               );
             })}
           </div>
 
-          {/* Search Box */}
-          <div className="relative w-full md:w-72">
-            <Search className="w-4 h-4 text-gray-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
-            <input
-              type="text"
-              placeholder="Search articles..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full bg-white border border-gray-200 rounded-full pl-10 pr-4 py-2 text-xs font-medium text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#106354] transition-all"
-            />
-          </div>
+          {/* Category Filter Dropdown */}
+          {categories.length > 0 && (
+            <div className="relative w-full sm:w-52 shrink-0">
+              <div className="absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none flex items-center gap-1.5 text-gray-400">
+                <Filter className="w-3.5 h-3.5 text-[#106354]" />
+              </div>
+              <select
+                value={selectedCategory}
+                onChange={(e) => setSelectedCategory(e.target.value)}
+                className="w-full bg-white border border-gray-200 rounded-full pl-9 pr-8 py-2 text-xs font-bold text-gray-800 appearance-none focus:outline-none focus:ring-2 focus:ring-[#106354] transition-all cursor-pointer shadow-xs"
+              >
+                <option value="ALL">All Categories</option>
+                {categories.map(cat => (
+                  <option key={cat.id || cat.name} value={cat.name}>
+                    {cat.name}
+                  </option>
+                ))}
+              </select>
+              <ChevronDown className="w-3.5 h-3.5 text-gray-400 absolute right-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+            </div>
+          )}
 
         </div>
       </section>
 
       {/* ══════════════════════════════════════════════
-          CATEGORY FILTERS & MAIN CONTENT
+          MAIN CONTENT
       ══════════════════════════════════════════════ */}
-      <section className="py-16 bg-white">
+      <section className="py-12 md:py-16 bg-white">
         <div className="max-w-7xl mx-auto px-6 lg:px-8">
-          
-          {/* Category Filter Pills */}
-          {categories.length > 0 && (
-            <div className="flex items-center gap-2 overflow-x-auto pb-6 mb-8 border-b border-gray-100">
-              <span className="text-xs font-bold text-gray-400 uppercase tracking-wider mr-2">Filter:</span>
-              <button
-                onClick={() => setSelectedCategory('ALL')}
-                className={`px-4 py-1.5 rounded-full text-xs font-bold transition-all ${
-                  selectedCategory === 'ALL'
-                    ? 'bg-[#12241F] text-white'
-                    : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-                }`}
-              >
-                All
-              </button>
-              {categories.map(cat => (
-                <button
-                  key={cat.id}
-                  onClick={() => setSelectedCategory(cat.name)}
-                  className={`px-4 py-1.5 rounded-full text-xs font-bold transition-all ${
-                    selectedCategory === cat.name
-                      ? 'bg-[#12241F] text-white'
-                      : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-                  }`}
-                >
-                  {cat.name}
-                </button>
-              ))}
-            </div>
-          )}
 
           {/* Loading Spinner */}
           {isLoading ? (

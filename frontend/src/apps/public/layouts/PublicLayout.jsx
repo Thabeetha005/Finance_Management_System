@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Outlet, Link, useLocation } from 'react-router-dom';
+import { Outlet, Link, useLocation, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Menu, X, ArrowRight, ChevronDown, Wallet, Gift, CheckCircle } from 'lucide-react';
+import { Menu, X, ArrowRight, ArrowLeft, ChevronDown, Wallet, Gift, CheckCircle } from 'lucide-react';
 import { useAuth } from '../../../shared/context/AuthContext';
 import { useQuery } from '@tanstack/react-query';
 import api from '../../../shared/api/axios';
@@ -60,6 +60,7 @@ const PublicLayout = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [expandedMobileCategory, setExpandedMobileCategory] = useState(null);
   const location = useLocation();
+  const navigate = useNavigate();
   const { user, isAuthenticated, logout, showBonusPopup, setShowBonusPopup } = useAuth();
 
   // Fetch live wallet balance from API (not stale auth context)
@@ -93,15 +94,16 @@ const PublicLayout = () => {
   const footerRef = useRef(null);
 
   useEffect(() => {
-    if (footerRef.current) {
-      const resizeObserver = new ResizeObserver(entries => {
-        for (let entry of entries) {
-          setFooterHeight(entry.target.offsetHeight);
-        }
-      });
-      resizeObserver.observe(footerRef.current);
-      return () => resizeObserver.disconnect();
-    }
+    const updateFooterHeight = () => {
+      if (footerRef.current && window.innerWidth >= 768) {
+        setFooterHeight(footerRef.current.offsetHeight);
+      } else {
+        setFooterHeight(0);
+      }
+    };
+    updateFooterHeight();
+    window.addEventListener('resize', updateFooterHeight);
+    return () => window.removeEventListener('resize', updateFooterHeight);
   }, []);
 
   return (
@@ -126,78 +128,102 @@ const PublicLayout = () => {
 
           <div className="hidden md:flex items-center gap-8">
             <nav className="flex items-center space-x-8">
-            <Link to="/services" className={`relative group/services h-full flex items-center py-6 -my-6 text-xs font-bold tracking-wider transition-colors hover:text-primary gap-1 ${location.pathname.startsWith('/services') ? 'text-primary' : 'text-white'}`}>
-              <span>SERVICES</span>
-              <span className="absolute -bottom-1 left-0 w-0 h-[2px] bg-[#4E8B83] transition-all duration-300 group-hover/services:w-full"></span>
-            </Link>
-
-            <div className="relative group h-full flex items-center py-6 -my-6">
-              <Link to="/consulting" className={`relative text-xs font-bold tracking-wider transition-colors hover:text-primary flex items-center gap-1 ${location.pathname === '/consulting' ? 'text-primary' : 'text-white'}`}>
-                <span>CONSULTING</span>
-                <span className="absolute -bottom-1 left-0 w-0 h-[2px] bg-[#4E8B83] transition-all duration-300 group-hover:w-full"></span>
+              {/* SERVICES */}
+              <Link 
+                to="/services" 
+                className={`relative group flex items-center text-xs font-bold tracking-wider transition-colors ${
+                  location.pathname.startsWith('/services') ? 'text-[#4E8B83]' : 'text-white hover:text-[#4E8B83]'
+                }`}
+              >
+                <span className="relative py-1">
+                  SERVICES
+                  <span className={`absolute bottom-0 left-0 h-[2.5px] bg-[#4E8B83] transition-all duration-300 ease-out rounded-full ${
+                    location.pathname.startsWith('/services') ? 'w-full' : 'w-0 group-hover:w-full'
+                  }`} />
+                </span>
               </Link>
-            </div>
 
-            <div className="relative group h-full flex items-center py-6 -my-6">
-              <Link to="/blog" className={`relative text-xs font-bold tracking-wider transition-colors hover:text-primary flex items-center gap-1 ${location.pathname.startsWith('/blog') ? 'text-primary' : 'text-white'}`}>
-                <span>BLOG</span>
-                <span className="absolute -bottom-1 left-0 w-0 h-[2px] bg-[#4E8B83] transition-all duration-300 group-hover:w-full"></span>
+              {/* CONSULTING */}
+              <Link 
+                to="/consulting" 
+                className={`relative group flex items-center text-xs font-bold tracking-wider transition-colors ${
+                  location.pathname === '/consulting' ? 'text-[#4E8B83]' : 'text-white hover:text-[#4E8B83]'
+                }`}
+              >
+                <span className="relative py-1">
+                  CONSULTING
+                  <span className={`absolute bottom-0 left-0 h-[2.5px] bg-[#4E8B83] transition-all duration-300 ease-out rounded-full ${
+                    location.pathname === '/consulting' ? 'w-full' : 'w-0 group-hover:w-full'
+                  }`} />
+                </span>
               </Link>
-              <div className="absolute top-full left-0 w-52 pt-1 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 transform translate-y-2 group-hover:translate-y-0 z-50">
-                <div className="bg-white shadow-2xl py-3 rounded-sm min-w-[200px]">
-                  {[
-                    { name: 'LATEST NEWS', path: '/blog/latest-news' },
-                    { name: 'FINANCIAL INSIGHTS', path: '/blog/insights' },
-                    { name: 'COMPANY UPDATES', path: '/blog/company-updates' }
-                  ].map(sub => (
-                    <Link key={sub.name} to={sub.path} className="flex items-center px-6 py-3 text-xs font-bold text-[#1A1A1A] hover:text-[#4E8B83] transition-all duration-300 relative group/link">
-                      <span className="absolute left-0 top-1/2 -translate-y-1/2 w-0 h-4 bg-[#4E8B83] transition-all duration-300 group-hover/link:w-1"></span>
-                      <span className="transform transition-transform duration-300 group-hover/link:translate-x-3">{sub.name}</span>
-                    </Link>
-                  ))}
+
+              {/* BLOG */}
+              <Link 
+                to="/blog" 
+                className={`relative group flex items-center text-xs font-bold tracking-wider transition-colors ${
+                  location.pathname.startsWith('/blog') ? 'text-[#4E8B83]' : 'text-white hover:text-[#4E8B83]'
+                }`}
+              >
+                <span className="relative py-1">
+                  BLOG
+                  <span className={`absolute bottom-0 left-0 h-[2.5px] bg-[#4E8B83] transition-all duration-300 ease-out rounded-full ${
+                    location.pathname.startsWith('/blog') ? 'w-full' : 'w-0 group-hover:w-full'
+                  }`} />
+                </span>
+              </Link>
+
+              {/* CONTACT */}
+              <Link 
+                to="/contact" 
+                className={`relative group flex items-center text-xs font-bold tracking-wider transition-colors ${
+                  location.pathname === '/contact' ? 'text-[#4E8B83]' : 'text-white hover:text-[#4E8B83]'
+                }`}
+              >
+                <span className="relative py-1">
+                  CONTACT
+                  <span className={`absolute bottom-0 left-0 h-[2.5px] bg-[#4E8B83] transition-all duration-300 ease-out rounded-full ${
+                    location.pathname === '/contact' ? 'w-full' : 'w-0 group-hover:w-full'
+                  }`} />
+                </span>
+              </Link>
+
+              {/* EXPLORE */}
+              <div className="relative group py-6 -my-6 flex items-center">
+                <button 
+                  className={`relative flex items-center gap-1 text-xs font-bold tracking-wider transition-colors ${
+                    ['/about', '/team', '/testimonials', '/faq'].includes(location.pathname) ? 'text-[#4E8B83]' : 'text-white hover:text-[#4E8B83]'
+                  }`}
+                >
+                  <span className="relative py-1">
+                    EXPLORE
+                    <span className={`absolute bottom-0 left-0 h-[2.5px] bg-[#4E8B83] transition-all duration-300 ease-out rounded-full ${
+                      ['/about', '/team', '/testimonials', '/faq'].includes(location.pathname) ? 'w-full' : 'w-0 group-hover:w-full'
+                    }`} />
+                  </span>
+                </button>
+                <div className="absolute top-full left-0 w-52 pt-1 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 transform translate-y-2 group-hover:translate-y-0 z-50">
+                  <div className="bg-white shadow-2xl py-3 rounded-sm min-w-[200px]">
+                    {[
+                      { name: 'ABOUT US', path: '/about' },
+                      { name: 'OUR TEAM', path: '/team' },
+                      { name: 'TESTIMONIALS', path: '/testimonials' },
+                      { name: 'FAQ', path: '/faq' }
+                    ].map(sub => (
+                      <Link key={sub.name} to={sub.path} className="flex items-center px-6 py-3 text-xs font-bold text-[#1A1A1A] hover:text-[#4E8B83] transition-all duration-300 relative group/link">
+                        <span className="absolute left-0 top-1/2 -translate-y-1/2 w-0 h-4 bg-[#4E8B83] transition-all duration-300 group-hover/link:w-1"></span>
+                        <span className="transform transition-transform duration-300 group-hover/link:translate-x-3">{sub.name}</span>
+                      </Link>
+                    ))}
+                  </div>
                 </div>
               </div>
-            </div>
-
-            <Link to="/contact" className={`relative group/contact h-full flex items-center py-6 -my-6 text-xs font-bold tracking-wider transition-colors hover:text-primary gap-1 ${location.pathname === '/contact' ? 'text-primary' : 'text-white'}`}>
-              <span>CONTACT</span>
-              <span className="absolute -bottom-1 left-0 w-0 h-[2px] bg-[#4E8B83] transition-all duration-300 group-hover/contact:w-full"></span>
-            </Link>
-
-            <div className="relative group h-full flex items-center py-6 -my-6">
-              <button className={`relative text-xs font-bold tracking-wider transition-colors hover:text-primary flex items-center gap-1 ${location.pathname.startsWith('/pages') ? 'text-primary' : 'text-white'}`}>
-                <span>EXPLORE</span>
-                <span className="absolute -bottom-1 left-0 w-0 h-[2px] bg-[#4E8B83] transition-all duration-300 group-hover:w-full"></span>
-              </button>
-              <div className="absolute top-full left-0 w-52 pt-1 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 transform translate-y-2 group-hover:translate-y-0 z-50">
-                <div className="bg-white shadow-2xl py-3 rounded-sm min-w-[200px]">
-                  {[
-                    { name: 'ABOUT US', path: '/about' },
-                    { name: 'OUR TEAM', path: '/team' },
-                    { name: 'TESTIMONIALS', path: '/testimonials' },
-                    { name: 'FAQ', path: '/faq' }
-                  ].map(sub => (
-                    <Link key={sub.name} to={sub.path} className="flex items-center px-6 py-3 text-xs font-bold text-[#1A1A1A] hover:text-[#4E8B83] transition-all duration-300 relative group/link">
-                      <span className="absolute left-0 top-1/2 -translate-y-1/2 w-0 h-4 bg-[#4E8B83] transition-all duration-300 group-hover/link:w-1"></span>
-                      <span className="transform transition-transform duration-300 group-hover/link:translate-x-3">{sub.name}</span>
-                    </Link>
-                  ))}
-                </div>
-              </div>
-            </div>
-
-          </nav>
+            </nav>
 
           <div className="hidden md:flex items-center gap-5 relative z-50">
             <Link 
               to="/login" 
-              className="text-xs font-bold tracking-wider text-white hover:text-[#4E8B83] transition-colors uppercase"
-            >
-              Sign Up
-            </Link>
-            <Link 
-              to="/login" 
-              className="inline-flex items-center justify-center px-6 py-2.5 text-xs font-bold tracking-wider text-white transition-all bg-primary rounded-full hover:bg-primary-hover uppercase"
+              className="inline-flex items-center justify-center px-6 py-2.5 text-xs font-bold tracking-wider text-white transition-all bg-primary rounded-full hover:bg-primary-hover uppercase shadow-md hover:shadow-emerald-900/40"
             >
               Log In
               <ArrowRight className="w-4 h-4 ml-2" />
@@ -206,7 +232,7 @@ const PublicLayout = () => {
         </div>
 
           <button 
-            className="md:hidden text-white"
+            className="md:hidden text-white p-2 rounded-xl hover:bg-white/10 min-w-[44px] min-h-[44px] flex items-center justify-center cursor-pointer touch-target"
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
           >
             {isMobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
@@ -214,62 +240,113 @@ const PublicLayout = () => {
         </div>
       </motion.header>
 
-      {/* Mobile Menu */}
-      {isMobileMenuOpen && (
-        <div className="fixed inset-0 z-40 bg-white pt-24 px-6 md:hidden overflow-y-auto pb-10">
-          <nav className="flex flex-col text-lg font-bold">
-            {/* Standard Links */}
-            <Link to="/" onClick={() => setIsMobileMenuOpen(false)} className="text-[#1A1A1A] py-4 border-b border-gray-100">Home</Link>
-            
-            {/* Services Accordion */}
-            <div className="border-b border-gray-100">
-              <button 
-                className="w-full py-4 flex items-center justify-between text-[#1A1A1A]"
-                onClick={() => setExpandedMobileCategory(expandedMobileCategory === 'services' ? null : 'services')}
-              >
-                Services
-                <ChevronDown className={`w-5 h-5 transition-transform ${expandedMobileCategory === 'services' ? 'rotate-180' : ''}`} />
-              </button>
-              
-              {/* Nested Categories */}
-              {expandedMobileCategory === 'services' && (
-                <div className="pl-4 pb-4 space-y-4 border-l-2 border-gray-100 ml-2 mt-2">
-                  <Link to="/services" onClick={() => setIsMobileMenuOpen(false)} className="block text-sm font-bold text-[#4E8B83] pb-2 border-b border-gray-100">
-                    All Services Overview →
-                  </Link>
-                  {megaMenuData.map((category) => {
-                    const slug = category.title.toLowerCase().replace(/ & /g, '-and-').replace(/ /g, '-');
-                    return (
-                      <Link 
-                        key={category.title} 
-                        to={`/services/category/${slug}`} 
-                        onClick={() => setIsMobileMenuOpen(false)}
-                        className="block w-full text-left py-2 text-[15px] font-bold text-[#1A1A1A] hover:text-[#4E8B83]"
-                      >
-                        {category.title}
-                      </Link>
-                    );
-                  })}
-                </div>
-              )}
-            </div>
-
-            <Link to="/solutions" onClick={() => setIsMobileMenuOpen(false)} className="text-[#1A1A1A] py-4 border-b border-gray-100">Solutions</Link>
-            <Link to="/industries" onClick={() => setIsMobileMenuOpen(false)} className="text-[#1A1A1A] py-4 border-b border-gray-100">Industries</Link>
-            <Link to="/features" onClick={() => setIsMobileMenuOpen(false)} className="text-[#1A1A1A] py-4 border-b border-gray-100">Features</Link>
-            <Link to="/about" onClick={() => setIsMobileMenuOpen(false)} className="text-[#1A1A1A] py-4 border-b border-gray-100">About</Link>
-            <Link to="/contact" onClick={() => setIsMobileMenuOpen(false)} className="text-[#1A1A1A] py-4 border-b border-gray-100">Contact</Link>
-
-            <Link 
-              to="/contact" 
-              className="inline-flex items-center justify-center px-6 py-4 mt-8 text-sm font-bold tracking-widest uppercase text-white bg-[#4E8B83] rounded shadow-lg"
+      {/* Mobile Right Dropdown Menu */}
+      <AnimatePresence>
+        {isMobileMenuOpen && (
+          <>
+            {/* Backdrop */}
+            <motion.div 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 bg-black/40 backdrop-blur-xs z-40 md:hidden"
               onClick={() => setIsMobileMenuOpen(false)}
+            />
+
+            {/* Floating Right Dropdown Card */}
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.95, y: -10 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: -10 }}
+              transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
+              className="fixed top-16 right-4 w-[calc(100vw-2rem)] max-w-sm bg-[#12241F] border border-[#4E8B83]/30 rounded-2xl shadow-[0_20px_50px_rgba(0,0,0,0.6)] z-50 p-4 text-white md:hidden max-h-[85vh] overflow-y-auto"
             >
-              Talk to Our Experts
-            </Link>
-          </nav>
-        </div>
-      )}
+              {/* Navigation Links */}
+              <nav className="flex flex-col space-y-1">
+                <Link 
+                  to="/services" 
+                  onClick={() => setIsMobileMenuOpen(false)} 
+                  className={`flex items-center justify-between px-4 py-3 rounded-xl transition-colors text-sm font-bold ${
+                    location.pathname.startsWith('/services') ? 'bg-[#106354] text-white' : 'hover:bg-white/5 text-gray-200 hover:text-white'
+                  }`}
+                >
+                  <span>Services</span>
+                  <ArrowRight className="w-4 h-4 text-[#4E8B83]" />
+                </Link>
+
+                <Link 
+                  to="/consulting" 
+                  onClick={() => setIsMobileMenuOpen(false)} 
+                  className={`flex items-center justify-between px-4 py-3 rounded-xl transition-colors text-sm font-bold ${
+                    location.pathname === '/consulting' ? 'bg-[#106354] text-white' : 'hover:bg-white/5 text-gray-200 hover:text-white'
+                  }`}
+                >
+                  <span>Consulting</span>
+                  <ArrowRight className="w-4 h-4 text-[#4E8B83]" />
+                </Link>
+
+                <Link 
+                  to="/blog" 
+                  onClick={() => setIsMobileMenuOpen(false)} 
+                  className={`flex items-center justify-between px-4 py-3 rounded-xl transition-colors text-sm font-bold ${
+                    location.pathname.startsWith('/blog') ? 'bg-[#106354] text-white' : 'hover:bg-white/5 text-gray-200 hover:text-white'
+                  }`}
+                >
+                  <span>Blog</span>
+                  <ArrowRight className="w-4 h-4 text-[#4E8B83]" />
+                </Link>
+
+                <Link 
+                  to="/contact" 
+                  onClick={() => setIsMobileMenuOpen(false)} 
+                  className={`flex items-center justify-between px-4 py-3 rounded-xl transition-colors text-sm font-bold ${
+                    location.pathname === '/contact' ? 'bg-[#106354] text-white' : 'hover:bg-white/5 text-gray-200 hover:text-white'
+                  }`}
+                >
+                  <span>Contact</span>
+                  <ArrowRight className="w-4 h-4 text-[#4E8B83]" />
+                </Link>
+
+                {/* Explore Submenu */}
+                <div className="pt-3 border-t border-white/10 mt-2">
+                  <span className="px-3 text-[10px] font-bold tracking-widest text-[#4E8B83] uppercase block mb-1.5">Explore Company</span>
+                  <div className="grid grid-cols-2 gap-1.5">
+                    {[
+                      { name: 'About Us', path: '/about' },
+                      { name: 'Our Team', path: '/team' },
+                      { name: 'Testimonials', path: '/testimonials' },
+                      { name: 'FAQ', path: '/faq' },
+                    ].map(sub => (
+                      <Link
+                        key={sub.name}
+                        to={sub.path}
+                        onClick={() => setIsMobileMenuOpen(false)}
+                        className={`px-3 py-2 rounded-lg text-xs font-semibold transition-colors ${
+                          location.pathname === sub.path ? 'bg-white/10 text-white font-bold' : 'text-gray-300 hover:text-white hover:bg-white/5'
+                        }`}
+                      >
+                        {sub.name}
+                      </Link>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Action CTA */}
+                <div className="pt-4 mt-2 border-t border-white/10">
+                  <Link 
+                    to="/login" 
+                    onClick={() => setIsMobileMenuOpen(false)} 
+                    className="w-full py-3 bg-[#106354] hover:bg-[#0a4b41] text-white font-bold text-xs tracking-wider uppercase rounded-xl flex items-center justify-center gap-2 shadow-lg transition-all"
+                  >
+                    <span>Log In</span>
+                    <ArrowRight className="w-4 h-4" />
+                  </Link>
+                </div>
+              </nav>
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
 
       {/* Desktop Sidebar Drawer */}
       {/* Overlay */}
@@ -398,10 +475,10 @@ const PublicLayout = () => {
       {/* FOOTER */}
       <footer
         ref={footerRef}
-        className="text-white fixed bottom-0 left-0 w-full z-0"
+        className="text-white relative md:fixed md:bottom-0 md:left-0 w-full z-0 pointer-events-auto"
         style={{
           backgroundImage: `url('/hero-bg.jpg?v=2')`,
-          backgroundAttachment: 'fixed',
+          backgroundAttachment: 'scroll',
           backgroundPosition: 'center',
           backgroundRepeat: 'no-repeat',
           backgroundSize: 'cover',
@@ -413,8 +490,8 @@ const PublicLayout = () => {
         {/* Main Footer */}
         <div className="relative z-10 max-w-6xl mx-auto px-6 lg:px-10 py-16 grid grid-cols-1 md:grid-cols-3 gap-12">
 
-          {/* Left: Logo & Tagline */}
-          <div className="flex flex-col gap-4">
+          {/* Left: Logo & Tagline (Hidden on mobile, visible on desktop) */}
+          <div className="hidden md:flex flex-col gap-4">
             <Link to="/" className="flex items-center gap-3">
               <img src="/kalpanaaa-logo-new.png" alt="Kalpanaaa Finance" className="h-9 md:h-12 w-auto object-contain object-left drop-shadow-md" />
             </Link>

@@ -79,12 +79,25 @@ public class AdminConsultationController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
+    private void validateModifiable(Consultation consultation) {
+        if (consultation == null) return;
+        String status = consultation.getStatus();
+        if ("COMPLETED".equalsIgnoreCase(status)) {
+            throw new IllegalStateException("Consultation is already completed and cannot be modified.");
+        }
+        if ("REJECTED".equalsIgnoreCase(status) || "CANCELLED".equalsIgnoreCase(status)) {
+            throw new IllegalStateException("Consultation is rejected or cancelled and cannot be modified.");
+        }
+    }
+
     private final com.kalpanaaafinance.modules.shared.service.AuditService auditService;
 
     @org.springframework.transaction.annotation.Transactional
     @PatchMapping("/{id}/approve")
-    public ResponseEntity<Consultation> approve(@PathVariable Long id, org.springframework.security.core.Authentication auth) {
+    public ResponseEntity<?> approve(@PathVariable Long id, org.springframework.security.core.Authentication auth) {
         Consultation consultation = repository.findById(id).orElseThrow();
+        validateModifiable(consultation);
+
         consultation.setStatus("APPROVED");
         consultation = repository.save(consultation);
 
@@ -98,8 +111,10 @@ public class AdminConsultationController {
 
     @org.springframework.transaction.annotation.Transactional
     @PatchMapping("/{id}/reject")
-    public ResponseEntity<Consultation> reject(@PathVariable Long id, @RequestBody(required = false) java.util.Map<String, String> payload, org.springframework.security.core.Authentication auth) {
+    public ResponseEntity<?> reject(@PathVariable Long id, @RequestBody(required = false) java.util.Map<String, String> payload, org.springframework.security.core.Authentication auth) {
         Consultation consultation = repository.findById(id).orElseThrow();
+        validateModifiable(consultation);
+
         consultation.setStatus("REJECTED");
         consultation = repository.save(consultation);
 
@@ -114,17 +129,19 @@ public class AdminConsultationController {
 
     @org.springframework.transaction.annotation.Transactional
     @PatchMapping("/{id}/assign")
-    public ResponseEntity<ConsultationAssignment> assign(@PathVariable Long id, @RequestBody ConsultationAssignmentRequest request, org.springframework.security.core.Authentication auth) {
+    public ResponseEntity<?> assign(@PathVariable Long id, @RequestBody ConsultationAssignmentRequest request, org.springframework.security.core.Authentication auth) {
         Consultation consultation = repository.findById(id).orElseThrow();
+        validateModifiable(consultation);
+
         ConsultantProfile consultant = consultantProfileRepository.findById(request.getConsultantId()).orElseThrow();
         
         ConsultationAssignment assignment = assignmentRepository.findTopByConsultationIdOrderByIdDesc(id).orElse(new ConsultationAssignment());
         assignment.setConsultation(consultation);
         assignment.setConsultant(consultant);
-        assignment.setStatus("PENDING_APPROVAL");
+        assignment.setStatus("ASSIGNED");
         assignment = assignmentRepository.save(assignment);
         
-        consultation.setStatus("CONSULTANT_ASSIGNED_PENDING_APPROVAL");
+        consultation.setStatus("SCHEDULED");
         consultation = repository.save(consultation);
 
         ConsultationAssignment finalAssignment = assignment;
@@ -137,6 +154,21 @@ public class AdminConsultationController {
 
         String consultantName = (consultant.getUser() != null && consultant.getUser().getName() != null) ? consultant.getUser().getName() : "Consultant #" + consultant.getId();
         createConsultationMessage(consultation, "Consultant Assigned", "Consultant " + consultantName + " has been assigned to your session.");
+
+        // Send notification to the consultant
+        if (consultant.getUser() != null) {
+            Message consultantMsg = new Message();
+            consultantMsg.setRecipientUserId(consultant.getUser().getId());
+            consultantMsg.setSenderRole("ADMIN");
+            consultantMsg.setSubject("New Consultation Assigned");
+            consultantMsg.setMessageContent("You have been assigned a new consultation session for " + 
+                (consultation.getUser() != null ? consultation.getUser().getName() : "a client") + 
+                " on " + consultation.getPreferredDate() + " at " + consultation.getPreferredTime() + ".");
+            consultantMsg.setMessageType(Message.MessageType.NOTIFICATION);
+            consultantMsg.setRelatedEntityType(Message.EntityType.CONSULTATION);
+            consultantMsg.setRelatedEntityId(consultation.getId());
+            messageRepository.save(consultantMsg);
+        }
         
         String email = auth != null ? auth.getName() : "admin@kalpanaaafinance.com";
         auditService.logAction(email, "CONSULTANT_ASSIGNED", "CONSULTATION", id, "Assigned consultant " + consultantName + " to consultation #" + id, "127.0.0.1");
@@ -149,7 +181,6 @@ public class AdminConsultationController {
     public ResponseEntity<ConsultationSession> approveAssignment(@PathVariable Long id) {
         Consultation consultation = repository.findById(id).orElseThrow();
         ConsultationAssignment assignment = assignmentRepository.findTopByConsultationIdOrderByIdDesc(id).orElseThrow();
-
         
         assignment.setStatus("APPROVED");
         assignment.setApprovedAt(LocalDateTime.now());
@@ -158,10 +189,12 @@ public class AdminConsultationController {
         consultation.setStatus("APPROVED");
         repository.save(consultation);
         
-        ConsultationSession session = new ConsultationSession();
-        session.setAssignment(assignment);
-        session.setStatus("SCHEDULED");
-        session = sessionRepository.save(session);
+        ConsultationSession session = sessionRepository.findByAssignmentId(assignment.getId()).orElseGet(() -> {
+            ConsultationSession newSession = new ConsultationSession();
+            newSession.setAssignment(assignment);
+            newSession.setStatus("SCHEDULED");
+            return sessionRepository.save(newSession);
+        });
         
         return ResponseEntity.ok(session);
     }
@@ -170,26 +203,49 @@ public class AdminConsultationController {
     @PatchMapping("/{id}/cancel")
     public ResponseEntity<Consultation> cancel(@PathVariable Long id) {
         Consultation consultation = repository.findById(id).orElseThrow();
+        validateModifiable(consultation);
+
         consultation.setStatus("CANCELLED");
         return ResponseEntity.ok(repository.save(consultation));
     }
 
     @org.springframework.transaction.annotation.Transactional
     @PatchMapping("/{id}/reschedule")
-    public ResponseEntity<Consultation> reschedule(@PathVariable Long id, @RequestBody java.util.Map<String, String> payload) {
+    public ResponseEntity<?> reschedule(@PathVariable Long id, @RequestBody java.util.Map<String, String> payload) {
         Consultation consultation = repository.findById(id).orElseThrow();
+        validateModifiable(consultation);
+
         if (payload != null && payload.containsKey("date") && payload.get("date") != null && !payload.get("date").trim().isEmpty()) {
-            consultation.setPreferredDate(java.time.LocalDate.parse(payload.get("date")));
+            java.time.LocalDate newDate = java.time.LocalDate.parse(payload.get("date"));
+            if (newDate.isBefore(java.time.LocalDate.now())) {
+                return ResponseEntity.badRequest().body("Cannot assign or reschedule to a past date. Please select today or an upcoming date.");
+            }
+            consultation.setPreferredDate(newDate);
         }
         if (payload != null && payload.containsKey("time") && payload.get("time") != null && !payload.get("time").trim().isEmpty()) {
             consultation.setPreferredTime(payload.get("time"));
         }
         consultation.setStatus("RESCHEDULED");
-        consultation = repository.save(consultation);
+        Consultation savedConsultation = repository.save(consultation);
 
-        createConsultationMessage(consultation, "Consultation Rescheduled", "Your consultation was rescheduled to " + consultation.getPreferredDate() + " at " + consultation.getPreferredTime() + ".");
+        createConsultationMessage(savedConsultation, "Consultation Rescheduled", "Your consultation was rescheduled to " + savedConsultation.getPreferredDate() + " at " + savedConsultation.getPreferredTime() + ".");
 
-        return ResponseEntity.ok(consultation);
+        // If a consultant is assigned, notify them of the reschedule as well
+        assignmentRepository.findTopByConsultationIdOrderByIdDesc(savedConsultation.getId()).ifPresent(assignment -> {
+            if (assignment.getConsultant() != null && assignment.getConsultant().getUser() != null) {
+                Message consultantMsg = new Message();
+                consultantMsg.setRecipientUserId(assignment.getConsultant().getUser().getId());
+                consultantMsg.setSenderRole("ADMIN");
+                consultantMsg.setSubject("Consultation Session Rescheduled");
+                consultantMsg.setMessageContent("Your session with " + (savedConsultation.getUser() != null ? savedConsultation.getUser().getName() : "Client") + " has been rescheduled to " + savedConsultation.getPreferredDate() + " at " + savedConsultation.getPreferredTime() + ".");
+                consultantMsg.setMessageType(Message.MessageType.NOTIFICATION);
+                consultantMsg.setRelatedEntityType(Message.EntityType.CONSULTATION);
+                consultantMsg.setRelatedEntityId(savedConsultation.getId());
+                messageRepository.save(consultantMsg);
+            }
+        });
+
+        return ResponseEntity.ok(savedConsultation);
     }
 
     private void createConsultationMessage(Consultation consultation, String subject, String body) {

@@ -94,7 +94,6 @@ const ConsultationManagement = () => {
                 <th className="px-6 py-4 font-medium">Topic / Date</th>
                 <th className="px-6 py-4 font-medium">Message / Notes</th>
                 <th className="px-6 py-4 font-medium">Consultant</th>
-                <th className="px-6 py-4 font-medium">Consultant Status</th>
                 <th className="px-6 py-4 font-medium">Client Seen Status</th>
                 <th className="px-6 py-4 font-medium">Status</th>
                 <th className="px-6 py-4 font-medium text-right">Actions</th>
@@ -107,7 +106,6 @@ const ConsultationManagement = () => {
                     <td className="px-6 py-4"><div className="h-4 bg-gray-200 animate-pulse rounded w-32 mb-2"></div></td>
                     <td className="px-6 py-4"><div className="h-4 bg-gray-200 animate-pulse rounded w-24 mb-2"></div></td>
                     <td className="px-6 py-4"><div className="h-4 bg-gray-200 animate-pulse rounded w-48"></div></td>
-                    <td className="px-6 py-4"><div className="h-4 bg-gray-200 animate-pulse rounded w-20"></div></td>
                     <td className="px-6 py-4"><div className="h-4 bg-gray-200 animate-pulse rounded w-20"></div></td>
                     <td className="px-6 py-4"><div className="h-4 bg-gray-200 animate-pulse rounded w-20"></div></td>
                     <td className="px-6 py-4"><div className="h-6 bg-gray-200 animate-pulse rounded-full w-20"></div></td>
@@ -149,15 +147,6 @@ const ConsultationManagement = () => {
                       )}
                     </td>
                     <td className="px-6 py-4">
-                      {cons.status === 'CONSULTANT_ASSIGNED_PENDING_APPROVAL' ? (
-                        <span className="text-xs font-medium text-amber-600">Pending Consultant</span>
-                      ) : cons.assignedConsultantName ? (
-                        <span className="text-xs font-medium text-emerald-600">Accepted</span>
-                      ) : (
-                        <span className="text-xs text-gray-400">-</span>
-                      )}
-                    </td>
-                    <td className="px-6 py-4">
                       {cons.adminActionTaken ? (
                         cons.clientSeenStatus ? (
                           <span className="text-xs font-medium text-emerald-600 flex items-center gap-1"><Check className="w-3 h-3" /> Seen</span>
@@ -183,30 +172,40 @@ const ConsultationManagement = () => {
                       </span>
                     </td>
                     <td className="px-6 py-4 text-right whitespace-nowrap min-w-[120px]">
-                      <select
-                        onChange={(e) => {
-                          if (e.target.value) {
-                            setModalState({ isOpen: true, action: e.target.value, consId: cons.id });
-                            e.target.value = ''; // Reset selection
-                          }
-                        }}
-                        className="bg-gray-50 border border-gray-200 text-gray-700 text-xs rounded-lg focus:ring-[#106354] focus:border-[#106354] block w-full p-2 outline-none cursor-pointer font-semibold"
-                        value=""
-                      >
-                        <option value="" disabled>Actions...</option>
-                        <option value="APPROVE">Approve</option>
-                        <option value="DENY">Deny / Cancel</option>
-                        <option value="RESCHEDULE">Reschedule</option>
-                        <option value="ASSIGN">
-                          {cons.assignedConsultantName ? 'Reassign / Change Consultant' : 'Assign Consultant'}
-                        </option>
-                      </select>
+                      {cons.status === 'COMPLETED' ? (
+                        <span className="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-bold bg-blue-50 text-blue-700 border border-blue-200">
+                          Completed
+                        </span>
+                      ) : (cons.status === 'REJECTED' || cons.status === 'CANCELLED') ? (
+                        <span className="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-bold bg-red-50 text-red-700 border border-red-200">
+                          {cons.status === 'CANCELLED' ? 'Cancelled' : 'Rejected'}
+                        </span>
+                      ) : (
+                        <select
+                          onChange={(e) => {
+                            if (e.target.value) {
+                              setModalState({ isOpen: true, action: e.target.value, consId: cons.id });
+                              e.target.value = ''; // Reset selection
+                            }
+                          }}
+                          className="bg-gray-50 border border-gray-200 text-gray-700 text-xs rounded-lg focus:ring-[#106354] focus:border-[#106354] block w-full p-2 outline-none cursor-pointer font-semibold"
+                          value=""
+                        >
+                          <option value="" disabled>Actions...</option>
+                          <option value="APPROVE">Approve</option>
+                          <option value="DENY">Deny / Cancel</option>
+                          <option value="RESCHEDULE">Reschedule</option>
+                          <option value="ASSIGN">
+                            {cons.assignedConsultantName ? 'Reassign / Change Consultant' : 'Assign Consultant'}
+                          </option>
+                        </select>
+                      )}
                     </td>
                   </tr>
                 ))
               ) : (
                 <tr>
-                  <td colSpan="8" className="px-6 py-12 text-center">
+                  <td colSpan="7" className="px-6 py-12 text-center">
                     <div className="flex flex-col items-center justify-center text-gray-500">
                       <Video className="w-12 h-12 text-gray-300 mb-3" />
                       <p className="text-base font-medium text-gray-900">No consultation requests</p>
@@ -287,6 +286,7 @@ const ConsultationManagement = () => {
                     <label className="block text-sm font-medium text-gray-700 mb-1">New Date</label>
                     <input 
                       type="date"
+                      min={new Date().toISOString().split('T')[0]}
                       className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-[#4E8B83] text-sm"
                       value={modalData.date}
                       onChange={(e) => setModalData({...modalData, date: e.target.value})}

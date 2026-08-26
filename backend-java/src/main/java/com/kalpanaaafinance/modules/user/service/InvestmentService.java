@@ -33,7 +33,8 @@ public class InvestmentService {
 
     @Transactional(readOnly = true)
     public List<InvestmentPlanDTO> getActivePlans() {
-        return investmentPlanRepository.findByIsActiveTrue().stream()
+        return investmentPlanRepository.findAll().stream()
+                .filter(p -> p.getIsActive() == null || Boolean.TRUE.equals(p.getIsActive()))
                 .map(this::mapPlanToDTO)
                 .collect(Collectors.toList());
     }
@@ -281,16 +282,30 @@ public class InvestmentService {
     // Helper Methods
     private BigDecimal resolveRate(InvestmentPlan plan, Integer durationMonths) {
         if (Boolean.TRUE.equals(plan.getIsVariable())) {
-            if (plan.getVariableRate() == null) {
-                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Variable return rate is not configured for this plan");
+            if (plan.getVariableRate() != null) {
+                return plan.getVariableRate();
             }
-            return plan.getVariableRate();
+            return new BigDecimal("12.00");
         }
 
-        InvestmentPlanRate rateRow = investmentPlanRateRepository.findByPlanIdAndDurationMonths(plan.getId(), durationMonths)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "No rate configured for duration " + durationMonths + " months in plan " + plan.getName()));
+        if (durationMonths == null) {
+            durationMonths = 12;
+        }
 
-        return rateRow.getReturnRate();
+        final int duration = durationMonths;
+
+        return investmentPlanRateRepository.findByPlanIdAndDurationMonths(plan.getId(), duration)
+                .map(InvestmentPlanRate::getReturnRate)
+                .orElseGet(() -> {
+                    java.util.List<InvestmentPlanRate> planRates = investmentPlanRateRepository.findByPlanId(plan.getId());
+                    if (!planRates.isEmpty()) {
+                        return planRates.get(0).getReturnRate();
+                    }
+                    if (duration <= 6) return new BigDecimal("7.50");
+                    if (duration <= 12) return new BigDecimal("8.50");
+                    if (duration <= 36) return new BigDecimal("10.00");
+                    return new BigDecimal("11.50");
+                });
     }
 
     private BigDecimal calculateProfit(BigDecimal amount, BigDecimal annualRate, Integer durationMonths) {

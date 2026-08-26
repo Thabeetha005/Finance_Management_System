@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Outlet, Link, useLocation } from 'react-router-dom';
+import React, { useState, useEffect, useRef } from 'react';
+import { Outlet, Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../../shared/context/AuthContext';
 import { useQuery } from '@tanstack/react-query';
 import api from '../../../shared/api/axios';
@@ -8,15 +8,37 @@ import Confetti from 'react-confetti';
 import { 
   Menu, X, Bell, Mail, ChevronDown, LogOut, HelpCircle, 
   User, LayoutDashboard, PieChart, Landmark, ArrowRightLeft, 
-  MessageSquare, FileText, Gift
+  MessageSquare, FileText, Gift, ArrowLeft
 } from 'lucide-react';
 
 const DashboardLayout = () => {
   const { user, logout, showBonusPopup, setShowBonusPopup } = useAuth();
   const location = useLocation();
+  const navigate = useNavigate();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [announcementsOpen, setAnnouncementsOpen] = useState(false);
   const [profileMenuOpen, setProfileMenuOpen] = useState(false);
+
+  const profileMenuRef = useRef(null);
+  const announcementsRef = useRef(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (profileMenuRef.current && !profileMenuRef.current.contains(event.target)) {
+        setProfileMenuOpen(false);
+      }
+      if (announcementsRef.current && !announcementsRef.current.contains(event.target)) {
+        setAnnouncementsOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    document.addEventListener('touchstart', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener('touchstart', handleClickOutside);
+    };
+  }, []);
 
   const { data: profile } = useQuery({
     queryKey: ['userProfile'],
@@ -142,11 +164,11 @@ const DashboardLayout = () => {
       {/* Main Content Area */}
       <div className="flex-1 flex flex-col min-w-0 h-screen overflow-hidden">
         
-        {/* Header */}
-        <header className="h-16 bg-white border-b border-gray-200 flex items-center justify-between px-4 lg:px-8 z-30">
+        {/* Sticky Header */}
+        <header className="sticky top-0 h-16 bg-white/95 backdrop-blur-md border-b border-gray-200 flex items-center justify-between px-4 lg:px-8 z-30 shrink-0 shadow-xs">
           <div className="flex items-center gap-4">
             <button 
-              className="p-1 -ml-1 rounded-md hover:bg-gray-100 lg:hidden"
+              className="p-2 -ml-1 rounded-lg hover:bg-gray-100 lg:hidden min-w-[44px] min-h-[44px] flex items-center justify-center cursor-pointer"
               onClick={() => setSidebarOpen(true)}
             >
               <Menu className="w-6 h-6 text-gray-600" />
@@ -157,7 +179,7 @@ const DashboardLayout = () => {
 
             
             <div className="flex items-center gap-3">
-              <div className="relative">
+              <div className="relative" ref={announcementsRef}>
                 <button 
                   onClick={handleOpenAnnouncements}
                   className="relative p-1.5 text-gray-500 hover:text-slate-800 transition-colors focus:outline-none"
@@ -172,8 +194,7 @@ const DashboardLayout = () => {
 
                 {announcementsOpen && (
                   <>
-                    <div className="fixed inset-0 z-40" onClick={() => setAnnouncementsOpen(false)}></div>
-                    <div className="absolute right-0 mt-2 w-80 bg-white rounded-xl shadow-lg border border-gray-100 z-50 overflow-hidden">
+                    <div className="fixed top-16 left-4 right-4 sm:left-auto sm:right-0 sm:top-auto sm:absolute sm:mt-2 w-auto sm:w-80 max-w-sm sm:max-w-none bg-white rounded-2xl sm:rounded-xl shadow-2xl sm:shadow-lg border border-gray-100 z-50 overflow-hidden mx-auto sm:mx-0">
                       <div className="px-4 py-3 border-b border-gray-100 bg-gray-50/50 flex justify-between items-center">
                         <h3 className="font-bold text-gray-800 text-sm">Announcements</h3>
                         <span className="text-xs bg-[#4E8B83] text-white px-2 py-0.5 rounded-full font-medium">{announcements.length}</span>
@@ -213,7 +234,7 @@ const DashboardLayout = () => {
             <div className="h-8 w-[1px] bg-gray-200 hidden sm:block"></div>
             <div className="flex items-center gap-3">
               {/* PROFILE USERNAME MENU DROPDOWN (SECTION 1 & 16) */}
-              <div className="relative">
+              <div className="relative" ref={profileMenuRef}>
                 <button
                   onClick={() => setProfileMenuOpen(!profileMenuOpen)}
                   className="flex items-center gap-2.5 p-1.5 rounded-xl hover:bg-gray-100 transition-all focus:outline-none cursor-pointer"
@@ -233,9 +254,7 @@ const DashboardLayout = () => {
                 </button>
 
                 {profileMenuOpen && (
-                  <>
-                    <div className="fixed inset-0 z-40" onClick={() => setProfileMenuOpen(false)}></div>
-                    <div className="absolute right-0 mt-2 w-72 bg-white rounded-2xl shadow-xl border border-gray-100 z-50 overflow-hidden text-left animate-in fade-in slide-in-from-top-2 duration-150">
+                  <div className="fixed top-16 left-4 right-4 sm:left-auto sm:right-0 sm:top-auto sm:absolute sm:mt-2 w-auto sm:w-72 max-w-sm sm:max-w-none bg-white rounded-2xl shadow-xl border border-gray-100 z-50 overflow-hidden text-left animate-in fade-in slide-in-from-top-2 duration-150 mx-auto sm:mx-0">
                       {/* Header Avatar / Info */}
                       <div className="p-4 border-b border-gray-100 bg-gradient-to-br from-emerald-50/50 via-white to-gray-50/30">
                         <div className="flex items-center gap-3 mb-2">
@@ -331,7 +350,6 @@ const DashboardLayout = () => {
                         </button>
                       </div>
                     </div>
-                  </>
                 )}
               </div>
             </div>
@@ -346,7 +364,7 @@ const DashboardLayout = () => {
       </div>
 
       <AnimatePresence>
-        {showBonusPopup && (location.pathname === '/dashboard' || location.pathname === '/profile/dashboard') && (
+        {showBonusPopup && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -364,15 +382,8 @@ const DashboardLayout = () => {
               initial={{ scale: 0.9, opacity: 0, y: 20 }}
               animate={{ scale: 1, opacity: 1, y: 0 }}
               exit={{ scale: 0.9, opacity: 0, y: 20 }}
-              className="bg-[#12241F] border border-[#887333]/30 rounded-xl max-w-md w-full p-8 text-center relative shadow-2xl"
+              className="bg-[#12241F] border border-[#887333]/30 rounded-2xl max-w-md w-full p-8 text-center relative shadow-2xl"
             >
-              <button
-                onClick={() => setShowBonusPopup(false)}
-                className="absolute top-4 right-4 text-gray-400 hover:text-white transition-colors"
-              >
-                <X className="w-6 h-6" />
-              </button>
-              
               <div className="w-20 h-20 bg-gradient-to-br from-[#887333] to-[#C5A85A] rounded-full mx-auto flex items-center justify-center mb-6 shadow-lg shadow-[#887333]/20">
                 <Gift className="w-10 h-10 text-[#12241F]" />
               </div>
@@ -382,14 +393,14 @@ const DashboardLayout = () => {
               </h2>
               
               <p className="text-gray-300 text-lg mb-8 font-light">
-                YOU GOT <span className="font-bold text-[#C5A85A]">₹1,00,000</span> AS A BONUS
+                YOU GOT <span className="font-bold text-[#C5A85A]">₹1,00,000</span> AS A WELCOME BONUS
               </p>
               
               <button
                 onClick={() => setShowBonusPopup(false)}
-                className="w-full bg-[#106354] hover:bg-[#0D5246] text-white py-3 rounded uppercase text-sm tracking-widest font-semibold transition-colors"
+                className="w-full bg-[#106354] hover:bg-[#0D5246] text-white py-3 rounded-xl uppercase text-sm tracking-widest font-semibold transition-colors shadow-lg cursor-pointer"
               >
-                Claim Now
+                Confirm
               </button>
             </motion.div>
           </motion.div>

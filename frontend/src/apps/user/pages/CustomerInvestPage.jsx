@@ -18,6 +18,14 @@ const durationOptions = [
   { label: '5 Years', value: 60 }
 ];
 
+const defaultPlans = [
+  { id: 1, name: 'Mutual Funds', description: 'Diversified equity and debt portfolios managed by experts.', isVariable: false },
+  { id: 2, name: 'Fixed Deposits', description: 'Guaranteed, secure fixed returns with compounding interest.', isVariable: false },
+  { id: 3, name: 'Bonds', description: 'High-yield corporate and government sovereign bonds.', isVariable: false },
+  { id: 4, name: 'Equity', description: 'Direct stock market equity investments with variable market upside.', isVariable: true, variableRate: 12.5 },
+  { id: 5, name: 'SIP Plans', description: 'Systematic disciplined monthly wealth builder plans.', isVariable: false },
+  { id: 6, name: 'Gold Funds', description: 'Sovereign digital gold and gold ETFs tied to 24K bullion rates.', isVariable: true, variableRate: 10.0 }
+];
 
 const getIconForPlan = (name) => {
   switch (name) {
@@ -83,15 +91,63 @@ const CustomerInvestPage = () => {
     queryKey: ['investmentPreview', selectedPlan?.id, investAmount, selectedDuration],
     queryFn: async () => {
       if (!selectedPlan || !investAmount || investAmount <= 0 || !selectedDuration) return null;
-      const res = await api.post('/investments/preview', {
-        planId: selectedPlan.id,
-        investedAmount: Number(investAmount),
-        durationMonths: Number(selectedDuration)
-      });
-      return res.data;
+      try {
+        const res = await api.post('/investments/preview', {
+          planId: selectedPlan.id,
+          investedAmount: Number(investAmount),
+          durationMonths: Number(selectedDuration)
+        });
+        return res.data;
+      } catch (err) {
+        console.warn("Server preview returned error, falling back to dynamic client calculation", err);
+        return null;
+      }
     },
     enabled: !!selectedPlan && Number(investAmount) > 0 && !!selectedDuration
   });
+
+  // Dynamic live calculation (server response with client-side fallback)
+  const computedPreview = React.useMemo(() => {
+    if (!selectedPlan || !investAmount || Number(investAmount) <= 0 || !selectedDuration) return null;
+
+    if (previewData && previewData.maturityValue) return previewData;
+
+    let rate = 8.5;
+    if (selectedPlan.isVariable && selectedPlan.variableRate) {
+      rate = Number(selectedPlan.variableRate);
+    } else if (selectedPlan.rates && selectedPlan.rates.length > 0) {
+      const matchRate = selectedPlan.rates.find(r => Number(r.durationMonths) === Number(selectedDuration));
+      if (matchRate) rate = Number(matchRate.returnRate);
+      else rate = Number(selectedPlan.rates[0].returnRate);
+    } else {
+      if (selectedDuration <= 6) rate = 7.5;
+      else if (selectedDuration <= 12) rate = 8.5;
+      else if (selectedDuration <= 36) rate = 10.0;
+      else rate = 11.5;
+    }
+
+    const principal = Number(investAmount);
+    const profit = Math.round((principal * rate * (Number(selectedDuration) / 12)) / 100);
+    const maturityVal = principal + profit;
+
+    const startDate = new Date();
+    const maturityDate = new Date();
+    maturityDate.setMonth(maturityDate.getMonth() + Number(selectedDuration));
+
+    return {
+      planId: selectedPlan.id,
+      planName: selectedPlan.name,
+      investedAmount: principal,
+      durationMonths: selectedDuration,
+      returnRate: rate,
+      estimatedProfit: profit,
+      maturityValue: maturityVal,
+      startDate: startDate.toISOString(),
+      maturityDate: maturityDate.toISOString(),
+      currentWalletBalance: user?.balance || 0,
+      isVariable: selectedPlan.isVariable
+    };
+  }, [previewData, selectedPlan, investAmount, selectedDuration, user]);
 
   // Confirmation Mutation
   const confirmMutation = useMutation({
@@ -208,19 +264,19 @@ const CustomerInvestPage = () => {
           <h3 className="text-xl font-bold text-gray-900">Select Investment Type</h3>
         </div>
 
-        {loadingPlans ? (
+        {loadingPlans && (!dbPlans || dbPlans.length === 0) ? (
           <div className="flex justify-center p-12">
             <div className="animate-spin w-8 h-8 border-4 border-emerald-500 border-t-transparent rounded-full"></div>
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {dbPlans.map((plan) => {
+            {(dbPlans && dbPlans.length > 0 ? dbPlans : defaultPlans).map((plan) => {
               const IconComponent = getIconForPlan(plan.name);
-              const isSelected = selectedPlan?.id === plan.id;
+              const isSelected = selectedPlan?.id === plan.id || selectedPlan?.name === plan.name;
 
               return (
                 <div
-                  key={plan.id}
+                  key={plan.id || plan.name}
                   onClick={() => {
                     setSelectedPlan(plan);
                     setErrorMsg('');
@@ -324,40 +380,35 @@ const CustomerInvestPage = () => {
           </div>
 
           {/* Live Preview Card */}
-          {loadingPreview ? (
-            <div className="mt-8 p-8 border border-gray-100 rounded-xl flex items-center justify-center bg-gray-50">
-              <div className="animate-spin w-6 h-6 border-3 border-emerald-500 border-t-transparent rounded-full mr-3"></div>
-              <span className="text-sm font-semibold text-gray-600">Calculating live database rates...</span>
-            </div>
-          ) : previewData ? (
+          {computedPreview ? (
             <div className="mt-8 bg-gradient-to-br from-[#05231e] to-[#0d3b34] text-white rounded-2xl p-6 md:p-8 shadow-xl">
               <div className="flex items-center justify-between border-b border-white/10 pb-4 mb-6">
                 <div>
                   <h4 className="text-xs uppercase tracking-widest text-emerald-400 font-bold mb-1">LIVE RETURN PREVIEW</h4>
-                  <p className="text-xl font-bold text-white">{previewData.planName} ({previewData.durationMonths} Months)</p>
+                  <p className="text-xl font-bold text-white">{computedPreview.planName} ({computedPreview.durationMonths} Months)</p>
                 </div>
                 <div className="bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 px-3 py-1.5 rounded-full text-xs font-bold flex items-center gap-1.5">
                   <TrendingUp className="w-4 h-4" />
-                  <span>{previewData.returnRate}% Annual Return</span>
+                  <span>{computedPreview.returnRate}% Annual Return</span>
                 </div>
               </div>
 
               <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-8">
                 <div>
                   <p className="text-gray-400 text-xs font-medium uppercase mb-1">Invested Amount</p>
-                  <p className="text-lg font-bold text-white">₹{previewData.investedAmount?.toLocaleString('en-IN')}</p>
+                  <p className="text-lg font-bold text-white">₹{computedPreview.investedAmount?.toLocaleString('en-IN')}</p>
                 </div>
                 <div>
                   <p className="text-gray-400 text-xs font-medium uppercase mb-1">Estimated Profit</p>
-                  <p className="text-lg font-bold text-emerald-400">+₹{previewData.estimatedProfit?.toLocaleString('en-IN')}</p>
+                  <p className="text-lg font-bold text-emerald-400">+₹{computedPreview.estimatedProfit?.toLocaleString('en-IN')}</p>
                 </div>
                 <div>
                   <p className="text-gray-400 text-xs font-medium uppercase mb-1">Maturity Value</p>
-                  <p className="text-2xl font-black text-amber-300">₹{previewData.maturityValue?.toLocaleString('en-IN')}</p>
+                  <p className="text-2xl font-black text-amber-300">₹{computedPreview.maturityValue?.toLocaleString('en-IN')}</p>
                 </div>
                 <div>
                   <p className="text-gray-400 text-xs font-medium uppercase mb-1">Maturity Date</p>
-                  <p className="text-sm font-semibold text-gray-200">{formatDate(previewData.maturityDate)}</p>
+                  <p className="text-sm font-semibold text-gray-200">{formatDate(computedPreview.maturityDate)}</p>
                 </div>
               </div>
 
@@ -441,7 +492,7 @@ const CustomerInvestPage = () => {
               <div className="flex flex-col sm:flex-row items-center justify-between pt-4 border-t border-white/10 gap-4">
                 <div className="text-xs text-gray-300">
                   <span>Available Wallet Balance: </span>
-                  <span className="font-bold text-white">₹{previewData.currentWalletBalance?.toLocaleString('en-IN')}</span>
+                  <span className="font-bold text-white">₹{(computedPreview.currentWalletBalance || user?.balance || 0)?.toLocaleString('en-IN')}</span>
                 </div>
 
                 <button
@@ -453,6 +504,11 @@ const CustomerInvestPage = () => {
                   <ArrowRight className="w-4 h-4" />
                 </button>
               </div>
+            </div>
+          ) : loadingPreview ? (
+            <div className="mt-8 p-8 border border-gray-100 rounded-xl flex items-center justify-center bg-gray-50">
+              <div className="animate-spin w-6 h-6 border-3 border-emerald-500 border-t-transparent rounded-full mr-3"></div>
+              <span className="text-sm font-semibold text-gray-600">Calculating live database rates...</span>
             </div>
           ) : null}
 

@@ -1,8 +1,10 @@
 package com.kalpanaaafinance.config;
 
 import com.kalpanaaafinance.modules.shared.entity.InvestmentPlan;
+import com.kalpanaaafinance.modules.shared.entity.InvestmentPlanRate;
 import com.kalpanaaafinance.modules.shared.entity.Role;
 import com.kalpanaaafinance.modules.shared.entity.User;
+import com.kalpanaaafinance.modules.shared.repository.InvestmentPlanRateRepository;
 import com.kalpanaaafinance.modules.shared.repository.InvestmentPlanRepository;
 import com.kalpanaaafinance.modules.shared.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -20,6 +22,7 @@ import java.util.List;
 public class DatabaseSeeder implements CommandLineRunner {
 
     private final InvestmentPlanRepository investmentPlanRepository;
+    private final InvestmentPlanRateRepository investmentPlanRateRepository;
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
 
@@ -71,6 +74,23 @@ public class DatabaseSeeder implements CommandLineRunner {
                 InvestmentPlan.builder().name("Gold Funds").isVariable(true).variableRate(new BigDecimal("10.00")).description("Digital gold and ETFs").createdAt(LocalDateTime.now()).build()
             );
             investmentPlanRepository.saveAll(plans);
+        }
+
+        // Seed rates for any plans that don't have rates & ensure isActive is true
+        List<InvestmentPlan> existingPlans = investmentPlanRepository.findAll();
+        for (InvestmentPlan p : existingPlans) {
+            if (p.getIsActive() == null) {
+                p.setIsActive(true);
+                investmentPlanRepository.save(p);
+            }
+            if (Boolean.FALSE.equals(p.getIsVariable()) && investmentPlanRateRepository.findByPlanId(p.getId()).isEmpty()) {
+                investmentPlanRateRepository.saveAll(Arrays.asList(
+                    InvestmentPlanRate.builder().plan(p).durationMonths(6).returnRate(new BigDecimal("7.50")).build(),
+                    InvestmentPlanRate.builder().plan(p).durationMonths(12).returnRate(new BigDecimal("8.50")).build(),
+                    InvestmentPlanRate.builder().plan(p).durationMonths(36).returnRate(new BigDecimal("10.00")).build(),
+                    InvestmentPlanRate.builder().plan(p).durationMonths(60).returnRate(new BigDecimal("11.50")).build()
+                ));
+            }
         }
     }
 }

@@ -234,6 +234,8 @@ function AppContent() {
         <Route index element={<ConsultantDashboard />} />
         <Route path="sessions" element={<ConsultantSessions />} />
         <Route path="sessions/:id" element={<ConsultantSessionDetails />} />
+        <Route path="inbox" element={<CustomerInboxPage />} />
+        <Route path="messages" element={<CustomerInboxPage />} />
         <Route path="settings" element={<ConsultantSettings />} />
         <Route path="logs" element={<ConsultantLogs />} />
         <Route path="reports"   element={<ConsultantReports />} />

@@ -25,12 +25,14 @@ public class InvestmentPlan {
     private String description;
 
     @Column(name = "is_variable", nullable = false)
+    @Builder.Default
     private Boolean isVariable = false;
 
     @Column(name = "variable_rate", precision = 5, scale = 2)
     private BigDecimal variableRate;
 
     @Column(name = "is_active", nullable = false)
+    @Builder.Default
     private Boolean isActive = true;
 
     @OneToMany(mappedBy = "plan", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)

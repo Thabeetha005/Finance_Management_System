@@ -228,57 +228,109 @@ export const ProcessAndPartnerSection = () => {
 
       </div>
 
-      {/* Mobile Layout (Simplified Stacked) */}
+      {/* Mobile Layout (Animated Vertical Timeline & Cards) */}
       <div className="md:hidden px-6 relative">
-        <div className="mb-16">
-          <span className="text-xs font-bold tracking-widest text-[#C47D57] uppercase mb-4 block">How We Work Together</span>
-          <h2 className="text-4xl font-serif mb-6 leading-tight text-white">
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6 }}
+          className="mb-14"
+        >
+          <span className="text-xs font-bold tracking-widest text-[#C47D57] uppercase mb-3 block">How We Work Together</span>
+          <h2 className="text-3xl font-serif mb-4 leading-tight text-white">
             A Clear Path<br/>From Strategy to<br/><span className="text-[#C47D57]">Sustainable</span> Growth
           </h2>
-        </div>
+          <p className="text-gray-400 text-sm leading-relaxed">
+            Our process brings clarity to complexity and builds lasting financial strength.
+          </p>
+        </motion.div>
 
-        <div className="relative border-l-2 border-[#1A2D27] ml-6 pl-10 pb-16 space-y-16">
-          <motion.div className="absolute top-0 bottom-0 left-[-2px] w-[2px] bg-[#C47D57] origin-top" style={{ scaleY: smoothProgress }} />
+        {/* Animated Mobile Timeline Track */}
+        <div className="relative border-l-2 border-[#1A2D27] ml-5 pl-8 pb-12 space-y-12">
+          {/* Animated Glowing Copper Progress Line */}
+          <motion.div 
+            className="absolute top-0 bottom-0 left-[-2px] w-[2px] bg-gradient-to-b from-[#C47D57] via-[#D4AF37] to-[#C47D57] origin-top shadow-[0_0_8px_#C47D57]" 
+            style={{ scaleY: smoothProgress }} 
+          />
           
-          {steps.map((step) => (
-            <div key={step.num} className="relative">
-              <div className="absolute -left-[60px] top-0 w-10 h-10 rounded-full border-2 border-[#C47D57] flex items-center justify-center text-[#C47D57] bg-[#0A1612] font-bold text-sm">
+          {steps.map((step, idx) => (
+            <motion.div 
+              key={step.num} 
+              initial={{ opacity: 0, x: -30 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: false, amount: 0.3 }}
+              transition={{ duration: 0.5, delay: idx * 0.1, ease: [0.16, 1, 0.3, 1] }}
+              className="relative group"
+            >
+              {/* Step Circle Node with Pulsing Glow on Scroll */}
+              <motion.div 
+                initial={{ scale: 0.7, opacity: 0.5 }}
+                whileInView={{ scale: 1, opacity: 1 }}
+                viewport={{ once: false, amount: 0.4 }}
+                transition={{ duration: 0.4, ease: "easeOut" }}
+                className="absolute -left-[53px] top-0 w-11 h-11 rounded-full border-2 border-[#C47D57] flex items-center justify-center text-[#C47D57] bg-[#0A1612] font-bold text-sm shadow-[0_0_12px_rgba(196,125,87,0.3)] group-hover:bg-[#C47D57] group-hover:text-[#0A1612] transition-colors duration-300"
+              >
                 {step.num}
-              </div>
+              </motion.div>
+
               <div className="flex items-center text-[#C47D57] text-xs mb-2 font-mono font-bold tracking-widest">
                 {step.num}. <div className="ml-2 w-10 border-b border-dashed border-[#C47D57]/50"></div>
               </div>
-              <h3 className="text-2xl font-serif mb-3 text-white leading-tight">
+              
+              <h3 className="text-2xl font-serif mb-2.5 text-white leading-tight">
                 {step.title.split('\n').join(' ')}
               </h3>
+              
               <p className="text-gray-400 text-sm leading-relaxed">
                 {step.desc}
               </p>
-            </div>
+            </motion.div>
           ))}
         </div>
 
-        <div className="pt-16 border-t border-white/10">
-          <h2 className="text-4xl font-serif mb-6 leading-tight text-white">
+        {/* Partner Section Mobile Animations */}
+        <motion.div 
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6 }}
+          className="pt-12 border-t border-white/10"
+        >
+          <h2 className="text-3xl font-serif mb-4 leading-tight text-white">
             Your Trustworthy<br/>Financial <span className="text-[#C47D57]">Growth Partner</span>
           </h2>
-          <div className="space-y-6 mt-10">
+          <p className="text-gray-400 text-sm mb-8 leading-relaxed">
+            We bridge traditional accounting expertise with modern financial technology.
+          </p>
+
+          <div className="space-y-4">
             {[
               { icon: UsersRound, title: 'Licensed CPAs', desc: "Work directly with certified professionals." },
               { icon: DollarSign, title: 'Fixed Pricing', desc: "Know exactly what you'll pay monthly." },
               { icon: Cloud, title: 'Platform Expertise', desc: "Deep expertise in leading financial tools." },
               { icon: Handshake, title: 'Ongoing Partnership', desc: "Proactive insights and continuous support." }
             ].map((card, i) => (
-              <div key={i} className="bg-white/5 border border-white/10 rounded-xl p-6 flex gap-4">
-                <card.icon className="text-[#C47D57] shrink-0" />
-                <div>
-                  <h4 className="text-lg font-serif text-white mb-1">{card.title}</h4>
-                  <p className="text-xs text-gray-400">{card.desc}</p>
+              <motion.div 
+                key={i} 
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.4, delay: i * 0.1 }}
+                whileTap={{ scale: 0.98 }}
+                className="bg-white/5 border border-white/10 rounded-xl p-5 flex gap-4 items-start hover:bg-white/10 transition-all duration-300"
+              >
+                <div className="w-10 h-10 rounded-full border border-[#C47D57] flex items-center justify-center text-[#C47D57] shrink-0 bg-[#0A1612]">
+                  <card.icon className="w-5 h-5" />
                 </div>
-              </div>
+                <div>
+                  <h4 className="text-base font-serif text-white mb-1">{card.title}</h4>
+                  <p className="text-xs text-gray-400 leading-relaxed">{card.desc}</p>
+                </div>
+              </motion.div>
             ))}
           </div>
-        </div>
+        </motion.div>
       </div>
 
     </section>

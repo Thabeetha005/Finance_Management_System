@@ -64,14 +64,60 @@ const CustomerLoansPage = () => {
   const currentEmi = emiOverview?.currentEmi;
   const emiHistory = emiOverview?.history || [];
 
+  // Fetch Customer's All Submitted & Uploaded Documents
+  const { data: myDocuments = [] } = useQuery({
+    queryKey: ['myDocuments'],
+    queryFn: async () => {
+      try {
+        const res = await api.get('/documents/me');
+        return Array.isArray(res.data) ? res.data : [];
+      } catch (e) {
+        return [];
+      }
+    }
+  });
+
   // Fetch Customer's Reuse-Eligible Verified Documents
   const { data: reuseEligibleDocs = [] } = useQuery({
     queryKey: ['reuseEligibleDocs'],
     queryFn: async () => {
-      const res = await api.get('/documents/reuse-eligible');
-      return res.data;
+      try {
+        const res = await api.get('/documents/reuse-eligible');
+        return Array.isArray(res.data) ? res.data : [];
+      } catch (e) {
+        return [];
+      }
     }
   });
+
+  // Combined documents list (deduplicated by id)
+  const allUserDocs = React.useMemo(() => {
+    const map = new Map();
+    [...(Array.isArray(myDocuments) ? myDocuments : []), ...(Array.isArray(reuseEligibleDocs) ? reuseEligibleDocs : [])].forEach(d => {
+      if (d && d.id) map.set(d.id, d);
+    });
+    return Array.from(map.values());
+  }, [myDocuments, reuseEligibleDocs]);
+
+  // Match user's uploaded document to a category
+  const findMatchingDoc = (catKey) => {
+    if (!allUserDocs || allUserDocs.length === 0) return null;
+    const cleanKey = String(catKey || '').toLowerCase().replace(/[^a-z0-9]/g, '');
+
+    return allUserDocs.find(d => {
+      if (d.verificationStatus === 'REJECTED') return false;
+      const docType = String(d.documentType || '').toLowerCase().replace(/[^a-z0-9]/g, '');
+      const fileName = String(d.fileName || '').toLowerCase().replace(/[^a-z0-9]/g, '');
+
+      if (cleanKey.includes('pan') && (docType.includes('pan') || fileName.includes('pan'))) return true;
+      if (cleanKey.includes('aadhaar') && (docType.includes('aadhaar') || docType.includes('aadhar') || fileName.includes('aadhaar') || fileName.includes('aadhar'))) return true;
+      if (cleanKey.includes('bank') && (docType.includes('bank') || docType.includes('statement') || docType.includes('salary') || docType.includes('itr') || fileName.includes('bank') || fileName.includes('statement'))) return true;
+      if (cleanKey.includes('business') && (docType.includes('business') || docType.includes('gst') || fileName.includes('business') || fileName.includes('gst'))) return true;
+      if (cleanKey.includes('property') && (docType.includes('property') || docType.includes('house') || fileName.includes('property') || fileName.includes('house'))) return true;
+
+      return docType === cleanKey || docType.includes(cleanKey) || cleanKey.includes(docType);
+    });
+  };
 
   // Calculate EMI dynamically whenever amount or duration changes
   const calculateEstimate = async (plan, amount, duration) => {
@@ -688,25 +734,32 @@ const CustomerLoansPage = () => {
                 {/* Automatic Document Reuse Card List */}
                 <div className="space-y-3">
                   {requiredCategories.map(cat => {
-                    const verifiedMatch = reuseEligibleDocs.find(d => cat.key.equalsIgnoreCase(d.documentType));
+                    const matchedDoc = findMatchingDoc(cat.key);
+                    const isVerified = matchedDoc && (matchedDoc.verificationStatus === 'APPROVED' || matchedDoc.verificationStatus === 'VERIFIED');
+                    const isSubmitted = matchedDoc && !isVerified;
+
                     return (
                       <div key={cat.key} className={`p-4 rounded-2xl border transition-all ${
-                        verifiedMatch 
+                        matchedDoc 
                           ? 'bg-emerald-50/60 border-emerald-200' 
                           : 'bg-amber-50/60 border-amber-200'
                       }`}>
                         <div className="flex items-center justify-between">
                           <div className="flex items-center gap-3">
-                            {verifiedMatch ? (
+                            {matchedDoc ? (
                               <CheckCircle2 className="w-5 h-5 text-emerald-600 flex-shrink-0" />
                             ) : (
                               <AlertCircle className="w-5 h-5 text-amber-600 flex-shrink-0" />
                             )}
                             <div>
                               <p className="font-bold text-gray-900 text-sm">{cat.label}</p>
-                              {verifiedMatch ? (
+                              {isVerified ? (
                                 <p className="text-xs font-semibold text-emerald-700 mt-0.5">
-                                  ✓ Verified document automatically attached ({verifiedMatch.fileName})
+                                  ✓ Verified document automatically attached ({matchedDoc.fileName})
+                                </p>
+                              ) : isSubmitted ? (
+                                <p className="text-xs font-semibold text-emerald-700 mt-0.5">
+                                  ✓ Previously submitted document attached ({matchedDoc.fileName} — Under Review)
                                 </p>
                               ) : (
                                 <p className="text-xs font-semibold text-amber-700 mt-0.5">
@@ -716,7 +769,7 @@ const CustomerLoansPage = () => {
                             </div>
                           </div>
 
-                          {!verifiedMatch && (
+                          {!matchedDoc && (
                             <div className="flex items-center gap-2">
                               <input
                                 type="file"
@@ -754,7 +807,7 @@ const CustomerLoansPage = () => {
 
                 <div className="bg-[#e6f3f0] p-4 rounded-2xl border border-[#106354]/20 text-xs text-[#106354] flex items-center gap-3">
                   <ShieldCheck className="w-5 h-5 flex-shrink-0" />
-                  <span>All verified documents from your Profile are securely referenced without binary duplication.</span>
+                  <span>All submitted & verified documents from your Profile are securely referenced without asking you to re-upload.</span>
                 </div>
 
                 <div className="pt-4 flex justify-end">

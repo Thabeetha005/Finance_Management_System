@@ -60,12 +60,9 @@ const CustomerDashboard = () => {
         {/* Top Navigation & Time-Based Greeting Bar */}
         <div className="bg-white rounded-3xl p-6 shadow-sm border border-gray-100 flex flex-col md:flex-row items-center justify-between gap-6">
           <div className="flex items-center gap-4">
-            <div className="w-12 h-12 rounded-2xl bg-[#12241F] text-emerald-400 flex items-center justify-center font-bold text-xl shadow-md border border-emerald-900/30 overflow-hidden">
-              <span className="font-black text-emerald-400 text-lg">KF</span>
-            </div>
             <div>
               <h2 className="text-xl md:text-2xl font-black text-[#12241F] tracking-tight">
-                {getGreeting()}, {user?.name || 'Valued Customer'} 👋
+                {getGreeting()}, {user?.name || 'Valued Customer'}
               </h2>
               <p className="text-xs text-gray-500 font-medium">Welcome back to your financial analytics portal</p>
             </div>

@@ -104,6 +104,10 @@ public class SupportTicketService {
         SupportTicket ticket = supportTicketRepository.findById(ticketId)
                 .orElseThrow(() -> new RuntimeException("Ticket not found"));
 
+        if (ticket.getStatus() == SupportTicket.TicketStatus.RESOLVED || ticket.getStatus() == SupportTicket.TicketStatus.CLOSED) {
+            throw new IllegalStateException("Ticket is already resolved and its status is fixed.");
+        }
+
         SupportTicket.TicketStatus status;
         try {
             status = SupportTicket.TicketStatus.valueOf(statusString != null ? statusString.trim().toUpperCase() : "OPEN");

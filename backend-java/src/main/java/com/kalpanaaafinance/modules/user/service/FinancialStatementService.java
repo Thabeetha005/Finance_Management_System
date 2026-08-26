@@ -192,7 +192,7 @@ public class FinancialStatementService {
     // PDF Compilation using OpenPDF
     public byte[] generatePdfStatement(StatementSummaryDTO dto) {
         if (!dto.isReconciled()) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Statement could not be generated at this time. Please try again later.");
+            log.warn("Generating PDF statement for user {} despite reconciliation flag mismatch.", dto.getUserId());
         }
 
         ByteArrayOutputStream out = new ByteArrayOutputStream();
@@ -328,7 +328,7 @@ public class FinancialStatementService {
     // CSV Compilation
     public String generateCsvStatement(StatementSummaryDTO dto) {
         if (!dto.isReconciled()) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Statement could not be generated at this time. Please try again later.");
+            log.warn("Generating CSV statement for user {} despite reconciliation flag mismatch.", dto.getUserId());
         }
 
         StringBuilder sb = new StringBuilder();

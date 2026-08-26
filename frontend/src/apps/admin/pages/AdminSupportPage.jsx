@@ -163,22 +163,29 @@ const AdminSupportPage = () => {
                         {item.status}
                       </span>
                     </td>
-                    <td className="px-6 py-4 text-right">
-                      <select
-                        onChange={(e) => {
-                          if (e.target.value) {
-                            handleAction(item.id, item.type, e.target.value);
-                            e.target.value = ''; // Reset
-                          }
-                        }}
-                        className="bg-gray-50 border border-gray-200 text-gray-700 text-xs rounded-lg focus:ring-[#4E8B83] focus:border-[#4E8B83] block w-full p-2 outline-none cursor-pointer"
-                        defaultValue=""
-                      >
-                        <option value="" disabled>Action...</option>
-                        <option value="PROGRESS">Progress</option>
-                        <option value="PENDING">Pending</option>
-                        <option value="RESOLVED">Resolve</option>
-                      </select>
+                    <td className="px-6 py-4 text-right whitespace-nowrap min-w-[120px]">
+                      {item.status === 'RESOLVED' || item.status === 'CLOSED' ? (
+                        <span className="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-bold bg-emerald-50 text-emerald-800 border border-emerald-200">
+                          Resolved
+                        </span>
+                      ) : (
+                        <select
+                          onChange={(e) => {
+                            if (e.target.value) {
+                              handleAction(item.id, item.type, e.target.value);
+                              e.target.value = ''; // Reset
+                            }
+                          }}
+                          className="bg-gray-50 border border-gray-200 text-gray-700 text-xs rounded-lg focus:ring-[#4E8B83] focus:border-[#4E8B83] block w-full p-2 outline-none cursor-pointer font-medium"
+                          defaultValue=""
+                        >
+                          <option value="" disabled>Action...</option>
+                          {item.status !== 'IN_PROGRESS' && (
+                            <option value="PROGRESS">Progress</option>
+                          )}
+                          <option value="RESOLVED">Resolve</option>
+                        </select>
+                      )}
                     </td>
                   </tr>
                 ))

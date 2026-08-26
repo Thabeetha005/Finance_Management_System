@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Outlet, Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../../shared/context/AuthContext';
+import { useQuery } from '@tanstack/react-query';
 import { 
   LayoutDashboard, 
   Video,
@@ -13,7 +14,9 @@ import {
   Power,
   ShieldAlert,
   RefreshCw,
-  DollarSign
+  DollarSign,
+  Bell,
+  Mail
 } from 'lucide-react';
 import api from '../../../shared/api/axios';
 import { toast } from 'react-hot-toast';
@@ -25,11 +28,79 @@ const ConsultantLayout = () => {
   const [profileStatus, setProfileStatus] = useState('ACTIVE');
   const [terminationNotice, setTerminationNotice] = useState(null);
   const [confirmingTermination, setConfirmingTermination] = useState(false);
+  const [announcementsOpen, setAnnouncementsOpen] = useState(false);
+  const announcementsRef = useRef(null);
   const navigate = useNavigate();
+
+  // Fetch messages and unread count for consultant
+  const { data: messages = [] } = useQuery({
+    queryKey: ['consultantMessages'],
+    queryFn: async () => {
+      try {
+        const res = await api.get('/messages/me');
+        return Array.isArray(res.data) ? res.data : [];
+      } catch (e) {
+        return [];
+      }
+    },
+    refetchInterval: 30000,
+  });
+
+  const unreadCount = messages.filter(m => !m.isRead).length;
+
+  // Fetch active announcements
+  const { data: rawAnnouncements = [] } = useQuery({
+    queryKey: ['activeAnnouncements'],
+    queryFn: async () => {
+      try {
+        const res = await api.get('/announcements/active');
+        return Array.isArray(res.data) ? res.data : [];
+      } catch (e) {
+        return [];
+      }
+    },
+    refetchInterval: 60000,
+  });
+
+  const announcements = Array.isArray(rawAnnouncements) ? rawAnnouncements : [];
+
+  const [lastReadAnnouncementAt, setLastReadAnnouncementAt] = useState(() => {
+    return localStorage.getItem('lastReadConsultantAnnouncementAt') || null;
+  });
+
+  const unreadAnnouncementsCount = announcements.filter(a => {
+    if (!lastReadAnnouncementAt) return true;
+    return new Date(a.createdAt) > new Date(lastReadAnnouncementAt);
+  }).length;
+
+  const handleOpenAnnouncements = () => {
+    setAnnouncementsOpen(!announcementsOpen);
+    if (!announcementsOpen && announcements.length > 0) {
+      const now = new Date().toISOString();
+      localStorage.setItem('lastReadConsultantAnnouncementAt', now);
+      setLastReadAnnouncementAt(now);
+    }
+  };
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (announcementsRef.current && !announcementsRef.current.contains(event.target)) {
+        setAnnouncementsOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    document.addEventListener('touchstart', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener('touchstart', handleClickOutside);
+    };
+  }, []);
 
   const navigation = [
     { name: 'Dashboard',   href: '/consultant',          icon: LayoutDashboard },
     { name: 'My Sessions', href: '/consultant/sessions', icon: Video           },
+    { name: 'Inbox',       href: '/consultant/inbox',    icon: Mail, badge: unreadCount },
     { name: 'Reports',     href: '/consultant/reports',  icon: PieChart        },
     { name: 'Earnings',    href: '/consultant/earnings', icon: DollarSign      },
     { name: 'Logs',        href: '/consultant/logs',     icon: FileText        },
@@ -129,7 +200,12 @@ const ConsultantLayout = () => {
                   }`}
                 >
                   <Icon className={`w-5 h-5 mr-3 flex-shrink-0 ${isActive ? 'text-[#D4AF37]' : 'text-gray-400 group-hover:text-[#D4AF37]'}`} />
-                  <span>{item.name}</span>
+                  <span className="flex-1">{item.name}</span>
+                  {item.badge > 0 && (
+                    <span className="bg-emerald-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-full shadow-sm">
+                      {item.badge > 9 ? '9+' : item.badge}
+                    </span>
+                  )}
                 </Link>
               );
             })}
@@ -158,7 +234,67 @@ const ConsultantLayout = () => {
           </div>
           
           <div className="flex-1 px-4 flex justify-end">
-            <div className="flex items-center gap-6">
+            <div className="flex items-center gap-4 sm:gap-6">
+              
+              {/* Notifications / Announcements Bell */}
+              <div className="relative" ref={announcementsRef}>
+                <button 
+                  onClick={handleOpenAnnouncements}
+                  className="relative p-1.5 text-gray-500 hover:text-slate-800 transition-colors focus:outline-none cursor-pointer"
+                  title="Announcements"
+                >
+                  <Bell className="w-5 h-5" />
+                  {unreadAnnouncementsCount > 0 && (
+                    <span className="absolute top-0 right-0 w-4 h-4 bg-red-500 rounded-full flex items-center justify-center text-[10px] text-white font-bold border border-white">
+                      {unreadAnnouncementsCount > 9 ? '9+' : unreadAnnouncementsCount}
+                    </span>
+                  )}
+                </button>
+
+                {announcementsOpen && (
+                  <div className="fixed top-16 left-4 right-4 sm:left-auto sm:right-0 sm:top-auto sm:absolute sm:mt-2 w-auto sm:w-80 max-w-sm sm:max-w-none bg-white rounded-2xl sm:rounded-xl shadow-2xl sm:shadow-lg border border-gray-100 z-50 overflow-hidden mx-auto sm:mx-0 text-left">
+                    <div className="px-4 py-3 border-b border-gray-100 bg-gray-50/50 flex justify-between items-center">
+                      <h3 className="font-bold text-gray-800 text-sm">Announcements</h3>
+                      <span className="text-xs bg-[#4E8B83] text-white px-2 py-0.5 rounded-full font-medium">{announcements.length}</span>
+                    </div>
+                    <div className="max-h-80 overflow-y-auto">
+                      {announcements.length === 0 ? (
+                        <div className="p-6 text-center text-gray-500 text-sm">
+                          <Bell className="w-8 h-8 text-gray-300 mx-auto mb-2" />
+                          No active announcements.
+                        </div>
+                      ) : (
+                        <div className="divide-y divide-gray-50">
+                          {announcements.map((ann) => (
+                            <div key={ann.id} className="p-4 hover:bg-gray-50 transition-colors">
+                              <h4 className="text-sm font-bold text-gray-900 mb-1">{ann.title}</h4>
+                              <p className="text-xs text-gray-600 line-clamp-3 leading-relaxed whitespace-pre-wrap">{ann.content}</p>
+                              <p className="text-[10px] text-gray-400 mt-2 font-medium">{new Date(ann.createdAt).toLocaleString()}</p>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* Messages / Notifications Inbox Icon */}
+              <Link 
+                to="/consultant/inbox" 
+                className="relative p-1.5 text-gray-500 hover:text-slate-800 transition-colors"
+                title="Inbox & Notifications"
+              >
+                <Mail className="w-5 h-5" />
+                {unreadCount > 0 && (
+                  <span className="absolute top-0 right-0 w-4 h-4 bg-emerald-500 rounded-full flex items-center justify-center text-[10px] text-white font-bold border border-white">
+                    {unreadCount > 9 ? '9+' : unreadCount}
+                  </span>
+                )}
+              </Link>
+
+              <div className="h-6 w-[1px] bg-gray-200 hidden sm:block"></div>
+
               <Link to="/consultant/settings" className="flex items-center gap-3 hover:bg-gray-100 px-3 py-1.5 rounded-lg transition-colors cursor-pointer">
                 <div className="w-8 h-8 rounded-full border border-gray-200 flex items-center justify-center text-[#12241F] bg-gray-50 font-bold text-xs">
                   {(user?.name || 'C')[0].toUpperCase()}
@@ -169,7 +305,7 @@ const ConsultantLayout = () => {
               </Link>
               <button 
                 onClick={logout} 
-                className="inline-flex items-center justify-center p-2 text-gray-500 hover:text-red-600 transition-colors rounded-full hover:bg-red-50"
+                className="inline-flex items-center justify-center p-2 text-gray-500 hover:text-red-600 transition-colors rounded-full hover:bg-red-50 cursor-pointer"
                 title="Logout"
               >
                 <LogOut className="w-5 h-5" />

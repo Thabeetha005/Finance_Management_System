@@ -9,5 +9,6 @@ import java.util.Optional;
 @Repository
 public interface InvestmentPlanRateRepository extends JpaRepository<InvestmentPlanRate, Long> {
     Optional<InvestmentPlanRate> findByPlanIdAndDurationMonths(Long planId, Integer durationMonths);
+    java.util.List<InvestmentPlanRate> findByPlanId(Long planId);
     void deleteByPlanId(Long planId);
 }

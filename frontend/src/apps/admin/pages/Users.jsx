@@ -27,7 +27,8 @@ const formatId = (user) => {
 };
 
 const AllCustomers = () => {
-  const [search, setSearch] = useState('');
+  const [searchInput, setSearchInput] = useState('');
+  const [activeSearch, setActiveSearch] = useState('');
   const [page, setPage] = useState(0);
   const PAGE_SIZE = 15;
 
@@ -41,10 +42,27 @@ const AllCustomers = () => {
     }
   });
 
-  const filtered = users.filter(u =>
-    (u.name || '').toLowerCase().includes(search.toLowerCase()) ||
-    (u.email || '').toLowerCase().includes(search.toLowerCase())
-  );
+  const handleSearch = () => {
+    setActiveSearch(searchInput.trim());
+    setPage(0);
+  };
+
+  const handleKeyDown = (e) => {
+    if (e.key === 'Enter') {
+      handleSearch();
+    }
+  };
+
+  const filtered = users.filter(u => {
+    if (!activeSearch) return true;
+    const term = activeSearch.toLowerCase();
+    return (
+      (u.name || '').toLowerCase().includes(term) ||
+      (u.email || '').toLowerCase().includes(term) ||
+      (u.phone || '').toLowerCase().includes(term) ||
+      (u.customerId || '').toLowerCase().includes(term)
+    );
+  });
 
   const totalPages = Math.ceil(filtered.length / PAGE_SIZE);
   const paginated = filtered.slice(page * PAGE_SIZE, (page + 1) * PAGE_SIZE);
@@ -64,13 +82,24 @@ const AllCustomers = () => {
             <input
               type="text"
               placeholder="Search by name, email or phone..."
-              value={search}
-              onChange={e => { setSearch(e.target.value); setPage(0); }}
+              value={searchInput}
+              onChange={e => {
+                const val = e.target.value;
+                setSearchInput(val);
+                if (val === '') {
+                  setActiveSearch('');
+                  setPage(0);
+                }
+              }}
+              onKeyDown={handleKeyDown}
               className="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-1 focus:ring-[#4E8B83] focus:border-[#4E8B83] transition-all bg-white"
             />
           </div>
-          <button className="flex items-center gap-2 px-4 py-2 bg-[#4E8B83] text-white text-sm font-medium rounded-lg hover:bg-[#3d6e68] transition-colors">
-            <Search className="w-4 h-4" /> {/* Filter Icon Representation */}
+          <button 
+            onClick={handleSearch}
+            className="flex items-center gap-2 px-4 py-2 bg-[#4E8B83] text-white text-sm font-medium rounded-lg hover:bg-[#3d6e68] transition-colors cursor-pointer"
+          >
+            <Search className="w-4 h-4" />
             Filter
           </button>
         </div>

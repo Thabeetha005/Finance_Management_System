@@ -90,6 +90,9 @@ public class AdminContactRequestController {
     public ResponseEntity<ContactRequest> updateStatus(@PathVariable Long id, @RequestBody java.util.Map<String, String> payload, Authentication authentication, HttpServletRequest httpRequest) {
         if(!repository.existsById(id)) return ResponseEntity.notFound().build();
         ContactRequest entity = repository.findById(id).get();
+        if ("RESOLVED".equalsIgnoreCase(entity.getStatus())) {
+            return ResponseEntity.badRequest().build();
+        }
         String newStatus = payload.get("status");
         entity.setStatus(newStatus);
         ContactRequest saved = repository.save(entity);

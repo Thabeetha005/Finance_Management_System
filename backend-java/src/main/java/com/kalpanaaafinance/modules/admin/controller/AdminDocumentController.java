@@ -104,6 +104,10 @@ public class AdminDocumentController {
             return ResponseEntity.badRequest().body("Invalid verificationStatus. Must be APPROVED or REJECTED");
         }
 
+        if ("APPROVED".equalsIgnoreCase(document.getVerificationStatus()) || "REJECTED".equalsIgnoreCase(document.getVerificationStatus())) {
+            return ResponseEntity.badRequest().body("Document verification status is already fixed and cannot be changed.");
+        }
+
         document.setVerificationStatus(status);
         document.setAdminNote(note);
         document.setReviewedAt(LocalDateTime.now());

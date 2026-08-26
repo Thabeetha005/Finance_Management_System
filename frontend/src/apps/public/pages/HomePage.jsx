@@ -79,14 +79,16 @@ const HomePage = () => {
         <div className="absolute inset-0 bg-gradient-to-r from-[#12241F]/80 via-[#12241F]/50 to-transparent z-[1]"></div>
 
         {/* Slide Indicators */}
-        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-[3] flex items-center gap-3">
+        <div className="absolute bottom-4 sm:bottom-8 left-1/2 -translate-x-1/2 z-[3] flex items-center gap-2 sm:gap-3 slide-indicators">
           {heroImages.map((_, idx) => (
             <button
               key={idx}
+              type="button"
               onClick={() => setCurrentSlide(idx)}
-              className={`h-[3px] rounded-full transition-all duration-500 ease-out cursor-pointer ${
-                currentSlide === idx ? 'w-10 bg-[#4E8B83]' : 'w-5 bg-white/40 hover:bg-white/70'
+              className={`h-1 sm:h-[3px] rounded-full transition-all duration-500 ease-out cursor-pointer carousel-dot ${
+                currentSlide === idx ? 'w-6 sm:w-10 bg-[#4E8B83]' : 'w-2.5 sm:w-5 bg-white/40 hover:bg-white/70'
               }`}
+              style={{ minHeight: '3px', maxHeight: '4px' }}
             />
           ))}
         </div>

@@ -1,165 +1,420 @@
 import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../../shared/context/AuthContext';
-import { ArrowRight, Lock, Mail, AlertCircle, Eye, EyeOff } from 'lucide-react';
+import { Mail, Lock, User as UserIcon, AlertCircle, Eye, EyeOff, CheckCircle2 } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 
-const LoginPage = () => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [showPassword, setShowPassword] = useState(false);
+const LoginPage = ({ initialMode = 'login' }) => {
+  const location = useLocation();
+  // isSignUp: false = Sign In view, true = Create Account view
+  const [isSignUp, setIsSignUp] = useState(
+    initialMode === 'signup' || location.pathname.includes('/register') || location.pathname.includes('/signin')
+  );
+
+  // Login Form State
+  const [loginEmail, setLoginEmail] = useState('');
+  const [loginPassword, setLoginPassword] = useState('');
+  const [showLoginPassword, setShowLoginPassword] = useState(false);
+
+  // Sign Up Form State
+  const [signUpName, setSignUpName] = useState('');
+  const [signUpEmail, setSignUpEmail] = useState('');
+  const [signUpPassword, setSignUpPassword] = useState('');
+  const [signUpConfirmPassword, setSignUpConfirmPassword] = useState('');
+  const [showSignUpPassword, setShowSignUpPassword] = useState(false);
+
+  // Feedback & Loading
   const [error, setError] = useState('');
+  const [successMsg, setSuccessMsg] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  
-  const { login } = useAuth();
+
+  const { login, register } = useAuth();
   const navigate = useNavigate();
 
-  const handleSubmit = async (e) => {
+  const handleLoginSubmit = async (e) => {
     e.preventDefault();
     setError('');
+    setSuccessMsg('');
     setIsLoading(true);
 
-    const result = await login(email, password);
-    
+    const result = await login(loginEmail, loginPassword);
     setIsLoading(false);
-    
+
     if (result.success) {
-      if (result.role === 'ADMIN' || result.role === 'admin') {
+      const role = (result.role || '').toUpperCase();
+      if (role === 'ADMIN') {
         navigate('/admin');
-      } else if (result.role === 'CONSULTANT') {
+      } else if (role === 'CONSULTANT') {
         navigate('/consultant');
       } else {
         navigate('/profile');
       }
     } else {
-      setError(result.message);
+      setError(result.message || 'Invalid email or password.');
     }
   };
 
+  const handleSignUpSubmit = async (e) => {
+    e.preventDefault();
+    setError('');
+    setSuccessMsg('');
+
+    if (signUpPassword !== signUpConfirmPassword) {
+      setError('Passwords do not match.');
+      return;
+    }
+
+    if (signUpPassword.length < 6) {
+      setError('Password must be at least 6 characters long.');
+      return;
+    }
+
+    setIsLoading(true);
+
+    const result = await register(signUpName, signUpEmail, signUpPassword);
+    setIsLoading(false);
+
+    if (result.success) {
+      const role = (result.role || '').toUpperCase();
+      if (role === 'ADMIN') {
+        navigate('/admin');
+      } else if (role === 'CONSULTANT') {
+        navigate('/consultant');
+      } else {
+        navigate('/profile');
+      }
+    } else {
+      setError(result.message || 'Registration failed. Please try again.');
+    }
+  };
+
+  const toggleMode = (targetSignUp) => {
+    setError('');
+    setSuccessMsg('');
+    setIsSignUp(targetSignUp);
+  };
+
   return (
-    <div className="min-h-screen bg-[#051e17] relative overflow-hidden flex flex-col justify-center py-12 sm:px-6 lg:px-8">
-      {/* Ambient background glow effects */}
-      <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-emerald-500/15 rounded-full blur-3xl pointer-events-none" />
-      <div className="absolute bottom-10 right-10 w-80 h-80 bg-teal-400/10 rounded-full blur-3xl pointer-events-none" />
-      
-      <div className="relative z-10 sm:mx-auto sm:w-full sm:max-w-lg px-4">
-        {/* Teal Green Glassmorphic Outer Card */}
-        <div className="bg-[#082a20]/75 backdrop-blur-xl border border-emerald-500/30 rounded-3xl p-6 sm:p-8 shadow-2xl shadow-emerald-950/80">
-          
-          {/* Header & Logo inside Teal Glass Container */}
-          <div className="sm:mx-auto sm:w-full sm:max-w-md mb-6 text-center">
-            <a href="/" className="inline-block transition-transform hover:scale-105 duration-300">
-              <img src="/kalpanaaa-logo-new.png" alt="Kalpanaaa Finance" className="h-12 md:h-14 w-auto object-contain mx-auto drop-shadow-lg" />
-            </a>
+    <div className="min-h-screen bg-[#041d16] relative overflow-hidden flex flex-col justify-center items-center py-8 px-4 sm:px-6 lg:px-8 font-sans selection:bg-[#073828] selection:text-white">
+      {/* Subtle ambient glow background */}
+      <div className="absolute top-1/4 left-1/3 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-emerald-700/10 rounded-full blur-[140px] pointer-events-none" />
+      <div className="absolute bottom-10 right-1/4 w-[500px] h-[500px] bg-teal-600/10 rounded-full blur-[120px] pointer-events-none" />
 
-            <h2 className="mt-5 text-center text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
-              Log in to your account
-            </h2>
-            <p className="mt-2 text-center text-sm text-emerald-200/80">
-              Or{' '}
-              <Link to="/register" className="font-semibold text-emerald-400 hover:text-emerald-300 transition-colors underline decoration-emerald-400/30 underline-offset-4">
-                create a new account
-              </Link>
-            </p>
-          </div>
 
-          {/* White Form Content Card */}
-          <div className="bg-white py-8 px-5 sm:px-8 shadow-xl rounded-2xl border border-gray-100">
-            {error && (
-              <div className="mb-5 bg-red-50 border-l-4 border-red-500 p-4 rounded-r-md flex items-start gap-3">
-                <AlertCircle className="w-5 h-5 text-red-500 mt-0.5 flex-shrink-0" />
-                <p className="text-sm text-red-700 font-medium">{error}</p>
+
+      {/* Outer Card Shell with light warm cream interior background */}
+      <div className="relative z-10 w-full max-w-4xl min-h-[600px] bg-[#f5f0e6] rounded-[32px] shadow-2xl shadow-emerald-950/80 overflow-hidden flex flex-col md:flex-row border border-[#e3d7c3]/60">
+        
+        {/* ==================== WHITE/CREAM BANNER - FORM 1: SIGN IN ==================== */}
+        <div className={`w-full md:w-1/2 p-8 sm:p-10 pr-4 sm:pr-6 flex flex-col justify-between text-[#0d2b20] transition-all duration-500 ${isSignUp ? 'opacity-0 pointer-events-none md:opacity-100 md:pointer-events-none' : 'opacity-100'}`}>
+          <div className="w-full max-w-[290px] sm:max-w-[320px]">
+            <div className="mb-6">
+              <h2 className="text-3xl sm:text-4xl font-extrabold text-[#0d2b20] tracking-tight">
+                Sign in
+              </h2>
+              <div className="w-12 h-[3px] bg-[#9e824c] rounded-full mt-2 mb-2" />
+              <p className="text-sm text-[#0d2b20]/75 font-normal">
+                Welcome back to your financial advisory portal.
+              </p>
+            </div>
+
+            {!isSignUp && error && (
+              <div className="mb-5 bg-red-50 border-l-4 border-red-500 p-3.5 rounded-r-xl flex items-start gap-2.5">
+                <AlertCircle className="w-5 h-5 text-red-600 mt-0.5 flex-shrink-0" />
+                <p className="text-xs text-red-800 font-medium">{error}</p>
               </div>
             )}
 
-            <form className="space-y-6" onSubmit={handleSubmit}>
+            <form onSubmit={handleLoginSubmit} className="space-y-5">
               <div>
-                <label htmlFor="email" className="block text-sm font-semibold text-gray-700">
+                <label className="block text-xs font-semibold text-[#0d2b20]/80 uppercase tracking-wider mb-2">
                   Email address
                 </label>
-                <div className="mt-1.5 relative rounded-lg shadow-sm">
-                  <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
-                    <Mail className="h-5 w-5 text-emerald-600/70" />
-                  </div>
+                <div className="relative border-b-2 border-[#0d2b20]/20 focus-within:border-[#0d2b20] transition-colors pb-1">
+                  <Mail className="absolute left-0 top-1/2 -translate-y-1/2 w-4 h-4 text-[#0d2b20]/60 pointer-events-none" />
                   <input
-                    id="email"
-                    name="email"
                     type="email"
-                    autoComplete="email"
                     required
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    className="focus:ring-2 focus:ring-emerald-600 focus:border-emerald-600 block w-full pl-10 sm:text-sm border-gray-300 rounded-lg py-3 border outline-none transition-all duration-200 text-gray-900 bg-gray-50/50 focus:bg-white"
-                    placeholder="you@example.com"
+                    value={loginEmail}
+                    onChange={(e) => setLoginEmail(e.target.value)}
+                    className="w-full bg-transparent text-[#0d2b20] placeholder-[#0d2b20]/40 text-sm outline-none py-1.5 font-medium pl-6 pr-2"
+                    placeholder="name@example.com"
                   />
                 </div>
               </div>
 
               <div>
-                <label htmlFor="password" className="block text-sm font-semibold text-gray-700">
+                <label className="block text-xs font-semibold text-[#0d2b20]/80 uppercase tracking-wider mb-2">
                   Password
                 </label>
-                <div className="mt-1.5 relative rounded-lg shadow-sm">
-                  <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
-                    <Lock className="h-5 w-5 text-emerald-600/70" />
-                  </div>
+                <div className="relative border-b-2 border-[#0d2b20]/20 focus-within:border-[#0d2b20] transition-colors pb-1">
+                  <Lock className="absolute left-0 top-1/2 -translate-y-1/2 w-4 h-4 text-[#0d2b20]/60 pointer-events-none" />
                   <input
-                    id="password"
-                    name="password"
-                    type={showPassword ? "text" : "password"}
-                    autoComplete="current-password"
+                    type={showLoginPassword ? "text" : "password"}
                     required
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    className="focus:ring-2 focus:ring-emerald-600 focus:border-emerald-600 block w-full pl-10 pr-10 sm:text-sm border-gray-300 rounded-lg py-3 border outline-none transition-all duration-200 text-gray-900 bg-gray-50/50 focus:bg-white"
+                    value={loginPassword}
+                    onChange={(e) => setLoginPassword(e.target.value)}
+                    className="w-full bg-transparent text-[#0d2b20] placeholder-[#0d2b20]/40 text-sm outline-none py-1.5 font-medium pl-6 pr-8"
                     placeholder="••••••••"
                   />
-                  <div className="absolute inset-y-0 right-0 pr-3.5 flex items-center">
-                    <button
-                      type="button"
-                      onClick={() => setShowPassword(!showPassword)}
-                      className="text-gray-400 hover:text-gray-600 focus:outline-none transition-colors"
-                    >
-                      {showPassword ? (
-                        <EyeOff className="h-5 w-5" aria-hidden="true" />
-                      ) : (
-                        <Eye className="h-5 w-5" aria-hidden="true" />
-                      )}
-                    </button>
-                  </div>
+                  <button
+                    type="button"
+                    onClick={() => setShowLoginPassword(!showLoginPassword)}
+                    className="absolute right-0 top-1/2 -translate-y-1/2 text-[#0d2b20]/50 hover:text-[#0d2b20] transition-colors cursor-pointer p-1"
+                  >
+                    {showLoginPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                  </button>
                 </div>
               </div>
 
-              <div>
+              <div className="pt-4">
                 <button
                   type="submit"
-                  disabled={isLoading}
-                  className="w-full flex justify-center items-center py-3.5 px-4 border border-transparent rounded-lg shadow-lg text-sm font-bold tracking-wider text-white bg-[#064e3b] hover:bg-[#043d2e] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-600 uppercase transition-all duration-300 disabled:opacity-70 disabled:cursor-not-allowed group"
+                  disabled={isLoading || isSignUp}
+                  className="w-full py-3.5 px-6 rounded-full font-semibold text-base text-white bg-[#063726] hover:bg-[#032318] active:scale-[0.99] shadow-lg transition-all duration-300 cursor-pointer disabled:opacity-50"
                 >
-                  {isLoading ? 'Logging in...' : 'Log In'}
-                  {!isLoading && <ArrowRight className="w-4 h-4 ml-2 transform group-hover:translate-x-1 transition-transform" />}
+                  {isLoading ? 'Signing in...' : 'Sign in'}
                 </button>
               </div>
             </form>
-            
-            <div className="mt-6">
-              <div className="relative">
-                <div className="absolute inset-0 flex items-center">
-                  <div className="w-full border-t border-gray-200" />
-                </div>
-                <div className="relative flex justify-center text-sm">
-                  <span className="px-3 bg-white text-emerald-800 font-semibold tracking-wider text-xs uppercase">
-                    Secure Portal Access
-                  </span>
-                </div>
-              </div>
-            </div>
+          </div>
 
+          <div className="mt-8 pt-4 w-full max-w-[290px] sm:max-w-[320px] text-center flex items-center justify-center">
+            <p className="text-sm text-[#0d2b20]/80 font-normal text-center w-full">
+              Don't have an account?{' '}
+              <button
+                type="button"
+                onClick={() => toggleMode(true)}
+                className="font-bold text-[#063726] hover:underline underline-offset-4 cursor-pointer transition-all"
+              >
+                Create account
+              </button>
+            </p>
           </div>
         </div>
+
+        {/* ==================== WHITE/CREAM BANNER - FORM 2: CREATE ACCOUNT ==================== */}
+        <div className={`w-full md:w-1/2 p-8 sm:p-10 pl-6 sm:pl-10 flex flex-col justify-between text-[#0d2b20] transition-all duration-500 ${!isSignUp ? 'opacity-0 pointer-events-none md:opacity-100 md:pointer-events-none' : 'opacity-100'}`}>
+          <div className="w-full max-w-[300px] sm:max-w-[330px] ml-auto">
+            <div className="mb-4">
+              <h2 className="text-3xl sm:text-4xl font-extrabold text-[#0d2b20] tracking-tight">
+                Create <span className="font-serif italic font-normal text-[#0d2b20]">account</span>
+              </h2>
+              <div className="w-12 h-[3px] bg-[#9e824c] rounded-full mt-2 mb-2" />
+              <p className="text-sm text-[#0d2b20]/75 font-normal">
+                One account for all your wealth & advisory solutions.
+              </p>
+            </div>
+
+            {isSignUp && error && (
+              <div className="mb-4 bg-red-50 border-l-4 border-red-500 p-3 rounded-r-xl flex items-start gap-2.5">
+                <AlertCircle className="w-5 h-5 text-red-600 mt-0.5 flex-shrink-0" />
+                <p className="text-xs text-red-800 font-medium">{error}</p>
+              </div>
+            )}
+
+            {isSignUp && successMsg && (
+              <div className="mb-4 bg-emerald-50 border-l-4 border-emerald-600 p-3 rounded-r-xl flex items-start gap-2.5">
+                <CheckCircle2 className="w-5 h-5 text-emerald-700 mt-0.5 flex-shrink-0" />
+                <p className="text-xs text-emerald-800 font-medium">{successMsg}</p>
+              </div>
+            )}
+
+            <form onSubmit={handleSignUpSubmit} className="space-y-3">
+              <div>
+                <label className="block text-xs font-semibold text-[#0d2b20]/80 uppercase tracking-wider mb-1">
+                  Full name
+                </label>
+                <div className="relative border-b-2 border-[#0d2b20]/20 focus-within:border-[#0d2b20] transition-colors pb-1">
+                  <UserIcon className="absolute left-0 top-1/2 -translate-y-1/2 w-4 h-4 text-[#0d2b20]/60 pointer-events-none" />
+                  <input
+                    type="text"
+                    required
+                    value={signUpName}
+                    onChange={(e) => setSignUpName(e.target.value)}
+                    className="w-full bg-transparent text-[#0d2b20] placeholder-[#0d2b20]/40 text-sm outline-none py-1 font-medium pl-6 pr-2"
+                    placeholder="John Doe"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-xs font-semibold text-[#0d2b20]/80 uppercase tracking-wider mb-1">
+                  Email address
+                </label>
+                <div className="relative border-b-2 border-[#0d2b20]/20 focus-within:border-[#0d2b20] transition-colors pb-1">
+                  <Mail className="absolute left-0 top-1/2 -translate-y-1/2 w-4 h-4 text-[#0d2b20]/60 pointer-events-none" />
+                  <input
+                    type="email"
+                    required
+                    value={signUpEmail}
+                    onChange={(e) => setSignUpEmail(e.target.value)}
+                    className="w-full bg-transparent text-[#0d2b20] placeholder-[#0d2b20]/40 text-sm outline-none py-1 font-medium pl-6 pr-2"
+                    placeholder="name@example.com"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-xs font-semibold text-[#0d2b20]/80 uppercase tracking-wider mb-1">
+                  Password
+                </label>
+                <div className="relative border-b-2 border-[#0d2b20]/20 focus-within:border-[#0d2b20] transition-colors pb-1">
+                  <Lock className="absolute left-0 top-1/2 -translate-y-1/2 w-4 h-4 text-[#0d2b20]/60 pointer-events-none" />
+                  <input
+                    type={showSignUpPassword ? "text" : "password"}
+                    required
+                    value={signUpPassword}
+                    onChange={(e) => setSignUpPassword(e.target.value)}
+                    className="w-full bg-transparent text-[#0d2b20] placeholder-[#0d2b20]/40 text-sm outline-none py-1 font-medium pl-6 pr-8"
+                    placeholder="••••••••"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowSignUpPassword(!showSignUpPassword)}
+                    className="absolute right-0 top-1/2 -translate-y-1/2 text-[#0d2b20]/50 hover:text-[#0d2b20] transition-colors cursor-pointer p-1"
+                  >
+                    {showSignUpPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                  </button>
+                </div>
+                <p className="text-[11px] text-[#0d2b20]/50 mt-1 font-normal">Use 8 characters or more.</p>
+              </div>
+
+              <div>
+                <label className="block text-xs font-semibold text-[#0d2b20]/80 uppercase tracking-wider mb-1">
+                  Confirm Password
+                </label>
+                <div className="relative border-b-2 border-[#0d2b20]/20 focus-within:border-[#0d2b20] transition-colors pb-1">
+                  <Lock className="absolute left-0 top-1/2 -translate-y-1/2 w-4 h-4 text-[#0d2b20]/60 pointer-events-none" />
+                  <input
+                    type="password"
+                    required
+                    value={signUpConfirmPassword}
+                    onChange={(e) => setSignUpConfirmPassword(e.target.value)}
+                    className="w-full bg-transparent text-[#0d2b20] placeholder-[#0d2b20]/40 text-sm outline-none py-1 font-medium pl-6 pr-2"
+                    placeholder="••••••••"
+                  />
+                </div>
+              </div>
+
+              <div className="pt-3">
+                <button
+                  type="submit"
+                  disabled={isLoading || !isSignUp}
+                  className="w-full py-3.5 px-6 rounded-full font-semibold text-base text-white bg-[#063726] hover:bg-[#032318] active:scale-[0.99] shadow-lg transition-all duration-300 cursor-pointer disabled:opacity-50"
+                >
+                  {isLoading ? 'Creating account...' : 'Create account'}
+                </button>
+              </div>
+            </form>
+          </div>
+
+          <div className="mt-8 pt-2 w-full max-w-[300px] sm:max-w-[330px] ml-auto text-center flex items-center justify-center">
+            <p className="text-sm text-[#0d2b20]/80 font-normal text-center w-full">
+              Already have an account?{' '}
+              <button
+                type="button"
+                onClick={() => toggleMode(false)}
+                className="font-bold text-[#063726] hover:underline underline-offset-4 cursor-pointer transition-all"
+              >
+                Sign in
+              </button>
+            </p>
+          </div>
+        </div>
+
+        {/* ==================== THE DARK GREEN SLANTING BANNER OVERLAY ==================== */}
+        {/* 
+          - Shifted to x: '74%' in Sign In mode so the slanting edge sits further back (rightwards), leaving full breathing room for the form!
+        */}
+        <motion.div
+          initial={false}
+          animate={{
+            x: isSignUp ? '-26%' : '74%',
+            skewX: -12,
+          }}
+          transition={{ duration: 0.7, ease: [0.65, 0, 0.35, 1] }}
+          className="hidden md:block absolute top-0 left-0 w-[65%] h-[130%] -top-[15%] z-20 overflow-hidden shadow-2xl bg-gradient-to-br from-[#032318] via-[#063726] to-[#021810] border-l-2 border-r-2 border-amber-300/80 pointer-events-auto"
+        >
+          {/* Glowing gold slanted seam line on the left edge */}
+          <div className="absolute top-0 left-0 w-1.5 h-full bg-gradient-to-b from-amber-300/90 via-emerald-400/70 to-amber-400/90 shadow-[0_0_20px_rgba(251,191,36,0.9)] z-30" />
+
+          {/* Glowing gold slanted seam line on the right edge */}
+          <div className="absolute top-0 right-0 w-1.5 h-full bg-gradient-to-b from-amber-300/90 via-emerald-400/70 to-amber-400/90 shadow-[0_0_20px_rgba(251,191,36,0.9)] z-30" />
+
+          {/* Counter-skewed wrapper (skewX: 12) */}
+          <div 
+            className="w-full h-full flex flex-col justify-between p-14 pt-28 pb-20 select-none relative z-10 text-white"
+            style={{
+              transform: 'skewX(12deg)', // Counter-skewing to keep text and copy straight
+            }}
+          >
+            <AnimatePresence mode="wait">
+              {isSignUp ? (
+                <motion.div
+                  key="signup-blade-text"
+                  initial={{ opacity: 0, y: 15 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -15 }}
+                  transition={{ duration: 0.35 }}
+                  className="flex flex-col justify-between h-full pl-36 sm:pl-44 pr-14"
+                >
+                  <div className="space-y-6 pt-2">
+                    <span className="text-xs uppercase tracking-[0.25em] font-mono text-amber-200/90 font-bold">
+                      KALPANAAA
+                    </span>
+                    <h3 className="text-4xl font-extrabold text-white leading-[1.15] tracking-tight">
+                      Start the <br />
+                      <span className="text-amber-100 font-serif italic font-normal">first page.</span>
+                    </h3>
+                    <p className="text-sm text-emerald-100/75 leading-relaxed max-w-[260px] font-light">
+                      One account for every board, every draft and every device you own.
+                    </p>
+                  </div>
+
+                  <div className="pb-2">
+                    <div className="w-12 h-0.5 bg-amber-300/50 rounded-full" />
+                  </div>
+                </motion.div>
+              ) : (
+                <motion.div
+                  key="login-blade-text"
+                  initial={{ opacity: 0, y: 15 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -15 }}
+                  transition={{ duration: 0.35 }}
+                  className="flex flex-col justify-between h-full pl-14 sm:pl-16 pr-10"
+                >
+                  <div className="space-y-6 pt-2">
+                    <span className="text-xs uppercase tracking-[0.25em] font-mono text-amber-200/90 font-bold">
+                      KALPANAAA
+                    </span>
+                    <h3 className="text-4xl font-extrabold text-white leading-[1.15] tracking-tight">
+                      Welcome <br />
+                      <span className="text-amber-100 font-serif italic font-normal">back.</span>
+                    </h3>
+                    <p className="text-sm text-emerald-100/75 leading-relaxed max-w-[270px] font-light">
+                      Sign in to manage your digital wealth, investments, and financial advisory sessions.
+                    </p>
+                  </div>
+
+                  <div className="pb-2">
+                    <div className="w-12 h-0.5 bg-amber-300/50 rounded-full" />
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
+        </motion.div>
+
+      </div>
+
+      {/* Footer Disclaimer */}
+      <div className="mt-8 text-center text-xs text-emerald-200/40">
+        &copy; {new Date().getFullYear()} Kalpanaaa Finance. All rights reserved. 256-Bit SSL Encrypted Access.
       </div>
     </div>
   );
-
 };
 
 export default LoginPage;

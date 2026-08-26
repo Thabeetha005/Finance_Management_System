@@ -1,5 +1,5 @@
 import React, { useState, useMemo, useEffect } from 'react';
-import { Search, FileText, CheckCircle, XCircle, Eye } from 'lucide-react';
+import { Search, FileText, CheckCircle, XCircle, Eye, ExternalLink, Download, AlertCircle, Loader2, X } from 'lucide-react';
 import api from '../../../shared/api/axios';
 import { toast } from 'react-hot-toast';
 
@@ -12,9 +12,46 @@ const AdminVerificationQueue = () => {
   const PAGE_SIZE = 15;
   const [selectedApp, setSelectedApp] = useState(null);
 
+  // Document preview states
+  const [docLoading, setDocLoading] = useState(false);
+  const [docBlobUrl, setDocBlobUrl] = useState(null);
+  const [docMimeType, setDocMimeType] = useState('');
+  const [docLoadError, setDocLoadError] = useState(false);
+
   useEffect(() => {
     setPage(1);
   }, [activeTab, searchQuery]);
+
+  // Load document preview when selectedApp opens
+  useEffect(() => {
+    let activeUrl = null;
+    if (selectedApp) {
+      setDocLoading(true);
+      setDocLoadError(false);
+      setDocBlobUrl(null);
+      api.get(`/admin/documents/${selectedApp.originalId}`, { responseType: 'blob' })
+        .then(res => {
+          const type = res.headers['content-type'] || (selectedApp.documents?.toLowerCase().endsWith('.pdf') ? 'application/pdf' : 'image/png');
+          const blob = new Blob([res.data], { type });
+          activeUrl = window.URL.createObjectURL(blob);
+          setDocBlobUrl(activeUrl);
+          setDocMimeType(type);
+        })
+        .catch(err => {
+          console.error("Error loading document preview:", err);
+          setDocLoadError(true);
+        })
+        .finally(() => {
+          setDocLoading(false);
+        });
+    }
+
+    return () => {
+      if (activeUrl) {
+        window.URL.revokeObjectURL(activeUrl);
+      }
+    };
+  }, [selectedApp]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -140,7 +177,7 @@ const AdminVerificationQueue = () => {
       setSelectedApp(null);
     } catch (err) {
       console.error("Action failed", err);
-      toast.error("Failed to update verification status: " + (err.response?.data?.message || err.message));
+      toast.error("Failed to update verification status: " + (err.response?.data?.message || err.response?.data || err.message));
     }
   };
 
@@ -199,7 +236,7 @@ const AdminVerificationQueue = () => {
                 <th className="py-4 px-6">File Name</th>
                 <th className="py-4 px-6">Uploaded On</th>
                 <th className="py-4 px-6">Status</th>
-                <th className="py-4 px-6">Action</th>
+                <th className="py-4 px-6 text-right">Action</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-100 text-xs">
@@ -212,7 +249,7 @@ const AdminVerificationQueue = () => {
                     <td className="py-4 px-6"><div className="h-4 bg-gray-200 animate-pulse rounded w-28"></div></td>
                     <td className="py-4 px-6"><div className="h-4 bg-gray-200 animate-pulse rounded w-20"></div></td>
                     <td className="py-4 px-6"><div className="h-6 bg-gray-200 animate-pulse rounded-full w-16"></div></td>
-                    <td className="py-4 px-6"><div className="h-7 bg-gray-200 animate-pulse rounded-lg w-16"></div></td>
+                    <td className="py-4 px-6 text-right"><div className="h-7 bg-gray-200 animate-pulse rounded-lg w-16 ml-auto"></div></td>
                   </tr>
                 ))
               ) : filteredData.length === 0 ? (
@@ -227,9 +264,11 @@ const AdminVerificationQueue = () => {
                     <td className="py-4 px-6 font-bold text-gray-900">{row.id}</td>
                     <td className="py-4 px-6 font-bold text-gray-800">{row.customer}</td>
                     <td className="py-4 px-6 font-semibold text-gray-700">{row.type}</td>
-                    <td className="py-4 px-6 font-medium text-gray-600 flex items-center gap-1.5 mt-2">
-                      <FileText className="w-3.5 h-3.5 text-gray-400 shrink-0" />
-                      <span className="truncate max-w-xs">{row.documents}</span>
+                    <td className="py-4 px-6 font-medium text-gray-600">
+                      <div className="flex items-center gap-1.5">
+                        <FileText className="w-3.5 h-3.5 text-gray-400 shrink-0" />
+                        <span className="truncate max-w-xs">{row.documents}</span>
+                      </div>
                     </td>
                     <td className="py-4 px-6 font-medium text-gray-500">{row.date}</td>
                     <td className="py-4 px-6">
@@ -241,13 +280,23 @@ const AdminVerificationQueue = () => {
                         {row.status}
                       </span>
                     </td>
-                    <td className="py-4 px-6">
-                      <button 
-                        onClick={() => setSelectedApp(row)}
-                        className="px-3 py-1.5 text-xs font-bold rounded-lg transition-colors shadow-sm bg-[#106354] hover:bg-[#0c4e42] text-white cursor-pointer"
-                      >
-                        Review
-                      </button>
+                    <td className="py-4 px-6 text-right whitespace-nowrap">
+                      {row.status === 'APPROVED' ? (
+                        <span className="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-bold bg-emerald-50 text-emerald-800 border border-emerald-200">
+                          Approved
+                        </span>
+                      ) : row.status === 'REJECTED' ? (
+                        <span className="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-bold bg-red-50 text-red-800 border border-red-200">
+                          Rejected
+                        </span>
+                      ) : (
+                        <button 
+                          onClick={() => setSelectedApp(row)}
+                          className="px-3.5 py-1.5 text-xs font-bold rounded-lg transition-colors shadow-sm bg-[#106354] hover:bg-[#0c4e42] text-white cursor-pointer"
+                        >
+                          Review
+                        </button>
+                      )}
                     </td>
                   </tr>
                 ))
@@ -285,25 +334,42 @@ const AdminVerificationQueue = () => {
         )}
       </div>
 
-      {/* Review Modal */}
+      {/* Review Modal with Inline Document Viewer */}
       {selectedApp && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-xs p-4">
-          <div className="bg-white rounded-3xl w-full max-w-md shadow-2xl overflow-hidden border border-gray-100">
-            <div className="p-6 border-b border-gray-100 flex justify-between items-center bg-gray-50/50">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-xs p-4 overflow-y-auto">
+          <div className="bg-white rounded-3xl w-full max-w-4xl shadow-2xl overflow-hidden border border-gray-100 my-8 flex flex-col max-h-[90vh]">
+            <div className="p-5 sm:p-6 border-b border-gray-100 flex justify-between items-center bg-gray-50/50 flex-shrink-0">
               <div>
-                <h2 className="text-lg font-bold text-gray-900">Review Application</h2>
+                <div className="flex items-center gap-3">
+                  <h2 className="text-lg font-bold text-gray-900">Review Application</h2>
+                  <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider ${
+                    selectedApp.status === 'APPROVED' ? 'bg-emerald-100 text-emerald-800' :
+                    selectedApp.status === 'PENDING' ? 'bg-amber-100 text-amber-800' :
+                    'bg-red-100 text-red-700'
+                  }`}>
+                    {selectedApp.status}
+                  </span>
+                </div>
                 <p className="text-xs text-gray-500 mt-0.5">{selectedApp.id}</p>
               </div>
-              <button onClick={() => setSelectedApp(null)} className="text-gray-400 hover:text-gray-600 text-xl font-bold cursor-pointer">
-                &times;
+              <button 
+                onClick={() => {
+                  setSelectedApp(null);
+                  if (docBlobUrl) window.URL.revokeObjectURL(docBlobUrl);
+                  setDocBlobUrl(null);
+                }} 
+                className="text-gray-400 hover:text-gray-600 text-xl font-bold cursor-pointer p-1 rounded-lg hover:bg-gray-100"
+              >
+                <X className="w-5 h-5" />
               </button>
             </div>
             
-            <div className="p-6 space-y-4 text-xs">
-              <div className="grid grid-cols-2 gap-4 bg-gray-50 p-4 rounded-2xl border border-gray-100">
+            <div className="p-6 space-y-4 text-xs overflow-y-auto flex-1">
+              {/* Summary Information Cards */}
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 bg-gray-50 p-4 rounded-2xl border border-gray-100">
                 <div>
                   <label className="block text-[10px] font-bold text-gray-400 uppercase">Customer</label>
-                  <div className="font-bold text-gray-900 mt-0.5">{selectedApp.customer}</div>
+                  <div className="font-bold text-gray-900 mt-0.5 truncate">{selectedApp.customer}</div>
                 </div>
                 <div>
                   <label className="block text-[10px] font-bold text-gray-400 uppercase">Document ID</label>
@@ -315,44 +381,113 @@ const AdminVerificationQueue = () => {
                 </div>
                 <div>
                   <label className="block text-[10px] font-bold text-gray-400 uppercase">File Name</label>
-                  <div className="font-bold text-gray-900 mt-0.5 truncate">{selectedApp.documents}</div>
+                  <div className="font-bold text-gray-900 mt-0.5 truncate" title={selectedApp.documents}>{selectedApp.documents}</div>
                 </div>
               </div>
               
-              <div className="p-4 bg-emerald-50/50 border border-emerald-100 rounded-2xl text-center space-y-2">
-                <button 
-                  onClick={async () => {
-                    try {
-                      const res = await api.get(`/admin/documents/${selectedApp.originalId}`, { responseType: 'blob' });
-                      const url = window.URL.createObjectURL(new Blob([res.data]));
-                      window.open(url, '_blank');
-                    } catch (e) {
-                      toast.error("Failed to open document file");
-                    }
-                  }}
-                  className="w-full py-2.5 bg-white border border-[#106354] text-[#106354] rounded-xl font-bold hover:bg-emerald-50 transition-colors shadow-xs flex items-center justify-center gap-2 cursor-pointer"
-                >
-                  <Eye className="w-4 h-4" />
-                  View Uploaded Document File
-                </button>
-                <p className="text-[11px] text-gray-500">
-                  Inspect official document details before verifying.
-                </p>
+              {/* Inline Document Preview Box */}
+              <div className="border border-gray-200 rounded-2xl overflow-hidden bg-slate-900/5">
+                <div className="px-4 py-2.5 bg-gray-100/80 border-b border-gray-200 flex items-center justify-between">
+                  <div className="flex items-center gap-2 text-gray-700 font-bold text-xs">
+                    <FileText className="w-4 h-4 text-[#106354]" />
+                    <span className="truncate max-w-xs sm:max-w-md">Uploaded Document: {selectedApp.documents}</span>
+                  </div>
+                  {docBlobUrl && (
+                    <div className="flex items-center gap-2">
+                      <a
+                        href={docBlobUrl}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-white border border-gray-200 text-gray-700 hover:bg-gray-50 font-bold text-[11px] shadow-xs cursor-pointer"
+                      >
+                        <ExternalLink className="w-3.5 h-3.5" />
+                        Open in New Tab
+                      </a>
+                      <a
+                        href={docBlobUrl}
+                        download={selectedApp.documents || 'document'}
+                        className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-[#106354] text-white hover:bg-[#0c4e42] font-bold text-[11px] shadow-xs cursor-pointer"
+                      >
+                        <Download className="w-3.5 h-3.5" />
+                        Download
+                      </a>
+                    </div>
+                  )}
+                </div>
+
+                <div className="p-2 sm:p-4 min-h-[380px] max-h-[500px] flex items-center justify-center bg-gray-50/50">
+                  {docLoading ? (
+                    <div className="flex flex-col items-center justify-center p-12 text-gray-500 gap-3">
+                      <Loader2 className="w-8 h-8 text-[#106354] animate-spin" />
+                      <p className="font-medium text-xs">Loading document preview...</p>
+                    </div>
+                  ) : docLoadError ? (
+                    <div className="flex flex-col items-center justify-center p-12 text-gray-500 gap-2 text-center">
+                      <AlertCircle className="w-8 h-8 text-amber-500" />
+                      <p className="font-bold text-gray-800 text-sm">Preview Unavailable</p>
+                      <p className="text-xs text-gray-500 max-w-sm">
+                        Unable to render preview directly. You can inspect the document by opening it in a new tab.
+                      </p>
+                    </div>
+                  ) : docBlobUrl ? (
+                    docMimeType.includes('image') || (selectedApp.documents && /\.(png|jpe?g|webp|gif)$/i.test(selectedApp.documents)) ? (
+                      <div className="w-full flex items-center justify-center max-h-[460px] overflow-auto">
+                        <img 
+                          src={docBlobUrl} 
+                          alt="Uploaded Document" 
+                          className="max-h-[440px] max-w-full object-contain rounded-xl border border-gray-200 shadow-sm bg-white"
+                        />
+                      </div>
+                    ) : (
+                      <iframe 
+                        src={docBlobUrl} 
+                        className="w-full h-[450px] rounded-xl border border-gray-200 bg-white shadow-xs" 
+                        title="Document PDF Viewer"
+                      />
+                    )
+                  ) : null}
+                </div>
               </div>
               
-              <div className="pt-3 flex justify-end gap-3">
-                <button 
-                  onClick={() => handleAction('Denied')}
-                  className="px-4 py-2.5 text-red-700 bg-red-50 hover:bg-red-100 rounded-xl font-bold transition-all text-xs cursor-pointer"
-                >
-                  Deny Application
-                </button>
-                <button 
-                  onClick={() => handleAction('Approved')}
-                  className="px-4 py-2.5 bg-[#106354] hover:bg-[#0c4e42] text-white rounded-xl font-bold transition-all text-xs shadow-md cursor-pointer"
-                >
-                  Approve Application
-                </button>
+              {/* Actions Footer */}
+              <div className="pt-2 flex items-center justify-between border-t border-gray-100 flex-shrink-0">
+                {selectedApp.status === 'PENDING' ? (
+                  <>
+                    <p className="text-[11px] text-gray-500 italic">
+                      Decision is final and fixed once confirmed.
+                    </p>
+                    <div className="flex items-center gap-3">
+                      <button 
+                        onClick={() => handleAction('Denied')}
+                        className="px-4 py-2 text-red-700 bg-red-50 hover:bg-red-100 rounded-xl font-bold transition-all text-xs cursor-pointer border border-red-200"
+                      >
+                        Deny Application
+                      </button>
+                      <button 
+                        onClick={() => handleAction('Approved')}
+                        className="px-5 py-2 bg-[#106354] hover:bg-[#0c4e42] text-white rounded-xl font-bold transition-all text-xs shadow-md cursor-pointer"
+                      >
+                        Approve Application
+                      </button>
+                    </div>
+                  </>
+                ) : (
+                  <div className="w-full flex items-center justify-between">
+                    <span className="text-xs font-semibold text-gray-500">
+                      This document is <strong className="capitalize">{selectedApp.status.toLowerCase()}</strong> and its status is locked.
+                    </span>
+                    <button 
+                      onClick={() => {
+                        setSelectedApp(null);
+                        if (docBlobUrl) window.URL.revokeObjectURL(docBlobUrl);
+                        setDocBlobUrl(null);
+                      }}
+                      className="px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-xl font-bold text-xs cursor-pointer"
+                    >
+                      Close
+                    </button>
+                  </div>
+                )}
               </div>
             </div>
           </div>

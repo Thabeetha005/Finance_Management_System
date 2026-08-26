@@ -16,7 +16,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/messages")
-@PreAuthorize("hasRole('CUSTOMER')")
+@PreAuthorize("isAuthenticated()")
 @RequiredArgsConstructor
 public class CustomerMessageController {
 
