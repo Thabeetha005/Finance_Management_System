@@ -84,6 +84,3 @@ npm run dev
 - Frontend: `http://localhost:5173`
 - Backend: `http://localhost:8080`
 
-## License
-
-This project is licensed under the MIT License.
